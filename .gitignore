@@ -55,3 +55,9 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+send/param.php
+send/in/smsVB5.txt
+send/in/smsVB1.txt
+send/in/smsVB3.txt
+send/in/smsVB4.txt
+send/in/smsVB2.txt

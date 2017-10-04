@@ -1,0 +1,224 @@
+.site-login {
+    width: 300px;
+    margin: 50px auto;
+}
+
+#main {
+    overflow: hidden;
+    font-family: "Segoe UI", arial, helvetica, freesans, sans-serif;
+    min-width: 1850px;
+}
+
+#content {
+    width: 100%;
+}
+#left {
+    float: left;
+    margin: 6em 10px 0 0;
+}
+
+#left div span#count {
+    position: absolute;
+    margin: -2em 1em;
+}
+
+#text {
+    width: 30em;
+    height: 20em;
+    border: none;
+    font-size: 100%;
+    font-family: "Segoe UI", arial, helvetica, freesans, sans-serif;
+    border-radius: 5px;
+    background: #fff;
+    border: 1px solid #999;
+    padding: 0.3em;
+}
+
+#buttons button {
+    width: 89px;
+    margin: 10px 0;
+}
+
+#buttons button#btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#buttons button#clr {
+    float:right;
+}
+
+#phones {
+    width: 30em;
+    height: 6em;
+    border: none;
+    font-size: 100%;
+    font-family: "Segoe UI", arial, helvetica, freesans, sans-serif;
+    border-radius: 5px;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 0.3em;
+    color: #999;
+}
+
+#queue {
+    width: 30em;
+    height: 25em;
+    border: none;
+    font-size: 100%;
+    font-family: "Segoe UI", arial, helvetica, freesans, sans-serif;
+    border-radius: 5px;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 0.3em;
+    list-style-type: none;
+    color: #999;
+}
+
+#queue li {
+    font-size: 90%;
+}
+
+#tabs {
+    float: left;
+    margin: 4em auto 0 auto;
+    width: 80em;
+}
+
+ul.tabs {
+    margin: 0 5px;
+    padding: 0px;
+    list-style: none;
+    z-index: 1;
+}
+ul.tabs li {
+    color: #999;
+    display: inline-block;
+    padding: 0.3em 10px;
+    border: 1px solid #eee;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    position: relative;
+}
+
+ul.tabs li.current {
+    color: #333;
+    border: 1px solid #999;
+    border-bottom: 1px solid #fff;
+    border-radius: 5px 5px 0 0;
+}
+
+.tab-content {
+    border-radius: 5px;
+    display: none;
+    background: #fff;
+    border: 1px solid #999;
+    padding: 0.3em;
+    -webkit-column-count:4;  
+    -moz-column-count:4;  
+    column-count:4;
+    min-height: 81vh;
+    line-height: 1em;
+    overflow-y: auto;
+    margin-top: -1px;
+    margin-bottom: 1em;
+}
+
+.tab-content.current {
+    display: inherit;
+    border-radius: 5px;
+}
+
+.tab-content div {
+    padding-left: 1.4em;
+}
+
+.tab-content div.newdept {
+    padding-top: 1em;
+    margin-top: 1.4em;
+    border-top: 1px solid #ccc;
+}
+
+.tab-content div.depthead {
+    padding-left: 0em;
+    margin-top: 1em;
+    border-bottom: 1px solid #966;
+    color:#966;
+}
+
+.tab-content div input {
+    margin-left: -1.4em;
+}
+
+.tab-content abbr {
+    border-bottom: none;
+    text-decoration: none;
+    margin-left: 0.4em;
+}
+
+.tab-content abbr[title] {
+    border-bottom: none;
+    text-decoration: none;
+}
+
+.tab-content span {
+    font-size: 80%;
+    color:#999;
+}
+
+.list {
+    display: none;
+    float: left;
+    margin: 6em 10px;
+}
+
+.list.current {
+    display: inherit;
+}
+
+.list select {
+    padding: 0.3em;
+    width: 20em;
+    border-radius: 5px;
+    background: #fff;
+    border: 1px solid #999;
+    cursor: pointer;
+    overflow-y: auto;
+}
+
+:focus {
+    outline: none;
+}
+
+#queue ul li {
+    font-size: 90%;
+}
+
+.history {
+    margin: 4em 0;
+    width: 100%;
+}
+
+.history td {
+    border: 1px solid #999;
+    padding: 0.2em;
+    max-width: 600px;
+    font-size: 90%;
+    background: #eee;
+    vertical-align: top;
+}
+
+.history tr.odd td {
+    background: #fff;
+}
+
+.history td.text {
+    max-width: 800px;
+    min-width: 400px;
+}
+.history th {
+    border: 1px solid #999;
+    padding: 0.2em;
+    background: #eee;
+}
