@@ -91,6 +91,7 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
     $mail->isHTML(false);                                  // Set email format to HTML
 
     $uid = "";
+    $sendmail = false;
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
         if($uid == "") {
             $uid = $row["uid"];
@@ -100,7 +101,8 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
             $mail->addAddress($row["frommail"], $row["fname"]);
         }
         $status = 0;
-        if(($row["email_only"] < 1) && ($row["mobile"] != "")) { // Skip SMS if e-mail only
+        if($row["mobile"] < 70000000000) $row["email_only"] = 1; // if mobile number does not exist
+        if($row["email_only"] < 1) { // Skip SMS if e-mail only
             if(SendSMS($row["uid"], $row["name"], $row["dept"], $row["mobile"], $row["tomail"], $row["text"])) {
                 $status = $status | 1;
                 $result2 = $db->query("UPDATE recipient SET sent = NOW(), status = " . $status . " WHERE id = " . $row["id"]);
@@ -114,7 +116,8 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
         if($uid == $row["uid"]) {
             if($row["tomail"] != "") {
                 $mail->addAddress($row["tomail"], $row["name"]);     // Add address to multirecipient email
-                if(($row["email_only"] > 0) || ($row["mobile"] == "")) {
+                $sendmail = true;
+                if($row["email_only"] > 0) {
                     $status = $status | 16;
                     $result2 = $db->query("UPDATE recipient SET sent = NOW(), done = NOW(), status = " . $status . " WHERE id = " . $row["id"]);
                 }
@@ -123,17 +126,29 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
                     $result2 = $db->query("UPDATE recipient SET status = " . $status . " WHERE id = " . $row["id"]);
                 }
             }
+            else { // blank email
+                if($row["email_only"] > 0) {
+                    $status = $status | 64;
+                    $result2 = $db->query("UPDATE recipient SET sent = NOW(), done = NOW(), status = " . $status . " WHERE id = " . $row["id"]);
+                }
+                else {
+                    $status = $status | 64;
+                    $result2 = $db->query("UPDATE recipient SET status = " . $status . " WHERE id = " . $row["id"]);
+                }
+            }
         }
         else { // Sent email and start next message
-            $mail->Subject = $subject;
-            $mail->setFrom($cc, $fname);
-            //$mail->addCC($cc);
-            $mail->Body = $body;
-            try {
-                $mail->send();
-            }
-            catch (Exception $e) {
+            if($sendmail) {
+                $mail->Subject = $subject;
+                $mail->setFrom($cc, $fname);
+                //$mail->addCC($cc);
+                $mail->Body = $body;
+                try {
+                    $mail->send();
+                }
+                catch (Exception $e) {
 
+                }
             }
             $mail->clearAddresses();
 
@@ -146,14 +161,16 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
     }
 
     if($uid != "") { // Sent last email if exist
-        $mail->Subject = $subject;
-        $mail->setFrom($cc, $fname);
-        $mail->Body = $body;
-        try {
-            $mail->send();
-        }
-        catch (Exception $e) {
+        if($sendmail) {
+            $mail->Subject = $subject;
+            $mail->setFrom($cc, $fname);
+            $mail->Body = $body;
+            try {
+                $mail->send();
+            }
+            catch (Exception $e) {
 
+            }
         }
     }
     $result->free();

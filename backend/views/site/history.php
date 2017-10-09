@@ -63,8 +63,13 @@ if ($result = $db->query("SELECT uid, contact.name AS name, dept, text, sent, do
                     $status .= "; Error";
                 }
             }
-            if(($row["status"] & 16) > 0) {
-                $status .= "; E-mail";
+            if(($row["status"] & 64) > 0) {
+                $status .= "; No e-mail";
+            }
+            else {
+                if(($row["status"] & 16) > 0) {
+                    $status .= "; E-mail";
+                }
             }
         }
         else {
@@ -83,8 +88,13 @@ if ($result = $db->query("SELECT uid, contact.name AS name, dept, text, sent, do
                     $status .= "; Error";
                 }
             }
-            if(($row["status"] & 16) > 0) {
-                $status .= "; E-mail";
+            if(($row["status"] & 64) > 0) {
+                $status .= "; No e-mail";
+            }
+            else {
+                if(($row["status"] & 16) > 0) {
+                    $status .= "; E-mail";
+                }
             }
         }
     }
