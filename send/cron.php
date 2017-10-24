@@ -13,7 +13,7 @@ function SendSMS($uid, $name, $dept, $phone, $email, $text) {
         if($i % 2 > 0) $pdu_number .= $phone[$i] . $phone[$i - 1];
     }
 
-    $txt = mb_substr($text, 0, MAX_SMS_LENGHT);
+    $txt = mb_substr($text, 0, MAX_SMS_LENGTH);
 
     $arText = array();
     $i = 0;

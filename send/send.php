@@ -4,12 +4,12 @@ require('param.php');
 function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
     $res = false;
     $mtext = $db->real_escape_string($text);
-    if ($result = $db->query("SELECT group_id, `group`.name AS gname FROM user, `group` WHERE user.id = '$user_id'")) {
+    if ($result = $db->query("SELECT group_id, group.name AS gname FROM `user`, `group` WHERE user.id = '$user_id'")) {
         $row = $result->fetch_array(MYSQLI_ASSOC);
         $group_id = $row["group_id"];
         $group = $row["gname"];
     }
-    $txt = mb_substr($mtext, 0, MAX_SMS_LENGHT - strlen($group) - 3) . " ($group)";
+    $txt = mb_substr($mtext, 0, MAX_SMS_LENGTH - strlen($group) - 3) . " ($group)";
     if($result = $db->query("INSERT INTO sms (text, put, user_id, gid, uid) VALUES ('$txt', NOW(), '$user_id', '$group_id', '$uid')")) {
         $sms_id = $db->insert_id;
         foreach($contacts as $contact_id) {
@@ -27,7 +27,7 @@ function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
 
 function getName(&$db, $AuthKey) {
     $res = false;
-    if ($result = $db->query("SELECT id FROM user WHERE auth_key = '$AuthKey'")) {
+    if ($result = $db->query("SELECT id FROM `user` WHERE auth_key = '$AuthKey'")) {
         $row = $result->fetch_array(MYSQLI_ASSOC);
         $res = $row["id"];
     }

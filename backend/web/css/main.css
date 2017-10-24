@@ -221,8 +221,13 @@ ul.tabs li.current {
     font-size: 90%;
 }
 
+#calendar {
+    margin-top: 4em;
+    width: 16em;
+}
+
 .history {
-    margin: 4em 0;
+    margin: 1em 0;
     width: 100%;
 }
 
