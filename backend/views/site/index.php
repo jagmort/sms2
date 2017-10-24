@@ -16,8 +16,9 @@ $tabs = array();
 <?php if(($identity = Yii::$app->user->identity) != NULL) echo '<input type="hidden" name="authkey" value="' . $identity->getAuthKey() . '" />' ?>
 
 <div id="left">
+<?php //<?= $datetime->format('d/m H:i') Недоступно оборудование ?>
 <div>
-<textarea id="text" name="text" maxlength="600"><?= $datetime->format('d/m H:i') ?> Недоступно оборудование </textarea>
+<textarea id="text" name="text" maxlength="600"></textarea>
 <span id="count"></span>
 </div>
 <div id="buttons">
@@ -35,7 +36,7 @@ $tabs = array();
 <div id="tabs">
 <?php
 require('../../send/param.php');
-if ($result = $db->query("SELECT tab.id AS id, tab.name AS name FROM `tab`, `group`, `group_tab`, `user` WHERE `group`.id = group_tab.group_id AND tab.id = tab_id AND user.group_id = `group`.id AND auth_key = '" . $identity->getAuthKey() . "' ORDER BY `order` DESC")) {
+if ($result = $db->query("SELECT tab.id AS id, tab.name AS name FROM `tab`, `group`, `group_tab`, `user` WHERE `group`.id = group_tab.group_id AND tab.id = tab_id AND user.group_id = `group`.id AND auth_key = '" . $identity->getAuthKey() . "' ORDER BY `order` DESC, tab.name")) {
 ?>
 <ul class="tabs">
 <?php
@@ -64,7 +65,26 @@ if ($result = $db->query("SELECT tab.id AS id, tab.name AS name FROM `tab`, `gro
                     $tabcont .= '<div>';
                 }
            
-                $tabcont .= '<input type="checkbox" id="phone' . $row2["id"] . '" value="' . $row2["mobile"] . '" /><abbr title="' . $row2["name"] . "\n" . $row2["mobile"] . "\n" .  $row2["dept"] . "\n" .  $row2["position"] . "\n" .  $row2["work"] . "\n" .  $row2["email"] . '">' . $row2["name"] . '<br /><span>' . $row2["position"] . "</span></abbr></div>\n";
+                $tabcont .= '<input type="checkbox" id="phone' . $row2["id"] . '" value="' . $row2["id"] . '" />';
+                $tabcont .= '<abbr title="'
+                    . $row2["name"]
+                    . "\n" . $row2["mobile"] 
+                    . "\n" .  $row2["dept"] 
+                    . "\n" .  $row2["position"] 
+                    . "\n" .  $row2["work"] 
+                    . "\n" .  $row2["email"] 
+                    . '">' . preg_replace('/(.*)\'(.*)\'(.*)/i', '${1}<strong>${2}</strong>${3}', $row2["name"]) . '<br />';
+                $tabcont .= '<span>' . $row2["position"] . '</span>';
+                $tabcont .= "</abbr>";
+                $tabcont .= '<div class="details">';
+                if($row2["mobile"] != "") $tabcont .= 'Сотовый: <a href="sip:' .  $row2["mobile"] . '">' . preg_replace('/(\d{1})(\d{3})(\d{3})(\d{4})/i', '${1}-${2}-${3}-${4}', $row2["mobile"]) . '</a><br />';
+                if($row2["work"] != "") {
+                    if(strlen($row2["work"]) > 9) $tabcont .= 'Рабочий: <a href="sip:' . substr("8" . preg_replace('/[^\d]*/i', '', $row2["work"]), -11) . '">' .  $row2["work"] . '</a><br />';
+                    else $tabcont .= 'Рабочий: ' . $row2["work"] . '<br />';
+                }
+                if($row2["email"] != "") $tabcont .= 'E-mail: <a href="mailto:' .  $row2["email"] . '">' .  $row2["email"] . '</a>';
+                $tabcont .= '</div>';
+                $tabcont .= "</div>\n";
             }
             $result2->free();
         }

@@ -113,10 +113,19 @@ $(document).ready(function() {
         $(this).addClass('current');
         $("#" + tab_id).addClass('current');
         $("#list-" + tab_id).addClass('current');
+
+        $(".current > div").removeClass("detailed");
     });
 
     $("#text").keyup(function(){
         $("#count").text((600 - $(this).val().length));
+    });
+    $("abbr").click(function(){
+        $(".current > div").removeClass("detailed");
+        $(".details").hide();
+        $(this).parent().children(".details").slideToggle("fast");
+        $(this).parent().addClass("detailed");
+
     });
 });
 
