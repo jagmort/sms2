@@ -52,9 +52,9 @@ if ($result = $db->query("SELECT uid, contact.name AS name, dept, text, sent, do
             $group = $row["gname"];
             $name = $row["name"] . " (" . $row["dept"] . ")";
             $text = $row["text"];
-            if($row["sent"] != '0000-00-00 00:00:00') $sent = DateTime::createFromFormat('Y-m-d H:i:s', $row["sent"])->format('d/m H:i');
+            if($row["sent"] != DATE0) $sent = DateTime::createFromFormat('Y-m-d H:i:s', $row["sent"])->format('d/m H:i');
             else $sent = '—';
-            if($row["done"] != '0000-00-00 00:00:00') $done = DateTime::createFromFormat('Y-m-d H:i:s', $row["done"])->format('d/m H:i');
+            if($row["done"] != DATE0) $done = DateTime::createFromFormat('Y-m-d H:i:s', $row["done"])->format('d/m H:i');
             else $done = '—';
             $status = $row["status"]; 
             if(($row["status"] & 4) > 0) {
@@ -79,7 +79,7 @@ if ($result = $db->query("SELECT uid, contact.name AS name, dept, text, sent, do
         }
         else {
             $name .= "<br />\n" . $row["name"] . " (" . $row["dept"] . ")";
-            if($row["done"] != '0000-00-00 00:00:00') $done .= "<br />\n" . DateTime::createFromFormat('Y-m-d H:i:s', $row["done"])->format('d/m H:i');
+            if($row["done"] != DATE0) $done .= "<br />\n" . DateTime::createFromFormat('Y-m-d H:i:s', $row["done"])->format('d/m H:i');
             else $done .= "<br />\n—";
 
             $status .= "<br />\n" . $row["status"]; 
