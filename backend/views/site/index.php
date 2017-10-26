@@ -67,14 +67,16 @@ if ($result = $db->query("SELECT tab.id AS id, tab.name AS name FROM `tab`, `gro
                 }
            
                 $tabcont .= '<input type="checkbox" id="phone' . $row2["id"] . '" value="' . $row2["id"] . '" />';
-                $tabcont .= '<abbr title="'
+                $tabcont .= '<abbr>';
+                /*$tabcont .= '<abbr title="'
                     . $row2["name"]
                     . "\n" . $row2["mobile"] 
                     . "\n" .  $row2["dept"] 
                     . "\n" .  $row2["position"] 
                     . "\n" .  $row2["work"] 
                     . "\n" .  $row2["email"] 
-                    . '">' . preg_replace('/(.*)\'(.*)\'(.*)/i', '${1}<strong>${2}</strong>${3}', $row2["name"]) . '<br />';
+                    . '">';*/
+                $tabcont .= preg_replace('/(.*)\'(.*)\'(.*)/i', '${1}<strong>${2}</strong>${3}', preg_replace('/_/i', ' ', $row2["name"])) . '<br />';
                 $tabcont .= '<span>' . $row2["position"] . '</span>';
                 $tabcont .= "</abbr>";
                 $tabcont .= '<div class="details">';
@@ -107,36 +109,38 @@ foreach($tabs as $tab) {
     $identity->getAuthKey() . "' ORDER BY name";
     if ($result = $db->query("SELECT list.id AS id, list.name AS name FROM `list`, `group`, `group_list`, `user` WHERE tab_id = '" . $tab . "' AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND auth_key = '" . $identity->getAuthKey() . "' ORDER BY `order` DESC")) {
         $rlist = $result->num_rows;
-        if($rlist > 38) $rlist = 38;
+        if($rlist > 0) {
+            if($rlist > 38) $rlist = 38;
 ?>
 <div class="list<?= ($k++ < 1) ? ' current' : '' ?>" id="list-tab-<?= $tab ?>">
 <select id="list" size="<?= $rlist ?>">
 <?php
-        $i = 0;
-        while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-            $i++;
-            if ($result2 = $db->query("SELECT contact.id AS id, email_only FROM `contact`, `contact_list` WHERE contact.id = contact_id AND list_id = " . $row["id"])) {
-                $first = true;
-                $contacts = "";
-                while($row2 = $result2->fetch_array(MYSQLI_ASSOC)) {
-                    if($row2["email_only"] <> "0") $email_only = "-";
-                    else $email_only = "";
-                    if($first) {
-                        $contacts = $row2["id"] . $email_only;
-                        $first = false;
+            $i = 0;
+            while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+                $i++;
+                if ($result2 = $db->query("SELECT contact.id AS id, email_only FROM `contact`, `contact_list` WHERE contact.id = contact_id AND list_id = " . $row["id"])) {
+                    $first = true;
+                    $contacts = "";
+                    while($row2 = $result2->fetch_array(MYSQLI_ASSOC)) {
+                        if($row2["email_only"] <> "0") $email_only = "-";
+                        else $email_only = "";
+                        if($first) {
+                            $contacts = $row2["id"] . $email_only;
+                            $first = false;
+                        }
+                        else $contacts .= "," . $row2["id"] . $email_only;
                     }
-                    else $contacts .= "," . $row2["id"] . $email_only;
+                    $result2->free();
                 }
-                $result2->free();
+                echo '<option value="' . $contacts . '" title="' . $row["name"] . '">' . $row["name"] . '</option>';
             }
-            echo '<option value="' . $contacts . '" title="' . $row["name"] . '">' . $row["name"] . '</option>';
-        }
-        $result->free();
-    }
+            $result->free();
 ?>
 </select>
 </div>
 <?php
+        }
+    }
 }
 
 $db->close();

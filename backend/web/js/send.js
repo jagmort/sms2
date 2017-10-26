@@ -115,6 +115,7 @@ $(document).ready(function() {
         $("#list-" + tab_id).addClass('current');
 
         $(".current > div").removeClass("detailed");
+        $(".details").hide();
     });
 
     $("#text").keyup(function(){

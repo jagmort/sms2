@@ -81,7 +81,7 @@
 
 #tabs {
     float: left;
-    margin: 4em auto 0 auto;
+    margin: 3.9em auto 0 auto;
     width: 80em;
 }
 
@@ -118,7 +118,7 @@ ul.tabs li.current {
     -webkit-column-count:4;  
     -moz-column-count:4;  
     column-count:4;
-    min-height: 81vh;
+    min-height: 81.2vh;
     line-height: 1em;
     overflow-y: auto;
     margin-top: -1px;
@@ -164,6 +164,7 @@ ul.tabs li.current {
     border-bottom: none;
     text-decoration: none;
     margin-left: .5em;
+    cursor: pointer;
 }
 
 .tab-content abbr[title] {
@@ -212,15 +213,6 @@ ul.tabs li.current {
     border: 1px solid #999;
     cursor: pointer;
     overflow-y: auto;
-}
-
-.list select option {
-    border-bottom: 1px #eee solid;
-}
-
-.list select option.empty {
-    border-bottom: 1px #eee solid;
-    color: #ccc;
 }
 
 :focus {
