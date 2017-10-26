@@ -57,7 +57,8 @@ if ($result = $db->query("SELECT tab.id AS id, tab.name AS name FROM `tab`, `gro
                 $j++;
                 if(/*$dept != "" &&*/ $dept != $row2["dept"]) {
                     //$tabcont .= '<div class="newdept">';
-                    $tabcont .= '<div class="depthead">' . preg_replace('/[^,]*,(.*)/i', '${1}', $row2["dept"]) . '</div><div>';
+                    $tabcont .= '<div class="depthead">' . (strlen($row2["dept"]) > 1 ? preg_replace('/[^,]*,(.*)/i', '${1}', $row2["dept"]) : '&nbsp;') . '</div>';
+                    $tabcont .= '<div>';
                     $dept = $row2["dept"];
                 }
                 else {
@@ -104,7 +105,7 @@ if ($result = $db->query("SELECT tab.id AS id, tab.name AS name FROM `tab`, `gro
 $k = 0;
 foreach($tabs as $tab) {
     $identity->getAuthKey() . "' ORDER BY name";
-    if ($result = $db->query("SELECT list.id AS id, list.name AS name FROM `list`, `group`, `group_list`, `user` WHERE tab_id = '" . $tab . "' AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND auth_key = '" . $identity->getAuthKey() . "' ORDER BY name")) {
+    if ($result = $db->query("SELECT list.id AS id, list.name AS name FROM `list`, `group`, `group_list`, `user` WHERE tab_id = '" . $tab . "' AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND auth_key = '" . $identity->getAuthKey() . "' ORDER BY `order` DESC")) {
         $rlist = $result->num_rows;
         if($rlist > 38) $rlist = 38;
 ?>
@@ -128,9 +129,7 @@ foreach($tabs as $tab) {
                 }
                 $result2->free();
             }
-?>
-<option value="<?= $contacts ?>"><?= $row["name"] ?></option>
-<?php
+            echo '<option value="' . $contacts . '" title="' . $row["name"] . '">' . $row["name"] . '</option>';
         }
         $result->free();
     }

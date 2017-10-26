@@ -193,6 +193,7 @@ ul.tabs li.current {
     color:#99c;
 }
 
+
 .list {
     display: none;
     float: left;
@@ -213,6 +214,15 @@ ul.tabs li.current {
     overflow-y: auto;
 }
 
+.list select option {
+    border-bottom: 1px #eee solid;
+}
+
+.list select option.empty {
+    border-bottom: 1px #eee solid;
+    color: #ccc;
+}
+
 :focus {
     outline: none;
 }
@@ -224,6 +234,10 @@ ul.tabs li.current {
 #calendar {
     margin-top: 4em;
     width: 16em;
+}
+
+#w0-kvdate input {
+    padding: 2px;
 }
 
 .history {

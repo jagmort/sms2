@@ -1,5 +1,6 @@
 <?php
 require('param.php');
+$authkey = $_POST["authkey"];
 try {
     $datetime1 = new DateTime($_POST["from_date"], new DateTimeZone('Europe/Moscow'));
 } catch (Exception $e) {
@@ -12,7 +13,13 @@ try {
 }
 $from_date = $datetime1->format('Y-m-d');
 $to_date = $datetime2->format('Y-m-d');
-if ($result = $db->query("SELECT uid, contact.name AS name, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone FROM recipient, sms, contact, user, `group` WHERE put >= '$from_date' AND put <= ('$to_date' + INTERVAL 1 DAY) AND user.id = user_id AND contact_id = contact.id AND sms_id = sms.id AND `group`.id = gid ORDER BY put DESC, contact.`order` DESC, name ASC")) {
+if ($result0 = $db->query("SELECT `group`.id AS gid FROM user, `group` WHERE `group`.id = group_id AND auth_key = '$authkey'")) {
+    $row = $result0->fetch_array(MYSQLI_ASSOC);
+    $gid = $row["gid"];
+    $result0->free();
+}
+
+if ($result = $db->query("SELECT uid, contact.name AS name, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone FROM recipient, sms, contact, user, `group` WHERE put >= '$from_date' AND put <= ('$to_date' + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid = $gid ORDER BY put DESC, contact.`order` DESC, name ASC")) {
 ?>
 <table class="history">
 <tr>

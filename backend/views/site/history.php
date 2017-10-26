@@ -25,6 +25,7 @@ echo DatePicker::widget([
         'format' => 'yyyy-mm-dd'
     ]
 ]);
+if(($identity = Yii::$app->user->identity) != NULL) echo '<input type="hidden" name="authkey" value="' . $identity->getAuthKey() . '" />'
 ?>
 </form>
 </div>

@@ -4,7 +4,7 @@ require('param.php');
 function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
     $res = false;
     $mtext = $db->real_escape_string($text);
-    if ($result = $db->query("SELECT group_id, group.name AS gname FROM `user`, `group` WHERE user.id = '$user_id'")) {
+    if ($result = $db->query("SELECT group_id, group.name AS gname FROM `user`, `group` WHERE group_id = `group`.id AND user.id = '$user_id'")) {
         $row = $result->fetch_array(MYSQLI_ASSOC);
         $group_id = $row["group_id"];
         $group = $row["gname"];
