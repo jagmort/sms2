@@ -50,7 +50,7 @@ if ($result = $db->query("SELECT tab.id AS id, tab.name AS name FROM `tab`, `gro
 <?php
 
         $tabcont .= '<div id="tab-' . $row["id"] . '" class="tab-content' . ($i != 1 ? '' : ' current') . "\">\n";
-        if ($result2 = $db->query("SELECT id, mobile, name, dept, position, work, email FROM contact WHERE tab_id = " . $row["id"] . " ORDER BY `order` DESC, name")) {
+        if ($result2 = $db->query("SELECT id, mobile, name, dept, position, work, email, `order` FROM contact WHERE tab_id = " . $row["id"] . " ORDER BY `order` DESC, name")) {
             $j = 0;
             $dept = "";
             while($row2 = $result2->fetch_array(MYSQLI_ASSOC)) {
@@ -67,7 +67,7 @@ if ($result = $db->query("SELECT tab.id AS id, tab.name AS name FROM `tab`, `gro
                 }
            
                 $tabcont .= '<input type="checkbox" id="phone' . $row2["id"] . '" value="' . $row2["id"] . '" />';
-                $tabcont .= '<abbr>';
+                $tabcont .= '<abbr order="' . $row2["order"] . '">';
                 /*$tabcont .= '<abbr title="'
                     . $row2["name"]
                     . "\n" . $row2["mobile"] 
