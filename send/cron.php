@@ -2,8 +2,10 @@
 namespace PHPMailer\PHPMailer;
 $webdir = "/var/www/html/sms2/send";
 
-function SendSMS($uid, $name, $dept, $phone, $email, $text) {
+function SendSMS($uid, $rid, $dept, $phone, $email, $text) {
     mb_internal_encoding("UTF-8");
+
+    $rid = "R" . substr("00000$rid", -6);
 
     $phone .= "F";
     if($phone[0] == "8") $phone[0] = "7";
@@ -28,7 +30,7 @@ function SendSMS($uid, $name, $dept, $phone, $email, $text) {
 
     $count = substr("0".strtoupper(dechex(count($arText))), -2);
     $num = 0;
-    $at = "komy $name wt	$dept	$phone	$email$txt\r\n\r\n";
+    $at = "komy $rid wt	$dept	$phone	$email$txt\r\n\r\n";
     foreach ($arText as $text) {
 
         $size = substr("0" . strtoupper(dechex(mb_strlen($text) * 2 + 6)), -2); // длина сообщения в HEX для вставки в хедер SMS
@@ -53,8 +55,7 @@ function SendSMS($uid, $name, $dept, $phone, $email, $text) {
 
     } //foreach
 
-
-    $fname = "00-" . $uid . "-" . rand(10, 99) . "-" . substr($name, 0, strpos($name, " ")) . "-" . $dept . ".txt";
+    $fname = "00-$uid-" . rand(10, 99) . "-$rid.txt";
 
     $fout = fopen(dirname(__FILE__) . "/out/$fname", "w");
     if(!$fout) {
@@ -103,7 +104,7 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
         $status = 0;
         if($row["mobile"] < MIN_PHONE_NUM) $row["email_only"] = 1; // wrong mobile number
         if($row["email_only"] < 1) { // Skip SMS if e-mail only
-            if(SendSMS($row["uid"], $row["name"], $row["dept"], $row["mobile"], $row["tomail"], $row["text"])) {
+            if(SendSMS($row["uid"], $row["id"], $row["dept"], $row["mobile"], $row["tomail"], $row["text"])) {
                 $status = $status | 1;
                 $result2 = $db->query("UPDATE recipient SET sent = NOW(), status = " . $status . " WHERE id = " . $row["id"]);
             }
@@ -184,7 +185,8 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
         for ($i = 1; $i < 6; $i++) {
             $response = file("$webdir/in/smsVB$i.txt");
             foreach($response as $line) {
-                if((strpos($line, $row["uid"]) !== false) AND ((strpos($line, substr($row["name"], 0, strpos($row["name"], " "))) !== false))) {
+                $rid = "R" . substr("00000" . $row["id"], -6);
+                if((strpos($line, $row["uid"]) !== false) AND ((strpos($line, $rid) !== false))) {
                     $present = true;
                     $status = $row["status"] | 2;
                     $result2 = $db->query("UPDATE recipient SET phone = $i, status = " . $status . " WHERE id = " . $row["id"]);
