@@ -101,7 +101,7 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
             $mail->addAddress($row["frommail"], $row["fname"]);
         }
         $status = 0;
-        if($row["mobile"] < MIN_PHONE_NUM) $row["email_only"] = 1; // if mobile number does not exist
+        if($row["mobile"] < MIN_PHONE_NUM) $row["email_only"] = 1; // wrong mobile number
         if($row["email_only"] < 1) { // Skip SMS if e-mail only
             if(SendSMS($row["uid"], $row["name"], $row["dept"], $row["mobile"], $row["tomail"], $row["text"])) {
                 $status = $status | 1;
