@@ -97,10 +97,6 @@ $(document).ready(function() {
         $("#queue").load("/sms2/send/queue.php", function() {
         });
     }, 5000);
-    $("#queue").click(function() {
-        $("#queue").load("/sms2/send/queue.php", function() {
-        });
-    });
 
     $('ul.tabs li').click(function(){
         var tab_id = $(this).attr('data-tab');
