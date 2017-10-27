@@ -259,3 +259,13 @@ ul.tabs li.current {
     padding: .2em;
     background: #eee;
 }
+
+.history td i {
+    color: blue;
+    font-style: normal;
+}
+
+.history td b {
+    color: red;
+    font-weight: normal;
+}
