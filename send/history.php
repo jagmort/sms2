@@ -13,13 +13,8 @@ try {
 }
 $from_date = $datetime1->format('Y-m-d');
 $to_date = $datetime2->format('Y-m-d');
-if ($result0 = $db->query("SELECT `group`.id AS gid FROM user, `group` WHERE `group`.id = group_id AND auth_key = '$authkey'")) {
-    $row = $result0->fetch_array(MYSQLI_ASSOC);
-    $gid = $row["gid"];
-    $result0->free();
-}
 
-if ($result = $db->query("SELECT uid, contact.name AS name, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone FROM recipient, sms, contact, user, `group` WHERE put >= '$from_date' AND put <= ('$to_date' + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid = $gid ORDER BY put DESC, contact.`order` DESC, name ASC")) {
+if ($result = $db->query("SELECT uid, contact.name AS name, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone FROM recipient, sms, contact, user, `group` WHERE put >= '$from_date' AND put <= ('$to_date' + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT `group`.id AS gid FROM user, `group` WHERE `group`.id = group_id AND auth_key = '$authkey') ORDER BY put DESC, contact.`order` DESC, name ASC")) {
 ?>
 <table class="history">
 <tr>
@@ -68,15 +63,17 @@ if ($result = $db->query("SELECT uid, contact.name AS name, dept, text, sent, do
                     $status .= "; Queue " . $row["phone"];
                 }
                 if(($row["status"] & 8) > 0) {
-                    $status .= "; Error";
+                    $status .= "; <b>Error</b>";
                 }
+                if(($row["status"] & 15) == 1) $status .= "; <b>SMS not sent</b>";
             }
             if(($row["status"] & 64) > 0) {
-                $status .= "; No e-mail";
+                $status .= "; <i>No e-mail</i>";
             }
             else {
                 if(($row["status"] & 16) > 0) {
-                    $status .= "; E-mail";
+                    if(($row["status"] & 15) <= 0) $status .= "; <i>E-mail only</i>";
+                    else $status .= "; E-mail";
                 }
             }
         }
@@ -94,15 +91,17 @@ if ($result = $db->query("SELECT uid, contact.name AS name, dept, text, sent, do
                     $status .= "; Queue " . $row["phone"];
                 }
                 if(($row["status"] & 8) > 0) {
-                    $status .= "; Error";
+                    $status .= "; <b>Error</b>";
                 }
+                if(($row["status"] & 15) == 1) $status .= "; <b>SMS not sent</b>";
             }
             if(($row["status"] & 64) > 0) {
-                $status .= "; No e-mail";
+                $status .= "; <i>No e-mail</i>";
             }
             else {
                 if(($row["status"] & 16) > 0) {
-                    $status .= "; E-mail";
+                    if(($row["status"] & 15) <= 0) $status .= "; <i>E-mail only</i>";
+                    else $status .= "; E-mail";
                 }
             }
         }
