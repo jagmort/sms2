@@ -45,9 +45,7 @@ if (isset($_POST["authkey"]) && isset($_POST["text"]) && isset($_POST["phones"])
     if($user_id = getName($db, $AuthKey)) {
         $uid = $datetime->format('Ymd-His-') . substr("000$user_id", -4);
         if(strlen($text) > 5) {
-            //$text = htmlspecialchars($text);
             $phones = explode("; ", trim($_POST["phones"]));
-            //if(AddHistory2($db, $phones, $text, $user_id, $uid)) {
             if(AddHistory3($db, $phones, $text, $user_id, $uid)) {
                 echo "В очереди на отправку";
             }
