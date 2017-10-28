@@ -112,7 +112,7 @@ foreach($tabs as $tab) {
         if($rlist > 0) {
             if($rlist > 38) $rlist = 38;
 ?>
-<div class="list<?= ($k++ < 1) ? ' current' : '' ?>" id="list-tab-<?= $tab ?>">
+<div class="list<?= ($k < 1) ? ' current' : '' ?>" id="list-tab-<?= $tab ?>">
 <select id="list" size="<?= $rlist ?>">
 <?php
             $i = 0;
@@ -140,6 +140,7 @@ foreach($tabs as $tab) {
 </div>
 <?php
         }
+        $k++;
     }
 }
 
