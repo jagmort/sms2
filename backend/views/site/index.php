@@ -122,8 +122,14 @@ $tabs = array();
                 if($rlist > 38) $rlist = 38;
 ?>
 <div class="list<?= ($k < 1) ? ' current' : '' ?>" id="list-tab-<?= $tab ?>">
-<select id="list" size="<?= $rlist ?>">
+<select id="list"
 <?php
+                if($rlist != 1):
+                    echo ' size="' . $rlist . '">';
+                else: 
+                    echo ' class="single" size="2">';
+                    echo '<option disabled></option>';
+                endif;
                 $i = 0;
                 while($row = $result->fetch_array(MYSQLI_ASSOC)):
                     $i++;
