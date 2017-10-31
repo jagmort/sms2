@@ -35,13 +35,15 @@ $tabs = array();
 <div id="tabs">
 <?php
     require('../../send/param.php');
-    if ($result = $db->query("SELECT tab.id AS id, tab.name AS name FROM `tab`, `group`, `group_tab`, `user` WHERE `group`.id = group_tab.group_id AND tab.id = tab_id AND user.group_id = `group`.id AND auth_key = '" . $identity->getAuthKey() . "' ORDER BY `order` DESC, tab.name")):
+
+    if ($result = $db->query("SELECT tab.id AS id, tab.name AS name, admin FROM `tab`, `group`, `group_tab`, `user` WHERE `group`.id = group_tab.group_id AND tab.id = tab_id AND user.group_id = `group`.id AND auth_key = '" . $identity->getAuthKey() . "' ORDER BY `order` DESC, tab.name")):
 ?>
 <ul class="tabs">
 <?php
         $tabcont = '';
         $i = 0;
         while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+            $admin = $row["admin"];
             $i++;
             $tabs[] = $row["id"];
 ?>
@@ -49,7 +51,7 @@ $tabs = array();
 <?php
 
             $tabcont .= '<div id="tab-' . $row["id"] . '" class="tab-content' . ($i != 1 ? '' : ' current') . "\">\n";
-            if ($result2 = $db->query("SELECT id, mobile, name, dept, position, work, email, `order` FROM contact WHERE tab_id = " . $row["id"] . " ORDER BY `order` DESC, name")):
+            if ($result2 = $db->query("SELECT id, mobile, name, dept, position, work, home, email, `order` FROM contact WHERE tab_id = " . $row["id"] . " ORDER BY `order` DESC, name")):
                 $j = 0;
                 $dept = "";
                 while($row2 = $result2->fetch_array(MYSQLI_ASSOC)):
@@ -73,14 +75,26 @@ $tabs = array();
                     if($row2["mobile"] != "")
                         $tabcont .= 'Сотовый: <a href="sip:' .  $row2["mobile"] . '">' . preg_replace('/(\d{1})(\d{3})(\d{3})(\d{4})/i', '${1}-${2}-${3}-${4}', $row2["mobile"]) . '</a><br />';
                     if($row2["work"] != ""):
-                        if(strlen($row2["work"]) > 9):
+                        if(strlen(preg_replace('/[^\d]*/i', '', $row2["work"])) > 9):
                             $tabcont .= 'Рабочий: <a href="sip:' . substr("8" . preg_replace('/[^\d]*/i', '', $row2["work"]), -11) . '">' .  $row2["work"] . '</a><br />';
                         else:
                             $tabcont .= 'Рабочий: ' . $row2["work"] . '<br />';
                         endif;
                     endif;
+                    if($row2["home"] != ""):
+                        if(strlen(preg_replace('/[^\d]*/i', '', $row2["home"])) > 9):
+                            $tabcont .= 'Домашний: <a href="sip:' . substr("8" . preg_replace('/[^\d]*/i', '', $row2["home"]), -11) . '">' .  $row2["home"] . '</a><br />';
+                        else:
+                            $tabcont .= 'Домашний: ' . $row2["home"] . '<br />';
+                        endif;
+                    endif;
                     if($row2["email"] != "")
                         $tabcont .= 'E-mail: <a href="mailto:' .  $row2["email"] . '">' .  $row2["email"] . '</a>';
+                    if($admin > 0):
+                        $tabcont .= '<br />ID: ' .  $row2["id"];
+                        $tabcont .= '<br />Отдел: ' .  $row2["dept"];
+                        $tabcont .= '<br />Порядок: ' .  $row2["order"];
+                    endif;
                     $tabcont .= '</div>';
                     $tabcont .= "</div>\n";
                 endwhile;
