@@ -14,7 +14,7 @@ try {
 $from_date = $datetime1->format('Y-m-d');
 $to_date = $datetime2->format('Y-m-d');
 
-if($result = $db->query("SELECT uid, contact.name AS name, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone FROM recipient, sms, contact, user, `group` WHERE put >= '$from_date' AND put <= ('$to_date' + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT `group`.id AS gid FROM user, `group` WHERE `group`.id = group_id AND auth_key = '$authkey') ORDER BY put DESC, contact.`order` DESC, name ASC")):
+if($result = $db->query("SELECT uid, contact.name AS name, position, mobile, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone FROM recipient, sms, contact, user, `group` WHERE put >= '$from_date' AND put <= ('$to_date' + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT group_id FROM user, `group` WHERE `group`.id = group_id AND auth_key = '$authkey') ORDER BY put DESC, contact.`order` DESC, name ASC")):
 
 // очереди на телефонах
 $webdir = "/var/www/html/sms2/send";
@@ -25,10 +25,15 @@ for ($i = 1; $i < 6; $i++) {
     unset($response);
     $response = file("$webdir/in/smsVB$i.txt");
     $count = sizeof($response);
-    if($i < 2)
+    if($i < 2):
         $out .= $count; 
-    else
-        $out .= " + " . $count;
+    else:
+        $out .= " + ";
+        if($count > 20)
+            $out .= "<span class=\"max\">$count</span>";
+        else
+            $out .= "$count";
+    endif;
     $sum += $count;
 }
 $out .= " = $sum";
@@ -38,7 +43,7 @@ if ($sum > 0):
         echo ' class="max"';
     echo '>Queue: ' . $out . '</p>';
 endif;
-// -------
+// ---------------------
 
 ?>
 <table class="history">
@@ -47,6 +52,8 @@ endif;
     $i = 0;
     $uid = '';
     while($row = $result->fetch_array(MYSQLI_ASSOC)):
+        $arr = preg_split("/[\s,_]+/", $row["name"]);
+        $contact = '<span title="' . $row["name"] . "\n" . $row["position"] . "\n" . $row["mobile"] . '">' . $arr[0] . ' ' . mb_substr($arr[1], 0, 1) . ' ' . mb_substr($arr[2], 0, 1) . "</span> (" . $row["dept"] . ")";
         if($uid !== $row["uid"]):
             if($uid !== ""):
                 echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
@@ -57,7 +64,7 @@ endif;
             $uid = $row["uid"];
             $username = $row["username"];
             $group = $row["gname"];
-            $name = $row["name"] . " (" . $row["dept"] . ")";
+            $name = $contact;
             $text = $row["text"];
             if($row["sent"] != DATE0)
                 $sent = DateTime::createFromFormat('Y-m-d H:i:s', $row["sent"])->format('d/m H:i');
@@ -68,41 +75,33 @@ endif;
             else
                 $done = '—';
             $status = $row["status"]; 
-            if(($row["status"] & 4) > 0):
-                $status .= "; Sent " . $row["phone"];
-            else:
-                if(($row["status"] & 2) > 0) $status .= "; Queue " . $row["phone"];
-                if(($row["status"] & 8) > 0) $status .= "; <b>Error</b>";
-                if(($row["status"] & 15) == 1) $status .= "; <b>SMS not sent</b>";
-            endif;
-            if(($row["status"] & 64) > 0):
-                $status .= "; <i>No e-mail</i>";
-            elseif(($row["status"] & 16) > 0):
-                if(($row["status"] & 15) <= 0)
-                    $status .= "; <i>E-mail only</i>";
-            endif;
+
         else:
-            $name .= "<br />\n" . $row["name"] . " (" . $row["dept"] . ")";
+            $name .= "<br />\n" . $contact;
             if($row["done"] != DATE0)
                 $done .= "<br />\n" . DateTime::createFromFormat('Y-m-d H:i:s', $row["done"])->format('d/m H:i');
             else
                 $done .= "<br />\n—";
 
             $status .= "<br />\n" . $row["status"]; 
-            if(($row["status"] & 4) > 0):
-                $status .= "; Sent " . $row["phone"];
-            else:
-                if(($row["status"] & 2) > 0) $status .= "; Queue " . $row["phone"];
-                if(($row["status"] & 8) > 0) $status .= "; <b>Error</b>";
-                if(($row["status"] & 15) == 1) $status .= "; <b>SMS not sent</b>";
-            endif;
-            if(($row["status"] & 64) > 0):
-                $status .= "; <i>No e-mail</i>";
-            elseif(($row["status"] & 16) > 0):
-                if(($row["status"] & 15) <= 0)
-                    $status .= "; <i>E-mail only</i>";
-            endif;
         endif;
+
+        // статус отправки
+        if(($row["status"] & 4) > 0):
+            $status .= "; Sent " . $row["phone"];
+        else:
+            if(($row["status"] & 2) > 0) $status .= "; Queue " . $row["phone"];
+            if(($row["status"] & 8) > 0) $status .= "; <b>Error</b>";
+            if(($row["status"] & 15) == 1) $status .= "; <b>SMS not sent</b>";
+        endif;
+        if(($row["status"] & 64) > 0):
+            $status .= "; <i>No e-mail</i>";
+        elseif(($row["status"] & 16) > 0):
+            if(($row["status"] & 15) <= 0)
+                $status .= "; <i>E-mail only</i>";
+        endif;
+        // ---------------
+
     endwhile;
     if($uid !== ""):
         echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
