@@ -1,3 +1,5 @@
+var maxlen = 600;
+var timeout = 5000;
 var program = [];
 
 function clearCheckboxes() {
@@ -63,7 +65,7 @@ $(document).ready(function() {
             setTimeout(function(){
                 $("#result").html("");
                 $("#btn").prop('disabled', false);
-            }, 5000);
+            }, timeout);
             clearCheckboxes();
             return false; 
         }
@@ -71,7 +73,6 @@ $(document).ready(function() {
 
     $('input:checkbox').each(function () {
         var el = $(this);
-        //$(this).on('change', scanCheckboxes);
         el.on('change', function() {
             switch(el.data('checked')) {
                 case 2:
@@ -96,7 +97,7 @@ $(document).ready(function() {
     setInterval(function() {
         $("#queue").load("/sms2/send/queue.php", function() {
         });
-    }, 5000);
+    }, timeout);
 
     $('ul.tabs li').click(function(){
         var tab_id = $(this).attr('data-tab');
@@ -115,7 +116,7 @@ $(document).ready(function() {
     });
 
     $("#text").keyup(function(){
-        $("#count").text((600 - $(this).val().length));
+        $('#count').text(maxlen - $(this).val().length);
     });
     $("abbr").click(function(){
         $(".current > div").removeClass("detailed");
