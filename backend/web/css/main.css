@@ -260,12 +260,24 @@ ul.tabs li.current {
     background: #eee;
 }
 
-.history td i {
+.history i {
     color: blue;
     font-style: normal;
 }
 
-.history td b {
+.history b {
     color: red;
     font-weight: normal;
+}
+#result p {
+    position: absolute;
+    right: 16px;
+    top: 5em;
+    color: #999;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+#result p.max {
+    color: red;
 }

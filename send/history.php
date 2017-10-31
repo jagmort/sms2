@@ -15,6 +15,31 @@ $from_date = $datetime1->format('Y-m-d');
 $to_date = $datetime2->format('Y-m-d');
 
 if($result = $db->query("SELECT uid, contact.name AS name, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone FROM recipient, sms, contact, user, `group` WHERE put >= '$from_date' AND put <= ('$to_date' + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT `group`.id AS gid FROM user, `group` WHERE `group`.id = group_id AND auth_key = '$authkey') ORDER BY put DESC, contact.`order` DESC, name ASC")):
+
+// очереди на телефонах
+$webdir = "/var/www/html/sms2/send";
+$files = array();
+$sum = 0;
+$out = '';
+for ($i = 1; $i < 6; $i++) {
+    unset($response);
+    $response = file("$webdir/in/smsVB$i.txt");
+    $count = sizeof($response);
+    if($i < 2)
+        $out .= $count; 
+    else
+        $out .= " + " . $count;
+    $sum += $count;
+}
+$out .= " = $sum";
+if ($sum > 0):
+    echo '<p';
+    if($sum > 100)
+        echo ' class="max"';
+    echo '>Queue: ' . $out . '</p>';
+endif;
+// -------
+
 ?>
 <table class="history">
 <tr><th>ID</th><th>User</th><th>Text</th><th>To</th><th>Created</th><th>SMS Sent</th><th>Status</th></tr>
