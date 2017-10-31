@@ -215,6 +215,14 @@ ul.tabs li.current {
     overflow-y: auto;
 }
 
+.list select.single {
+    height: 2.2em;
+    overflow-y: hidden;
+}
+.list option:disabled {
+    display: none;
+}
+
 :focus {
     outline: none;
 }
@@ -278,6 +286,10 @@ ul.tabs li.current {
     padding: 0 0;
 }
 
-#result p.max {
+#result .max {
     color: red;
+}
+
+#result span.max {
+    font-weight: bold;
 }
