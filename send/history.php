@@ -14,7 +14,7 @@ try {
 $from_date = $datetime1->format('Y-m-d');
 $to_date = $datetime2->format('Y-m-d');
 
-if($result = $db->query("SELECT uid, contact.name AS name, position, mobile, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone FROM recipient, sms, contact, user, `group` WHERE put >= '$from_date' AND put <= ('$to_date' + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT group_id FROM user, `group` WHERE `group`.id = group_id AND auth_key = '$authkey') ORDER BY put DESC, name ASC")):
+if($result = $db->query("SELECT uid, contact.name AS name, position, mobile, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email FROM recipient, sms, contact, user, `group` WHERE put >= '$from_date' AND put <= ('$to_date' + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT group_id FROM user, `group` WHERE `group`.id = group_id AND auth_key = '$authkey') ORDER BY put DESC, name ASC")):
 
 // очереди на телефонах
 $webdir = "/var/www/html/sms2/send";
@@ -50,7 +50,7 @@ endif;
     $uid = '';
     while($row = $result->fetch_array(MYSQLI_ASSOC)):
         $arr = preg_split("/[\s,_]+/", $row["name"]);
-        $contact = '<span title="' . $row["name"] . "\n" . $row["position"] . "\n" . $row["mobile"] . '">' . $arr[0] . ' ' . mb_substr($arr[1], 0, 1) . ' ' . mb_substr($arr[2], 0, 1) . "</span> (" . $row["dept"] . ")";
+        $contact = '<span title="' . $row["name"] . "\n" . $row["position"] . "\n" . $row["mobile"] . "\n" . $row["email"] . '">' . $arr[0] . ' ' . mb_substr($arr[1], 0, 1) . ' ' . mb_substr($arr[2], 0, 1) . "</span> (" . $row["dept"] . ")";
         if($uid !== $row["uid"]):
             if($uid !== ""):
                 echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
