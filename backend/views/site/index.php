@@ -10,14 +10,17 @@ $tabs = array();
 ?>
 
 <!-- view -->
-<?php if(($identity = Yii::$app->user->identity) != NULL): ?>
+<?php
+if(($identity = Yii::$app->user->identity) != NULL):
+    require('../../send/param.php');
+?>
 <div id="main">
 <div id="content">
 <form id="ajax_form" method="post" action="">
 <input type="hidden" name="authkey" value="<?= $identity->getAuthKey() ?>" />
 <div id="left">
 <div>
-<textarea id="text" name="text" maxlength="600"></textarea>
+<textarea id="text" name="text" maxlength="<?= MAX_SMS_LENGTH ?>"></textarea>
 <span id="count"></span>
 </div>
 <div id="buttons">
@@ -34,7 +37,6 @@ $tabs = array();
 
 <div id="tabs">
 <?php
-    require('../../send/param.php');
 
     if ($result = $db->query("SELECT tab.id AS id, tab.name AS name, admin FROM `tab`, `group`, `group_tab`, `user` WHERE `group`.id = group_tab.group_id AND tab.id = tab_id AND user.group_id = `group`.id AND auth_key = '" . $identity->getAuthKey() . "' ORDER BY `order` DESC, tab.name")):
 ?>
