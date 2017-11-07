@@ -14,7 +14,7 @@ try {
 $from_date = $datetime1->format('Y-m-d');
 $to_date = $datetime2->format('Y-m-d');
 
-if($result = $db->query("SELECT uid, contact.name AS name, position, mobile, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone FROM recipient, sms, contact, user, `group` WHERE put >= '$from_date' AND put <= ('$to_date' + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT group_id FROM user, `group` WHERE `group`.id = group_id AND auth_key = '$authkey') ORDER BY put DESC, contact.`order` DESC, name ASC")):
+if($result = $db->query("SELECT uid, contact.name AS name, position, mobile, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone FROM recipient, sms, contact, user, `group` WHERE put >= '$from_date' AND put <= ('$to_date' + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT group_id FROM user, `group` WHERE `group`.id = group_id AND auth_key = '$authkey') ORDER BY put DESC, name ASC")):
 
 // очереди на телефонах
 $webdir = "/var/www/html/sms2/send";
@@ -25,15 +25,12 @@ for ($i = 1; $i < 6; $i++) {
     unset($response);
     $response = file("$webdir/in/smsVB$i.txt");
     $count = sizeof($response);
-    if($i < 2):
-        $out .= $count; 
-    else:
+    if($i > 1)
         $out .= " + ";
-        if($count > 20)
-            $out .= "<span class=\"max\">$count</span>";
-        else
-            $out .= "$count";
-    endif;
+    if($count > 20) 
+        $out .= "<span class=\"max\">$count</span>";
+    else 
+        $out .= $count;
     $sum += $count;
 }
 $out .= " = $sum";

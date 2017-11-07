@@ -51,7 +51,7 @@ $tabs = array();
 <?php
 
             $tabcont .= '<div id="tab-' . $row["id"] . '" class="tab-content' . ($i != 1 ? '' : ' current') . "\">\n";
-            if ($result2 = $db->query("SELECT id, mobile, name, dept, position, work, home, email, `order` FROM contact WHERE tab_id = " . $row["id"] . " ORDER BY `order` DESC, name")):
+            if ($result2 = $db->query("SELECT contact.id AS id, mobile, name, dept, position, work, home, email, contact_tab.`order` AS `order` FROM contact, contact_tab WHERE contact.id = contact_id AND contact_tab.tab_id = " . $row["id"] . " ORDER BY `order` DESC, name")):
                 $j = 0;
                 $dept = "";
                 while($row2 = $result2->fetch_array(MYSQLI_ASSOC)):
