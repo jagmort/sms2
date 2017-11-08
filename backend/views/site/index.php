@@ -14,6 +14,7 @@ $tabs = array();
 if(($identity = Yii::$app->user->identity) != NULL):
     require('../../send/param.php');
 ?>
+<dialog id="edit">Bla-bla-bla</dialog>
 <div id="main">
 <div id="content">
 <form id="ajax_form" method="post" action="">
@@ -53,22 +54,21 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <?php
 
             $tabcont .= '<div id="tab-' . $row["id"] . '" class="tab-content' . ($i != 1 ? '' : ' current') . "\">\n";
-            if ($result2 = $db->query("SELECT contact.id AS id, mobile, name, dept, position, work, home, email, contact_tab.`order` AS `order`, tab_id FROM contact, contact_tab WHERE contact.id = contact_id AND tab_id = " . $row["id"] . " ORDER BY `order` DESC, name")):
+            if ($result2 = $db->query("SELECT contact.id AS id, mobile, name, dept, block, position, work, home, email, contact_tab.`order` AS `order`, tab_id FROM contact, contact_tab WHERE contact.id = contact_id AND tab_id = " . $row["id"] . " ORDER BY block, `order` DESC, name")):
                 $j = 0;
                 $dept = "";
                 while($row2 = $result2->fetch_array(MYSQLI_ASSOC)):
                     $j++;
-                    if($dept != $row2["dept"]):
-                        $tabcont .= '<div class="depthead">' . (strlen($row2["dept"]) > 1 ? preg_replace('/[^,]*,(.*)/i', '${1}', $row2["dept"]) : '&nbsp;') . '</div>';
+                    if($dept != $row2["block"]):
+                        $tabcont .= '<div class="depthead">' . (strlen($row2["block"]) > 1 ? preg_replace('/[^,]*,(.*)/i', '${1}', $row2["block"]) : '&nbsp;') . '</div>';
                         $tabcont .= '<div>';
-                        $dept = $row2["dept"];
+                        $dept = $row2["block"];
                     else:
                         if($dept == "")
-                            $dept = $row2["dept"];
+                            $dept = $row2["block"];
                         $tabcont .= '<div>';
                     endif;
-               
-                    $tabcont .= '<input type="checkbox" id="phone' . $row2["id"] . '" value="' . $row2["id"] . '" />';
+                    $tabcont .= "<input title=\"&#10003; SMS и e-mail\n&ndash;  только e-mail\" type=\"checkbox\" id=\"phone" . $row2["id"] . '" value="' . $row2["id"] . '" data-position="' . $row2["position"] . '"/>';
                     $tabcont .= '<abbr order="' . $row2["order"] . '">';
                     $tabcont .= preg_replace('/(.*)\'(.*)\'(.*)/i', '${1}<strong>${2}</strong>${3}', preg_replace('/_/i', ' ', $row2["name"])) . '<br />';
                     $tabcont .= '<span>' . $row2["position"] . '</span>';
@@ -93,10 +93,11 @@ if(($identity = Yii::$app->user->identity) != NULL):
                     if($row2["email"] != "")
                         $tabcont .= 'E-mail: <a href="mailto:' .  $row2["email"] . '">' .  $row2["email"] . '</a>';
                     if($admin > 0):
-                        $tabcont .= '<br />ID: ' .  $row2["id"];
-                        $tabcont .= '<br />Вкладка: ' .  $row2["tab_id"];
-                        $tabcont .= '<br />Отдел: ' .  $row2["dept"];
-                        $tabcont .= '<br />Порядок: ' .  $row2["order"];
+                        $tabcont .= '<br /><span data-id="' . $row2["name"] . '">&#9998;<br />ID: ' . $row2["id"];
+                        $tabcont .= '<br />Вкладка: ' . $row2["tab_id"];
+                        $tabcont .= '<br />Блок: ' . $row2["block"];
+                        $tabcont .= '<br />Отдел: ' . $row2["dept"];
+                        $tabcont .= '<br />Порядок: ' . $row2["order"] . '</span>';
                     endif;
                     $tabcont .= '</div>';
                     $tabcont .= "</div>\n";
