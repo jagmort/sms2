@@ -125,6 +125,11 @@ $(document).ready(function() {
         $(this).parent().addClass("detailed");
 
     });
+    $(".details > span").click(function(){
+        var id = $(this).attr('data-id');
+        $('#edit').html(id);
+        $('#edit')[0].showModal();
+    });
 });
 
 function sendAjaxForm(result_form, ajax_form, url) {

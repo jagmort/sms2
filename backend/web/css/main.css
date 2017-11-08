@@ -185,6 +185,11 @@ ul.tabs li.current {
     color:#999;
 }
 
+.tab-content .details span {
+    font-size: 100%;
+    cursor: pointer;
+}
+
 .tab-content strong {
     color:#333;
     font-weight: bold; 
