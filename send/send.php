@@ -41,7 +41,7 @@ if (isset($_POST["authkey"]) && isset($_POST["text"]) && isset($_POST["phones"])
     $order = array("\n", "\r", "\t", "\0", "\x0B");
     $text = str_replace($order, ' ', $text);
     $text = preg_replace('/\s+/', ' ', $text);
-    $AuthKey = $_POST["authkey"];
+    $AuthKey = $db->real_escape_string($_POST["authkey"]);
     if($user_id = getName($db, $AuthKey)) {
         $uid = $datetime->format('Ymd-His-') . substr("000$user_id", -4);
         if(strlen($text) > 5) {

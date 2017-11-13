@@ -1,6 +1,6 @@
 <?php
 require('param.php');
-$authkey = $_POST["authkey"];
+$authkey = $db->real_escape_string($_POST["authkey"]);
 try {
     $datetime1 = new DateTime($_POST["from_date"], new DateTimeZone('Europe/Moscow'));
 } catch (Exception $e) {
