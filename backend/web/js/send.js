@@ -157,10 +157,20 @@ $(document).ready(function() {
         $(this).parent().addClass("detailed");
 
     });
+
+    // Edit contact dialog
     $(".details > span").click(function(){
         var id = $(this).attr('data-id');
-        $('#edit').html(id);
-        $('#edit')[0].showModal();
+        var identity = $('#identity').val();
+        $.ajax({
+            type: 'POST',
+            url: '/sms2/send/contact.php',
+            data: 'id=' + id + '&authkey=' + identity,
+            success: function(data){
+                $('#edit').html(data);
+                $('#edit')[0].showModal();
+            }
+        });
     });
 });
 

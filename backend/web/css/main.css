@@ -107,6 +107,7 @@ ul.tabs li.current {
     border: 1px solid #999;
     border-bottom: 1px solid #fff;
     border-radius: 5px 5px 0 0;
+    cursor: default;
 }
 
 .tab-content {
@@ -298,3 +299,24 @@ ul.tabs li.current {
 #result span.max {
     font-weight: bold;
 }
+
+dialog {
+    border-radius: 5px;
+    background: #fff;
+    border: 1px solid #999;
+}
+
+dialog div {
+    text-align: right;
+}
+
+dialog input {
+    width: 40em;
+    margin: .3em .3em;
+}
+
+dialog button {
+    width: 89px;
+    margin: .3em .3em;
+}
+
