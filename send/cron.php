@@ -1,6 +1,5 @@
 <?php
 namespace PHPMailer\PHPMailer;
-$webdir = "/var/www/html/sms2/send";
 
 function SendSMS($uid, $rid, $dept, $phone, $email, $text) {
     mb_internal_encoding("UTF-8");
@@ -183,7 +182,7 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
         $present = false;
         for ($i = 1; $i < 6; $i++) {
-            $response = file("$webdir/in/smsVB$i.txt");
+            $response = file(dirname(__FILE__) . "/in/smsVB$i.txt");
             foreach($response as $line) {
                 $rid = "R" . substr("00000" . $row["id"], -6);
                 if((strpos($line, $row["uid"]) !== false) AND ((strpos($line, $rid) !== false))) {
