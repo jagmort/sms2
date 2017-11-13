@@ -1,7 +1,23 @@
 var maxlen = 600;
 var timeout = 5000;
-var program = [];
 
+// Submit form
+function sendAjaxForm(result_form, ajax_form, url) {
+    jQuery.ajax({
+        url:     url, 
+        type:     "POST",
+        dataType: "html",
+        data: jQuery("#" + ajax_form).serialize(),
+        success: function(response) {
+            $("#result").html(response);
+        },
+        error: function(response) {
+            $("#result").html("Ошибка");
+        }
+    });
+}
+
+// Clear all contacts' checkboxes
 function clearCheckboxes() {
     var all_checkboxes = jQuery(':checkbox');
     all_checkboxes.prop('checked', false);
@@ -12,6 +28,8 @@ function clearCheckboxes() {
     $("#phones").empty();
 }
 
+// Fill phones textarea with contacts' checkboxes
+var program = [];
 function scanCheckboxes() {
     program = [];
     $("#phones").empty();
@@ -32,6 +50,8 @@ function scanCheckboxes() {
 }
 
 $(document).ready(function() {
+
+    // List selection
     $('select').each(function () {
         $(this).on('change', function() {
             var all_checkboxes = jQuery(':checkbox');
@@ -53,11 +73,15 @@ $(document).ready(function() {
            scanCheckboxes();
        });
     })
+
+    // Clear button
     $("#clr").click(
         function(){
             clearCheckboxes();
         }
     );
+
+    // Send button
     $("#btn").click(
         function(){
             sendAjaxForm('result_form', 'ajax_form', '/sms2/send/send.php');
@@ -71,6 +95,7 @@ $(document).ready(function() {
         }
     );
 
+    // Change contact checkbox status
     $('input:checkbox').each(function () {
         var el = $(this);
         el.on('change', function() {
@@ -94,30 +119,37 @@ $(document).ready(function() {
         });
     });
 
+    // Get queue
     setInterval(function() {
         $("#queue").load("/sms2/send/queue.php", function() {
         });
     }, timeout);
 
+    // Switch tabs
     $('ul.tabs li').click(function(){
-        var tab_id = $(this).attr('data-tab');
+        if(this.className.indexOf('current') < 0) {
+            var tab_id = $(this).attr('data-tab');
 
-        $('ul.tabs li').removeClass('current');
-        $('.tab-content').removeClass('current');
-        $('.tab-content').removeClass('current');
-        $('.list').removeClass('current');
+            $('ul.tabs li').removeClass('current');
+            $('.tab-content').removeClass('current');
+            $('.tab-content').removeClass('current');
+            $('.list').removeClass('current');
 
-        $(this).addClass('current');
-        $("#" + tab_id).addClass('current');
-        $("#list-" + tab_id).addClass('current');
+            $(this).addClass('current');
+            $("#" + tab_id).addClass('current');
+            $("#list-" + tab_id).addClass('current');
 
-        $(".current > div").removeClass("detailed");
-        $(".details").hide();
+            $(".current > div").removeClass("detailed");
+            $(".details").hide();
+        }
     });
 
+    // Chars to go
     $("#text").keyup(function(){
         $('#count').text(maxlen - $(this).val().length);
     });
+
+    // Show contact details
     $("abbr").click(function(){
         $(".current > div").removeClass("detailed");
         $(".details").hide();
@@ -132,17 +164,3 @@ $(document).ready(function() {
     });
 });
 
-function sendAjaxForm(result_form, ajax_form, url) {
-    jQuery.ajax({
-        url:     url, 
-        type:     "POST",
-        dataType: "html",
-        data: jQuery("#" + ajax_form).serialize(),
-        success: function(response) {
-            $("#result").html(response);
-        },
-        error: function(response) {
-            $("#result").html("Ошибка");
-        }
-    });
-}
