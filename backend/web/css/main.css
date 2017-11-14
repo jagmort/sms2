@@ -310,6 +310,10 @@ dialog div {
     text-align: right;
 }
 
+dialog div.readonly {
+    margin-right: 41em;
+}
+
 dialog input {
     width: 40em;
     margin: .3em .3em;

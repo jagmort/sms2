@@ -1,28 +1,27 @@
 <?php
 require('param.php');
 
-function getName(&$db, $AuthKey) {
+function getName(&$db, $AuthKey, &$username) {
     $res = false;
-    if ($result = $db->query("SELECT username FROM `user` WHERE auth_key = '$AuthKey'")) {
+    if ($result = $db->query("SELECT username, admin FROM `user` WHERE auth_key = '$AuthKey'")) {
         $row = $result->fetch_array(MYSQLI_ASSOC);
-        $res = $row["username"];
+        if($row["admin"] > 0) {
+            $username = $row["username"];
+            $res = $row['admin'];
+        }
     }
     return $res;
 }
 
 $AuthKey = $db->real_escape_string($_POST['authkey']);
+$tab_id = $db->real_escape_string($_POST['tab']);
 $id = $db->real_escape_string($_POST['id']);
+$username = "";
+$admin = getName($db, $AuthKey, $username);
 
-if($username = getName($db, $AuthKey)) {
+if($admin > USER_KEYWORD) {
     if(isset($_POST['save'])) {
-        $name = $db->real_escape_string($_POST['name']);
-        $position = $db->real_escape_string($_POST['position']);
-        $dept = $db->real_escape_string($_POST['dept']);
-        $mobile = $db->real_escape_string($_POST['mobile']);
-        $work = $db->real_escape_string($_POST['work']);
-        $home = $db->real_escape_string($_POST['home']);
-        $email = $db->real_escape_string($_POST['email']);
-        if($result = $db->query("SELECT mobile, name, dept, position, work, home, email FROM contact WHERE id='$id'")) {
+        if($result = $db->query("SELECT mobile, name, dept, position, work, home, email, keyword FROM contact WHERE id='$id'")) {
             $fout = fopen(dirname(__FILE__) . "/log/" . $datetime->format('Ymd') . ".txt", "a");
             if(!$fout) {
                 $err = error_get_last();
@@ -37,28 +36,68 @@ if($username = getName($db, $AuthKey)) {
                 fwrite($fout, ' | ' . $row['work']);
                 fwrite($fout, ' | ' . $row['home']);
                 fwrite($fout, ' | ' . $row['email']);
+                fwrite($fout, ' | ' . $row['keyword']);
             }
             fwrite($fout, "\n+");
-            fwrite($fout, ' | ' . $name);
-            fwrite($fout, ' | ' . $position);
-            fwrite($fout, ' | ' . $dept);
-            fwrite($fout, ' | ' . $mobile);
-            fwrite($fout, ' | ' . $work);
-            fwrite($fout, ' | ' . $home);
-            fwrite($fout, ' | ' . $email);
+
+            $query = "UPDATE contact SET ";
+            if(isset($_POST['name'])) {
+                $name = $db->real_escape_string($_POST['name']);
+                $query .= "name='$name', ";
+                fwrite($fout, ' | ' . $name);
+            }
+            if(isset($_POST['position'])) {
+                $position = $db->real_escape_string($_POST['position']);
+                $query .= "position='$position', ";
+                fwrite($fout, ' | ' . $position);
+            }
+            if(isset($_POST['dept'])) {
+                $dept = $db->real_escape_string($_POST['dept']);
+                $query .= "dept='$dept', ";
+                fwrite($fout, ' | ' . $dept);
+            }
+            if(isset($_POST['mobile'])) {
+                $mobile = $db->real_escape_string($_POST['mobile']);
+                $query .= "mobile='$mobile', ";
+                fwrite($fout, ' | ' . $mobile);
+            }
+            if(isset($_POST['work'])) {
+                $work = $db->real_escape_string($_POST['work']);
+                $query .= "work='$work', ";
+                fwrite($fout, ' | ' . $work);
+            }
+            if(isset($_POST['home'])) {
+                $home = $db->real_escape_string($_POST['home']);
+                $query .= "home='$home', ";
+                fwrite($fout, ' | ' . $home);
+            }
+            if(isset($_POST['email'])) {
+                $email = $db->real_escape_string($_POST['email']);
+                $query .= "email='$email', ";
+                fwrite($fout, ' | ' . $email);
+            }
+            $keyword = $db->real_escape_string($_POST['keyword']);
+            $query .= "keyword='$keyword' WHERE id='$id'";
+            fwrite($fout, ' | ' . $keyword);
             fclose($fout);
-            if($result2 = $db->query("UPDATE contact SET mobile='$mobile', name='$name', dept='$dept', position='$position', work='$work', home='$home', email='$email' WHERE id='$id'")) {
-                header('Location: http://wiki.kortkeros.com/sms2/');
+
+            if($result2 = $db->query($query)) {
+                header('Location: /sms2/?tab=' . $tab_id . '&id=' . $id, true, 303);
             }
         }
     }
     else {
-        if ($result = $db->query("SELECT id, mobile, name, dept, position, work, home, email FROM `contact` WHERE id = '$id'")) {
+        if ($result = $db->query("SELECT id, mobile, name, dept, position, work, home, email, keyword FROM `contact` WHERE id = '$id'")) {
             while($row = $result->fetch_array(MYSQLI_ASSOC)) {
 ?>
 <form method="post" action="/sms2/send/contact.php">
 <input type="hidden" name="authkey" value="<?= $AuthKey ?>" />
 <input type="hidden" name="id" value="<?= $id ?>" />
+<input type="hidden" name="tab" value="<?= $tab_id ?>" />
+<div class="readonly">ID <?= $id ?></div>
+<?php
+    if($admin > USER_EDITOR) {
+?>
 <div>ФИО <input name="name" value="<?= htmlspecialchars($row['name']) ?>" /></div> 
 <div>Должность <input name="position" value="<?= htmlspecialchars($row['position']) ?>" /></div>
 <div>Отдел <input name="dept" value="<?= htmlspecialchars($row['dept']) ?>" /></div>
@@ -66,6 +105,10 @@ if($username = getName($db, $AuthKey)) {
 <div>Рабочий <input name="work" value="<?= htmlspecialchars($row['work']) ?>" /></div>
 <div>Домашний <input name="home" value="<?= htmlspecialchars($row['home']) ?>" /></div>
 <div>E-mail <input name="email" value="<?= htmlspecialchars($row['email']) ?>" /></div>
+<?php
+    }
+?>
+<div>Keyword <input name="keyword" value="<?= htmlspecialchars($row['keyword']) ?>" /></div>
 <div><button name="save" type="submit">Сохранить</button><button type="button" id="cancel" onclick="$('#edit')[0].close()">Отмена</button></div>
 </form>
 <?php

@@ -161,11 +161,12 @@ $(document).ready(function() {
     // Edit contact dialog
     $(".details > span").click(function(){
         var id = $(this).attr('data-id');
+        var tab = $(this).attr('data-tab');
         var identity = $('#identity').val();
         $.ajax({
             type: 'POST',
             url: '/sms2/send/contact.php',
-            data: 'id=' + id + '&authkey=' + identity,
+            data: 'id=' + id + '&authkey=' + identity + '&tab=' + tab,
             success: function(data){
                 $('#edit').html(data);
                 $('#edit')[0].showModal();
