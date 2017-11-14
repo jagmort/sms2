@@ -82,7 +82,7 @@ if($admin > USER_KEYWORD) {
             fclose($fout);
 
             if($result2 = $db->query($query)) {
-                header('Location: /sms2/?tab=' . $tab_id . '&id=' . $id, true, 303);
+                header('Location: /sms2/backend/web/?tab=' . $tab_id . '&id=' . $id, true, 303);
             }
         }
     }
