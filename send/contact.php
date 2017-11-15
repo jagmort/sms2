@@ -27,7 +27,7 @@ if($admin > USER_KEYWORD) {
                 $err = error_get_last();
                 echo $err["message"];
             }
-            fwrite($fout, "\n" . $datetime->format('Y-m-d H:i:s') . " $username\n-");
+            fwrite($fout, "\n\n" . $datetime->format('Y-m-d H:i:s') . " $username\n-");
             while($row = $result->fetch_array(MYSQLI_ASSOC)) {
                 fwrite($fout, ' | ' . $row['name']);
                 fwrite($fout, ' | ' . $row['position']);
