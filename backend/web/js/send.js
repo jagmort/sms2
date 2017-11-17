@@ -69,8 +69,13 @@ $(document).ready(function() {
                     $("#phone" + item.slice(0, -1)).prop('indeterminate', true);
                     $("#phone" + item.slice(0, -1)).data('checked', 1);
                 }
-           });
-           scanCheckboxes();
+            });
+            scanCheckboxes();
+            var alert = $("option:selected", this).attr('data-alert');
+            if(alert != '') {
+                $('#alert>.msg').html(alert);
+                $('#alert')[0].showModal();
+            }
        });
     })
 
