@@ -324,3 +324,7 @@ dialog button {
     margin: .3em .3em;
 }
 
+dialog div.msg {
+    text-align: center;
+    margin: .3em .3em;
+}
