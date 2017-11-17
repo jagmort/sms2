@@ -75,7 +75,13 @@ require 'Exception.php';
 require 'param.php';
 
 // Create SMS file
-if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS name, dept, mobile, contact.email AS tomail, group.email AS frommail, group.name AS fname, text, sign, uid FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND recipient.status = 0")) {
+if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS name, dept, mobile, contact.email AS tomail, group.email AS frommail, group.name AS fname, text, sign, uid FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND recipient.status = 0")) {
+    //$stmt->bind_param("i", 0);
+    if (!$stmt->execute())
+    {
+        // handle error
+    }
+    $result = $stmt->get_result();
     $mail = new PHPMailer(true);
     //Server settings
     $mail->SMTPDebug = 0;                                 // Enable verbose debug output
@@ -105,11 +111,21 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
         if($row["email_only"] < 1) { // Skip SMS if e-mail only
             if(SendSMS($row["uid"], $row["id"], $row["dept"], $row["mobile"], $row["tomail"], $row["text"])) {
                 $status = $status | 1;
-                $result2 = $db->query("UPDATE recipient SET sent = NOW(), status = " . $status . " WHERE id = " . $row["id"]);
+                $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), status = ? WHERE id = ?");
+                $stmt->bind_param("ii", $status, $row["id"]);
+                if (!$stmt->execute())
+                {
+                    // handle error
+                }
             }
             else {
                 $status = $status | 8;
-                $result2 = $db->query("UPDATE recipient SET sent = NOW(), status = " . $status . " WHERE id = " . $row["id"]);
+                $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), status = ? WHERE id = ?");
+                $stmt->bind_param("ii", $status, $row["id"]);
+                if (!$stmt->execute())
+                {
+                    // handle error
+                }
             }
         }
 
@@ -119,21 +135,41 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
                 $sendmail = true;
                 if($row["email_only"] > 0) {
                     $status = $status | 16;
-                    $result2 = $db->query("UPDATE recipient SET sent = NOW(), done = NOW(), status = " . $status . " WHERE id = " . $row["id"]);
+                    $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), done = NOW(), status = ? WHERE id = ?");
+                    $stmt->bind_param("ii", $status, $row["id"]);
+                    if (!$stmt->execute())
+                    {
+                        // handle error
+                    }
                 }
                 else {
                     $status = $status | 16;
-                    $result2 = $db->query("UPDATE recipient SET status = " . $status . " WHERE id = " . $row["id"]);
+                    $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
+                    $stmt->bind_param("ii", $status, $row["id"]);
+                    if (!$stmt->execute())
+                    {
+                        // handle error
+                    }
                 }
             }
             else { // blank email
                 if($row["email_only"] > 0) {
                     $status = $status | 64;
-                    $result2 = $db->query("UPDATE recipient SET sent = NOW(), done = NOW(), status = " . $status . " WHERE id = " . $row["id"]);
+                    $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), done = NOW(), status = ? WHERE id = ?");
+                    $stmt->bind_param("ii", $status, $row["id"]);
+                    if (!$stmt->execute())
+                    {
+                        // handle error
+                    }
                 }
                 else {
                     $status = $status | 64;
-                    $result2 = $db->query("UPDATE recipient SET status = " . $status . " WHERE id = " . $row["id"]);
+                    $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
+                    $stmt->bind_param("ii", $status, $row["id"]);
+                    if (!$stmt->execute())
+                    {
+                        // handle error
+                    }
                 }
             }
         }
@@ -178,7 +214,13 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
 
 
 // Check SMS file
-if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS name, dept, mobile, contact.email AS tomail, group.email AS frommail, group.name AS fname, text, sign, uid, recipient.status AS status FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND recipient.status > 0")) {
+if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS name, dept, mobile, contact.email AS tomail, group.email AS frommail, group.name AS fname, text, sign, uid, recipient.status AS status FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND recipient.status > 0")) {
+    //$stmt->bind_param("i", 0);
+    if (!$stmt->execute())
+    {
+        // handle error
+    }
+    $result = $stmt->get_result();
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
         $present = false;
         for ($i = 1; $i < 6; $i++) {
@@ -188,7 +230,12 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
                 if((strpos($line, $row["uid"]) !== false) AND ((strpos($line, $rid) !== false))) {
                     $present = true;
                     $status = $row["status"] | 2;
-                    $result2 = $db->query("UPDATE recipient SET phone = $i, status = " . $status . " WHERE id = " . $row["id"]);
+                    $stmt = $db->prepare("UPDATE recipient SET phone = $i, status = ? WHERE id = ?");
+                    $stmt->bind_param("ii", $status, $row["id"]);
+                    if (!$stmt->execute())
+                    {
+                        // handle error
+                    }
                 }
             }
         }
@@ -196,7 +243,12 @@ if ($result = $db->query("SELECT recipient.id AS id, email_only, contact.name AS
             if(($row["status"] & 2) > 0 && ($row["status"] & 4) == 0) {
                 $status = $row["status"] | 4;
                 $status = $status ^ 2;
-                $result2 = $db->query("UPDATE recipient SET done = NOW(), status = " . $status . " WHERE id = " . $row["id"]);
+                $stmt = $db->prepare("UPDATE recipient SET done = NOW(), status = ? WHERE id = ?");
+                $stmt->bind_param("ii", $status, $row["id"]);
+                if (!$stmt->execute())
+                {
+                    // handle error
+                }
             }
         }
     }

@@ -4,19 +4,35 @@ require('param.php');
 function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
     $res = false;
     $mtext = $db->real_escape_string($text);
-    if ($result = $db->query("SELECT group_id, group.name AS gname FROM `user`, `group` WHERE group_id = `group`.id AND user.id = '$user_id'")) {
+    if ($stmt = $db->prepare("SELECT group_id, group.name AS gname FROM `user`, `group` WHERE group_id = `group`.id AND user.id = ?")) {
+        $stmt->bind_param("i", $user_id);
+        if (!$stmt->execute())
+        {
+            // handle error
+        }
+        $result = $stmt->get_result();
         $row = $result->fetch_array(MYSQLI_ASSOC);
         $group_id = $row["group_id"];
         $group = $row["gname"];
     }
     $txt = mb_substr($mtext, 0, MAX_SMS_LENGTH - strlen($group) - 3) . " ($group)";
-    if($result = $db->query("INSERT INTO sms (text, put, user_id, gid, uid) VALUES ('$txt', NOW(), '$user_id', '$group_id', '$uid')")) {
+    if($stmt = $db->prepare("INSERT INTO sms (text, put, user_id, gid, uid) VALUES (?, NOW(), ?, ?, ?)")) {
+        $stmt->bind_param("siis", $txt, $user_id, $group_id, $uid);
+        if (!$stmt->execute())
+        {
+            // handle error
+        }
         $sms_id = $db->insert_id;
         foreach($contacts as $contact_id) {
             if(strpos($contact_id, "-") > 0) $email_only = 1;
             else $email_only = 0;
             $contact_id = intval($contact_id);
-            if ($result = $db->query("INSERT INTO recipient (sms_id, contact_id, email_only, status) VALUES ($sms_id, $contact_id, $email_only, 0)")) {
+            if ($stmt = $db->prepare("INSERT INTO recipient (sms_id, contact_id, email_only, status) VALUES (?, ?, ?, 0)")) {
+                $stmt->bind_param("iii", $sms_id, $contact_id, $email_only);
+                if (!$stmt->execute())
+                {
+                    // handle error
+                }
                 $res = true;    
             }
         }
@@ -27,7 +43,13 @@ function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
 
 function getName(&$db, $AuthKey) {
     $res = false;
-    if ($result = $db->query("SELECT id FROM `user` WHERE auth_key = '$AuthKey'")) {
+    if ($stmt = $db->prepare("SELECT id FROM `user` WHERE auth_key = ?")) {
+        $stmt->bind_param("s", $AuthKey);
+        if (!$stmt->execute())
+        {
+            // handle error
+        }
+        $result = $stmt->get_result();
         $row = $result->fetch_array(MYSQLI_ASSOC);
         $res = $row["id"];
     }

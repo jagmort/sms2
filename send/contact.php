@@ -3,7 +3,13 @@ require('param.php');
 
 function getName(&$db, $AuthKey, &$username) {
     $res = false;
-    if ($result = $db->query("SELECT username, admin FROM `user` WHERE auth_key = '$AuthKey'")) {
+    if ($stmt = $db->prepare("SELECT username, admin FROM `user` WHERE auth_key = ?")) {
+        $stmt->bind_param("s", $AuthKey);
+        if (!$stmt->execute())
+        {
+            // handle error
+        }
+        $result = $stmt->get_result();
         $row = $result->fetch_array(MYSQLI_ASSOC);
         if($row["admin"] > 0) {
             $username = $row["username"];
@@ -21,7 +27,13 @@ $admin = getName($db, $AuthKey, $username);
 
 if($admin > USER_KEYWORD) {
     if(isset($_POST['save'])) {
-        if($result = $db->query("SELECT mobile, name, dept, position, work, home, email, keyword FROM contact WHERE id='$id'")) {
+        if($stmt = $db->prepare("SELECT mobile, name, dept, position, work, home, email, keyword FROM contact WHERE id=?")) {
+            $stmt->bind_param("i", $id);
+            if (!$stmt->execute())
+            {
+                // handle error
+            }
+            $result = $stmt->get_result();
             $fout = fopen(dirname(__FILE__) . "/log/" . $datetime->format('Ymd') . ".txt", "a");
             if(!$fout) {
                 $err = error_get_last();
@@ -87,7 +99,13 @@ if($admin > USER_KEYWORD) {
         }
     }
     else {
-        if ($result = $db->query("SELECT id, mobile, name, dept, position, work, home, email, keyword FROM `contact` WHERE id = '$id'")) {
+        if ($stmt = $db->prepare("SELECT id, mobile, name, dept, position, work, home, email, keyword FROM `contact` WHERE id = ?")) {
+            $stmt->bind_param("i", $id);
+            if (!$stmt->execute())
+            {
+                // handle error
+            }
+            $result = $stmt->get_result();
             while($row = $result->fetch_array(MYSQLI_ASSOC)) {
 ?>
 <form method="post" action="/sms2/send/contact.php">
@@ -98,17 +116,17 @@ if($admin > USER_KEYWORD) {
 <?php
     if($admin > USER_EDITOR) {
 ?>
-<div>ФИО <input name="name" value="<?= htmlspecialchars($row['name']) ?>" /></div> 
-<div>Должность <input name="position" value="<?= htmlspecialchars($row['position']) ?>" /></div>
-<div>Отдел <input name="dept" value="<?= htmlspecialchars($row['dept']) ?>" /></div>
+<div>ФИО <input name="name" value="<?= htmlentities($row['name']) ?>" /></div> 
+<div>Должность <input name="position" value="<?= htmlentities($row['position']) ?>" /></div>
+<div>Отдел <input name="dept" value="<?= htmlentities($row['dept']) ?>" /></div>
 <div>Сотовый <input name="mobile" maxlength="11" value="<?= $row['mobile'] ?>" /></div>
-<div>Рабочий <input name="work" value="<?= htmlspecialchars($row['work']) ?>" /></div>
-<div>Домашний <input name="home" value="<?= htmlspecialchars($row['home']) ?>" /></div>
-<div>E-mail <input name="email" value="<?= htmlspecialchars($row['email']) ?>" /></div>
+<div>Рабочий <input name="work" value="<?= htmlentities($row['work']) ?>" /></div>
+<div>Домашний <input name="home" value="<?= htmlentities($row['home']) ?>" /></div>
+<div>E-mail <input name="email" value="<?= htmlentities($row['email']) ?>" /></div>
 <?php
     }
 ?>
-<div>Keyword <input name="keyword" value="<?= htmlspecialchars($row['keyword']) ?>" /></div>
+<div>Keyword <input name="keyword" value="<?= htmlentities($row['keyword']) ?>" /></div>
 <div><button name="save" type="submit">Сохранить</button><button type="button" id="cancel" onclick="$('#edit')[0].close()">Отмена</button></div>
 </form>
 <?php

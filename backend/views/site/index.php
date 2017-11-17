@@ -14,7 +14,8 @@ $tabs = array();
 if(($identity = Yii::$app->user->identity) != NULL):
     require('../../send/param.php');
 ?>
-<dialog id="edit">Bla-bla-bla</dialog>
+<dialog id="edit"></dialog>
+<dialog id="alert"><div class="msg"></div><div><button type="button" id="cancel" onclick="$('#alert')[0].close()">Закрыть</button></div></dialog>
 <div id="main">
 <div id="content">
 <form id="ajax_form" method="post" action="">
@@ -41,7 +42,13 @@ if(($identity = Yii::$app->user->identity) != NULL):
     if(isset($_GET["tab"]))
         $tab_id = $_GET["tab"];
 
-    if ($result = $db->query("SELECT tab.id AS id, tab.name AS name, admin FROM `tab`, `group`, `group_tab`, `user` WHERE `group`.id = group_tab.group_id AND tab.id = tab_id AND user.group_id = `group`.id AND auth_key = '" . $identity->getAuthKey() . "' ORDER BY `order` DESC, tab.name")):
+    if ($stmt = $db->prepare("SELECT tab.id AS id, tab.name AS name, admin FROM `tab`, `group`, `group_tab`, `user` WHERE `group`.id = group_tab.group_id AND tab.id = tab_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC, tab.name")):
+        $stmt->bind_param("s", $identity->getAuthKey());
+        if (!$stmt->execute())
+        {
+            // handle error
+        }
+        $result = $stmt->get_result();
 ?>
 <ul class="tabs">
 <?php
@@ -68,23 +75,29 @@ if(($identity = Yii::$app->user->identity) != NULL):
                 $tabcont .= '<div id="tab-' . $row["id"] . '" class="tab-content' . ($i != 1 ? '' : ' current') . "\">\n";
             }
 
-            if ($result2 = $db->query("SELECT contact.id AS id, mobile, name, dept, block, position, work, home, email, keyword, contact_tab.`order` AS `order`, tab_id FROM contact, contact_tab WHERE contact.id = contact_id AND tab_id = " . $row["id"] . " ORDER BY block, `order` DESC, name")):
+            if ($stmt = $db->prepare("SELECT contact.id AS id, mobile, name, dept, block, position, work, home, email, keyword, contact_tab.`order` AS `order`, tab_id FROM contact, contact_tab WHERE contact.id = contact_id AND tab_id = ? ORDER BY block, `order` DESC, name")):
+                $stmt->bind_param("i", $row["id"]);
+                if (!$stmt->execute())
+                {
+                    // handle error
+                }
+                $result2 = $stmt->get_result();
                 $j = 0;
-                $dept = "";
+                $block = "";
                 while($row2 = $result2->fetch_array(MYSQLI_ASSOC)):
                     $j++;
-                    if($dept != $row2["block"]):
+                    if($block != $row2["block"]):
                         $tabcont .= '<div class="depthead">' . (strlen($row2["block"]) > 1 ? preg_replace('/[^,]*,(.*)/i', '${1}', $row2["block"]) : '&nbsp;') . '</div>';
                         $tabcont .= '<div>';
-                        $dept = $row2["block"];
+                        $block = $row2["block"];
                     else:
-                        if($dept == "")
-                            $dept = $row2["block"];
+                        if($block == "")
+                            $block = $row2["block"];
                         $tabcont .= '<div';
                         if(isset($_GET['id']) && ($_GET['id'] == $row2["id"])) $tabcont .= ' class="detailed"';
                         $tabcont .= '>';
                     endif;
-                    $tabcont .= "<input title=\"&#10003; SMS и e-mail\n&ndash;  только e-mail\" type=\"checkbox\" id=\"phone" . $row2["id"] . '" value="' . $row2["id"] . '" data-keyword="' . $row2["keyword"] . '"/>';
+                    $tabcont .= "<input title=\"&#10003; SMS и e-mail\n&ndash;  только e-mail\" type=\"checkbox\" id=\"phone" . $row2["id"] . '" value="' . $row2["id"] . '" data-keyword="' . htmlentities($row2["keyword"]) . '"/>';
                     $tabcont .= '<abbr order="' . $row2["order"] . '">';
                     $tabcont .= preg_replace('/(.*)\'(.*)\'(.*)/i', '${1}<strong>${2}</strong>${3}', preg_replace('/_/i', ' ', $row2["name"])) . '<br />';
                     $tabcont .= '<span>' . $row2["position"] . '</span>';
@@ -115,7 +128,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                         $tabcont .= '<br />Вкладка: ' . $row2["tab_id"];
                         $tabcont .= '<br />Блок: ' . $row2["block"];
                         $tabcont .= '<br />Отдел: ' . $row2["dept"];
-                        $tabcont .= '<br />Keyword: ' . $row2["keyword"];
+                        $tabcont .= '<br />Keyword: ' . htmlentities($row2["keyword"]);
                         $tabcont .= '<br />Порядок: ' . $row2["order"] . '</span>';
                     endif;
                     $tabcont .= '</div>';
@@ -138,8 +151,13 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <?php
     $k = 0;
     foreach($tabs as $tab) {
-        $identity->getAuthKey() . "' ORDER BY name";
-        if ($result = $db->query("SELECT list.id AS id, list.name AS name FROM `list`, `group`, `group_list`, `user` WHERE tab_id = '" . $tab . "' AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND auth_key = '" . $identity->getAuthKey() . "' ORDER BY `order` DESC")):
+        if ($stmt = $db->prepare("SELECT list.id AS id, list.name AS name, alert FROM `list`, `group`, `group_list`, `user` WHERE tab_id = '" . $tab . "' AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC")):
+            $stmt->bind_param("s", $identity->getAuthKey());
+            if (!$stmt->execute())
+            {
+                // handle error
+            }
+            $result = $stmt->get_result();
             $rlist = $result->num_rows;
             if($rlist > 0):
                 if($rlist > 38) $rlist = 38;
@@ -156,7 +174,13 @@ if(($identity = Yii::$app->user->identity) != NULL):
                 $i = 0;
                 while($row = $result->fetch_array(MYSQLI_ASSOC)):
                     $i++;
-                    if($result2 = $db->query("SELECT contact.id AS id, email_only FROM `contact`, `contact_list` WHERE contact.id = contact_id AND list_id = " . $row["id"])):
+                    if($stmt = $db->prepare("SELECT contact.id AS id, email_only FROM `contact`, `contact_list` WHERE contact.id = contact_id AND list_id = ?")):
+                        $stmt->bind_param("i", $row["id"]);
+                        if (!$stmt->execute())
+                        {
+                            // handle error
+                        }
+                        $result2 = $stmt->get_result();
                         $first = true;
                         $contacts = "";
                         while($row2 = $result2->fetch_array(MYSQLI_ASSOC)):
@@ -174,7 +198,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                         endwhile;
                         $result2->free();
                     endif;
-                    echo '<option value="' . $contacts . '" title="' . $row["name"] . '">' . $row["name"] . '</option>';
+                    echo '<option data-alert="' . htmlentities($row["alert"]) . '" value="' . $contacts . '" title="' . htmlentities($row["name"]) . '">' . $row["name"] . '</option>';
                 endwhile;
                 $result->free();
 ?>
