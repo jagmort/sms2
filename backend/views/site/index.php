@@ -44,7 +44,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 
     if ($stmt = $db->prepare("SELECT tab.id AS id, tab.name AS name, admin FROM `tab`, `group`, `group_tab`, `user` WHERE `group`.id = group_tab.group_id AND tab.id = tab_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC, tab.name")):
         $stmt->bind_param("s", $identity->getAuthKey());
-        !$stmt->execute();
+        $stmt->execute();
         $result = $stmt->get_result();
 ?>
 <ul class="tabs">
@@ -74,7 +74,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 
             if ($stmt = $db->prepare("SELECT contact.id AS id, mobile, name, dept, block, position, work, home, email, keyword, contact_tab.`order` AS `order`, tab_id FROM contact, contact_tab WHERE contact.id = contact_id AND tab_id = ? ORDER BY block, `order` DESC, name")):
                 $stmt->bind_param("i", $row["id"]);
-                !$stmt->execute();
+                $stmt->execute();
                 $result2 = $stmt->get_result();
                 $j = 0;
                 $block = "";
@@ -147,7 +147,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
     foreach($tabs as $tab) {
         if ($stmt = $db->prepare("SELECT list.id AS id, list.name AS name, alert FROM `list`, `group`, `group_list`, `user` WHERE tab_id = '" . $tab . "' AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC")):
             $stmt->bind_param("s", $identity->getAuthKey());
-            !$stmt->execute();
+            $stmt->execute();
             $result = $stmt->get_result();
             $rlist = $result->num_rows;
             if($rlist > 0):
@@ -167,7 +167,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                     $i++;
                     if($stmt = $db->prepare("SELECT contact.id AS id, email_only FROM `contact`, `contact_list` WHERE contact.id = contact_id AND list_id = ?")):
                         $stmt->bind_param("i", $row["id"]);
-                        !$stmt->execute();
+                        $stmt->execute();
                         $result2 = $stmt->get_result();
                         $first = true;
                         $contacts = "";

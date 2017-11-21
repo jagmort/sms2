@@ -17,7 +17,7 @@ $to_date = $datetime2->format('Y-m-d');
 if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email FROM recipient, sms, contact, user, `group` WHERE put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT group_id FROM user, `group` WHERE `group`.id = group_id AND auth_key = ?) ORDER BY put DESC, name ASC")):
 
 $stmt->bind_param("sss", $from_date, $to_date, $authkey);
-!$stmt->execute();
+$stmt->execute();
 $result = $stmt->get_result();
 
 // очереди на телефонах

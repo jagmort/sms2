@@ -5,7 +5,7 @@ function getName(&$db, $AuthKey, &$username) {
     $res = false;
     if ($stmt = $db->prepare("SELECT username, admin FROM `user` WHERE auth_key = ?")) {
         $stmt->bind_param("s", $AuthKey);
-        !$stmt->execute();
+        $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_array(MYSQLI_ASSOC);
         if($row["admin"] > 0) {
@@ -26,7 +26,7 @@ if($admin > USER_KEYWORD) {
     if(isset($_POST['save'])) {
         if($stmt = $db->prepare("SELECT mobile, name, dept, position, work, home, email, keyword FROM contact WHERE id=?")) {
             $stmt->bind_param("i", $id);
-            !$stmt->execute();
+            $stmt->execute();
             $result = $stmt->get_result();
             $fout = fopen(dirname(__FILE__) . "/log/" . $datetime->format('Ymd') . ".txt", "a");
             if(!$fout) {
@@ -95,7 +95,7 @@ if($admin > USER_KEYWORD) {
     else {
         if ($stmt = $db->prepare("SELECT id, mobile, name, dept, position, work, home, email, keyword FROM `contact` WHERE id = ?")) {
             $stmt->bind_param("i", $id);
-            !$stmt->execute();
+            $stmt->execute();
             $result = $stmt->get_result();
             while($row = $result->fetch_array(MYSQLI_ASSOC)) {
 ?>
