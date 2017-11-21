@@ -6,10 +6,7 @@ function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
     $mtext = $db->real_escape_string($text);
     if ($stmt = $db->prepare("SELECT group_id, group.name AS gname FROM `user`, `group` WHERE group_id = `group`.id AND user.id = ?")) {
         $stmt->bind_param("i", $user_id);
-        if (!$stmt->execute())
-        {
-            // handle error
-        }
+        !$stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_array(MYSQLI_ASSOC);
         $group_id = $row["group_id"];
@@ -18,10 +15,7 @@ function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
     $txt = mb_substr($mtext, 0, MAX_SMS_LENGTH - strlen($group) - 3) . " ($group)";
     if($stmt = $db->prepare("INSERT INTO sms (text, put, user_id, gid, uid) VALUES (?, NOW(), ?, ?, ?)")) {
         $stmt->bind_param("siis", $txt, $user_id, $group_id, $uid);
-        if (!$stmt->execute())
-        {
-            // handle error
-        }
+        !$stmt->execute();
         $sms_id = $db->insert_id;
         foreach($contacts as $contact_id) {
             if(strpos($contact_id, "-") > 0) $email_only = 1;
@@ -29,10 +23,7 @@ function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
             $contact_id = intval($contact_id);
             if ($stmt = $db->prepare("INSERT INTO recipient (sms_id, contact_id, email_only, status) VALUES (?, ?, ?, 0)")) {
                 $stmt->bind_param("iii", $sms_id, $contact_id, $email_only);
-                if (!$stmt->execute())
-                {
-                    // handle error
-                }
+                !$stmt->execute();
                 $res = true;    
             }
         }
@@ -45,10 +36,7 @@ function getName(&$db, $AuthKey) {
     $res = false;
     if ($stmt = $db->prepare("SELECT id FROM `user` WHERE auth_key = ?")) {
         $stmt->bind_param("s", $AuthKey);
-        if (!$stmt->execute())
-        {
-            // handle error
-        }
+        !$stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_array(MYSQLI_ASSOC);
         $res = $row["id"];

@@ -77,10 +77,7 @@ require 'param.php';
 // Create SMS file
 if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS name, dept, mobile, contact.email AS tomail, group.email AS frommail, group.name AS fname, text, sign, uid FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND recipient.status = 0")) {
     //$stmt->bind_param("i", 0);
-    if (!$stmt->execute())
-    {
-        // handle error
-    }
+    $stmt->execute();
     $result = $stmt->get_result();
     $mail = new PHPMailer(true);
     //Server settings
@@ -113,19 +110,13 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS
                 $status = $status | 1;
                 $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), status = ? WHERE id = ?");
                 $stmt->bind_param("ii", $status, $row["id"]);
-                if (!$stmt->execute())
-                {
-                    // handle error
-                }
+                $stmt->execute();
             }
             else {
                 $status = $status | 8;
                 $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), status = ? WHERE id = ?");
                 $stmt->bind_param("ii", $status, $row["id"]);
-                if (!$stmt->execute())
-                {
-                    // handle error
-                }
+                $stmt->execute();
             }
         }
 
@@ -137,19 +128,13 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS
                     $status = $status | 16;
                     $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), done = NOW(), status = ? WHERE id = ?");
                     $stmt->bind_param("ii", $status, $row["id"]);
-                    if (!$stmt->execute())
-                    {
-                        // handle error
-                    }
+                    $stmt->execute();
                 }
                 else {
                     $status = $status | 16;
                     $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
                     $stmt->bind_param("ii", $status, $row["id"]);
-                    if (!$stmt->execute())
-                    {
-                        // handle error
-                    }
+                    $stmt->execute();
                 }
             }
             else { // blank email
@@ -157,19 +142,13 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS
                     $status = $status | 64;
                     $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), done = NOW(), status = ? WHERE id = ?");
                     $stmt->bind_param("ii", $status, $row["id"]);
-                    if (!$stmt->execute())
-                    {
-                        // handle error
-                    }
+                    $stmt->execute();
                 }
                 else {
                     $status = $status | 64;
                     $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
                     $stmt->bind_param("ii", $status, $row["id"]);
-                    if (!$stmt->execute())
-                    {
-                        // handle error
-                    }
+                    $stmt->execute();
                 }
             }
         }
@@ -216,10 +195,7 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS
 // Check SMS file
 if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS name, dept, mobile, contact.email AS tomail, group.email AS frommail, group.name AS fname, text, sign, uid, recipient.status AS status FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND recipient.status > 0")) {
     //$stmt->bind_param("i", 0);
-    if (!$stmt->execute())
-    {
-        // handle error
-    }
+    $stmt->execute();
     $result = $stmt->get_result();
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
         $present = false;
@@ -232,10 +208,7 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS
                     $status = $row["status"] | 2;
                     $stmt = $db->prepare("UPDATE recipient SET phone = $i, status = ? WHERE id = ?");
                     $stmt->bind_param("ii", $status, $row["id"]);
-                    if (!$stmt->execute())
-                    {
-                        // handle error
-                    }
+                    $stmt->execute();
                 }
             }
         }
@@ -245,10 +218,7 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS
                 $status = $status ^ 2;
                 $stmt = $db->prepare("UPDATE recipient SET done = NOW(), status = ? WHERE id = ?");
                 $stmt->bind_param("ii", $status, $row["id"]);
-                if (!$stmt->execute())
-                {
-                    // handle error
-                }
+                $stmt->execute();
             }
         }
     }
