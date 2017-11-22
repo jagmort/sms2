@@ -3,7 +3,6 @@ require('param.php');
 
 function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
     $res = false;
-    $mtext = $db->real_escape_string($text);
     if ($stmt = $db->prepare("SELECT group_id, group.name AS gname FROM `user`, `group` WHERE group_id = `group`.id AND user.id = ?")) {
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
@@ -12,7 +11,7 @@ function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
         $group_id = $row["group_id"];
         $group = $row["gname"];
     }
-    $txt = mb_substr($mtext, 0, MAX_SMS_LENGTH - strlen($group) - 3) . " ($group)";
+    $txt = mb_substr($text, 0, MAX_SMS_LENGTH - strlen($group) - 3) . " ($group)";
     if($stmt = $db->prepare("INSERT INTO sms (text, put, user_id, gid, uid) VALUES (?, NOW(), ?, ?, ?)")) {
         $stmt->bind_param("siis", $txt, $user_id, $group_id, $uid);
         $stmt->execute();
@@ -51,7 +50,7 @@ if (isset($_POST["authkey"]) && isset($_POST["text"]) && isset($_POST["phones"])
     $order = array("\n", "\r", "\t", "\0", "\x0B");
     $text = str_replace($order, ' ', $text);
     $text = preg_replace('/\s+/', ' ', $text);
-    $AuthKey = $db->real_escape_string($_POST["authkey"]);
+    $AuthKey = $_POST["authkey"];
     if($user_id = getName($db, $AuthKey)) {
         $uid = $datetime->format('Ymd-His-') . substr("000$user_id", -4);
         if(strlen($text) > 5) {
