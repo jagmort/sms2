@@ -1,5 +1,6 @@
 <?php
 require('param.php');
+$cols = array('name', 'position', 'dept', 'mobile', 'work', 'home', 'email', 'keyword', 'block', 'order');
 
 function getName(&$db, $AuthKey, &$username) {
     $res = false;
@@ -16,16 +17,16 @@ function getName(&$db, $AuthKey, &$username) {
     return $res;
 }
 
-$AuthKey = $db->real_escape_string($_POST['authkey']);
-$tab_id = $db->real_escape_string($_POST['tab']);
-$id = $db->real_escape_string($_POST['id']);
+$AuthKey = $_POST['authkey'];
+$tab_id = $_POST['tab'];
+$id = $_POST['id'];
 $username = "";
 $admin = getName($db, $AuthKey, $username);
 
 if($admin > USER_KEYWORD) {
     if(isset($_POST['save'])) {
-        if($stmt = $db->prepare("SELECT mobile, name, dept, position, work, home, email, keyword FROM contact WHERE id=?")) {
-            $stmt->bind_param("i", $id);
+        if($stmt = $db->prepare("SELECT name, position, dept, mobile, work, home, email, keyword, block, `order` FROM `contact`, `contact_tab` WHERE contact_id = `contact`.id AND `contact`.id=? AND tab_id=?")) {
+            $stmt->bind_param("ii", $id, $tab_id);
             $stmt->execute();
             $result = $stmt->get_result();
             $fout = fopen(dirname(__FILE__) . "/log/" . $datetime->format('Ymd') . ".txt", "a");
@@ -33,68 +34,40 @@ if($admin > USER_KEYWORD) {
                 $err = error_get_last();
                 echo $err["message"];
             }
+            $row = $result->fetch_array(MYSQLI_NUM);
             fwrite($fout, "\n\n" . $datetime->format('Y-m-d H:i:s') . " $username\n-");
-            while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-                fwrite($fout, ' | ' . $row['name']);
-                fwrite($fout, ' | ' . $row['position']);
-                fwrite($fout, ' | ' . $row['dept']);
-                fwrite($fout, ' | ' . $row['mobile']);
-                fwrite($fout, ' | ' . $row['work']);
-                fwrite($fout, ' | ' . $row['home']);
-                fwrite($fout, ' | ' . $row['email']);
-                fwrite($fout, ' | ' . $row['keyword']);
+            foreach ($row as &$value) {
+                fwrite($fout, ' | ' . $value);
             }
+            unset($value);
             fwrite($fout, "\n+");
 
-            $query = "UPDATE contact SET ";
-            if(isset($_POST['name'])) {
-                $name = $db->real_escape_string($_POST['name']);
-                $query .= "name='$name', ";
-                fwrite($fout, ' | ' . $name);
+            $i = 0;
+            foreach ($row as &$value) {
+                if(isset($_POST[$cols[$i]])) 
+                    $col[] = $_POST[$cols[$i]];
+                else 
+                    $col[] = $value;
+                fwrite($fout, ' | ' . $col[$i]);
+                $i++;
             }
-            if(isset($_POST['position'])) {
-                $position = $db->real_escape_string($_POST['position']);
-                $query .= "position='$position', ";
-                fwrite($fout, ' | ' . $position);
-            }
-            if(isset($_POST['dept'])) {
-                $dept = $db->real_escape_string($_POST['dept']);
-                $query .= "dept='$dept', ";
-                fwrite($fout, ' | ' . $dept);
-            }
-            if(isset($_POST['mobile'])) {
-                $mobile = $db->real_escape_string($_POST['mobile']);
-                $query .= "mobile='$mobile', ";
-                fwrite($fout, ' | ' . $mobile);
-            }
-            if(isset($_POST['work'])) {
-                $work = $db->real_escape_string($_POST['work']);
-                $query .= "work='$work', ";
-                fwrite($fout, ' | ' . $work);
-            }
-            if(isset($_POST['home'])) {
-                $home = $db->real_escape_string($_POST['home']);
-                $query .= "home='$home', ";
-                fwrite($fout, ' | ' . $home);
-            }
-            if(isset($_POST['email'])) {
-                $email = $db->real_escape_string($_POST['email']);
-                $query .= "email='$email', ";
-                fwrite($fout, ' | ' . $email);
-            }
-            $keyword = $db->real_escape_string($_POST['keyword']);
-            $query .= "keyword='$keyword' WHERE id='$id'";
-            fwrite($fout, ' | ' . $keyword);
+            unset($value);
             fclose($fout);
 
-            if($result2 = $db->query($query)) {
-                header('Location: /sms2/backend/web/?tab=' . $tab_id . '&id=' . $id, true, 303);
+            if($stmt = $db->prepare("UPDATE `contact` SET name=?, position=?, dept=?, mobile=?, work=?, home=?, email=?, keyword=? WHERE id=?")) {
+                $stmt->bind_param("sssissssi", $col[0], $col[1], $col[2], $col[3], $col[4], $col[5], $col[6], $col[7], $id);
+                $stmt->execute();
+            }
+            if($stmt = $db->prepare("UPDATE `contact_tab` SET block=?, `order`=? WHERE contact_id = ? AND tab_id = ?")) {
+                $stmt->bind_param("siii", $col[8], $col[9], $id, $tab_id);
+                $stmt->execute();
             }
         }
+        header('Location: /sms2/backend/web/?tab=' . $tab_id . '&id=' . $id, true, 303);
     }
     else {
-        if ($stmt = $db->prepare("SELECT id, mobile, name, dept, position, work, home, email, keyword FROM `contact` WHERE id = ?")) {
-            $stmt->bind_param("i", $id);
+        if ($stmt = $db->prepare("SELECT mobile, name, dept, position, work, home, email, keyword, tab_id, block, `order` FROM `contact`, `contact_tab` WHERE contact_id = `contact`.id AND `contact`.id = ? AND tab_id = ?")) {
+            $stmt->bind_param("ii", $id, $tab_id);
             $stmt->execute();
             $result = $stmt->get_result();
             while($row = $result->fetch_array(MYSQLI_ASSOC)) {
@@ -114,6 +87,8 @@ if($admin > USER_KEYWORD) {
 <div>Рабочий <input name="work" value="<?= htmlentities($row['work']) ?>" /></div>
 <div>Домашний <input name="home" value="<?= htmlentities($row['home']) ?>" /></div>
 <div>E-mail <input name="email" value="<?= htmlentities($row['email']) ?>" /></div>
+<div>Блок <input name="block" value="<?= htmlentities($row['block']) ?>" /></div>
+<div>Порядок <input name="order" value="<?= htmlentities($row['order']) ?>" /></div>
 <?php
     }
 ?>
