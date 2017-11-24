@@ -29,7 +29,8 @@ function SendSMS($uid, $rid, $dept, $phone, $email, $text) {
 
     $count = substr("0".strtoupper(dechex(count($arText))), -2);
     $num = 0;
-    $at = "komy $rid wt	$dept	$phone	$email$txt\r\n\r\n";
+    $order = array("|"); // проблемный символ, зависает отправка
+    $at = "komy $rid wt	$dept	$phone	$email" . str_replace($order, "/", $txt) . "\r\n\r\n";
     foreach ($arText as $text) {
 
         $size = substr("0" . strtoupper(dechex(mb_strlen($text) * 2 + 6)), -2); // длина сообщения в HEX для вставки в хедер SMS
