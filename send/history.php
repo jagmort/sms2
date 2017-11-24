@@ -25,13 +25,13 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
     $files = array();
     $sum = 0;
     $out = '';
-    for ($i = 1; $i < 6; $i++) {
+    for ($i = 1; $i <= PHONES_QTY; $i++) {
         unset($response);
         $response = file("$webdir/in/smsVB$i.txt");
         $count = sizeof($response);
         if($i > 1)
             $out .= " + ";
-        if($count > 20) 
+        if($count > PHONES_QUE) 
             $out .= "<span class=\"max\">$count</span>";
         else 
             $out .= $count;
@@ -40,7 +40,7 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
     $out .= " = $sum";
     if ($sum > 0) {
         echo '<p';
-        if($sum > 100)
+        if($sum > PHONES_ALL)
             echo ' class="max"';
         echo '>Queue: ' . $out . '</p>';
     }
