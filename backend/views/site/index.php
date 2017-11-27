@@ -81,7 +81,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                 while($row2 = $result2->fetch_array(MYSQLI_ASSOC)):
                     $j++;
                     if($block != $row2["block"]):
-                        $tabcont .= '<div class="depthead">' . (strlen($row2["block"]) > 1 ? preg_replace('/[^,]*,(.*)/i', '${1}', htmlentities($row2["block"])) : '&nbsp;') . '</div>';
+                        $tabcont .= '<div class="depthead">' . (strlen($row2["block"]) > 1 ? preg_replace('/(.*)\'(.*)\'(.*)/i', '${1}<strong>${2}</strong>${3}', preg_replace('/[^,]*,(.*)/i', '${1}', htmlentities($row2["block"]))) : '&nbsp;') . '</div>';
                         $tabcont .= '<div>';
                         $block = $row2["block"];
                     else:
