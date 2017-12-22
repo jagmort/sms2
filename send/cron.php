@@ -200,7 +200,7 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS
     $result = $stmt->get_result();
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
         $present = false;
-        for ($i = 1; $i < 6; $i++) {
+        for ($i = 1; $i <= PHONES_QTY; $i++) {
             $response = file(dirname(__FILE__) . "/in/smsVB$i.txt");
             foreach($response as $line) {
                 $rid = "R" . substr("00000" . $row["id"], -6);
