@@ -199,6 +199,15 @@ ul.tabs li.current {
     color:#99c;
 }
 
+.list optgroup {
+    font-weight: normal;
+    color: #966;
+    margin-top: 0.1em;
+}
+
+.list option {
+    padding-left: 1em;
+}
 
 .list {
     display: none;

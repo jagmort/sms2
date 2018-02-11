@@ -72,7 +72,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                 $tabcont .= '<div id="tab-' . $row["id"] . '" class="tab-content' . ($i != 1 ? '' : ' current') . "\">\n";
             }
 
-            if ($stmt = $db->prepare("SELECT contact.id AS id, mobile, name, dept, block, position, work, home, email, keyword, contact_tab.`order` AS `order`, tab_id FROM contact, contact_tab WHERE contact.id = contact_id AND tab_id = ? ORDER BY block, `order` DESC, name")):
+            if ($stmt = $db->prepare("SELECT contact.id AS id, mobile, name, dept, block, position, work, home, email, comment, keyword, contact_tab.`order` AS `order`, tab_id FROM contact, contact_tab WHERE contact.id = contact_id AND tab_id = ? ORDER BY block, `order` DESC, name")):
                 $stmt->bind_param("i", $row["id"]);
                 $stmt->execute();
                 $result2 = $stmt->get_result();
@@ -94,7 +94,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                     $tabcont .= "<input title=\"&#10003; SMS и e-mail\n&ndash;  только e-mail\" type=\"checkbox\" id=\"phone" . $row2["id"] . '" value="' . $row2["id"] . '" data-keyword="' . htmlentities($row2["keyword"]) . '"/>';
                     $tabcont .= '<abbr order="' . $row2["order"] . '">';
                     $tabcont .= preg_replace('/(.*)\'(.*)\'(.*)/i', '${1}<strong>${2}</strong>${3}', preg_replace('/_/i', ' ', htmlentities($row2["name"]))) . '<br />';
-                    $tabcont .= '<span>' . $row2["position"] . '</span>';
+                    $tabcont .= '<span>' . $row2["position"] . ', ' . $row2["dept"] . '</span>';
                     $tabcont .= "</abbr>";
                     $tabcont .= '<div class="details"';
                     if(isset($_GET['id']) && ($_GET['id'] == $row2["id"])) $tabcont .= ' style="display: block;"';
@@ -117,13 +117,14 @@ if(($identity = Yii::$app->user->identity) != NULL):
                     endif;
                     if($row2["email"] != "")
                         $tabcont .= 'E-mail: <a href="mailto:' .  htmlentities($row2["email"]) . '">' . htmlentities($row2["email"]) . '</a>';
+                    if($row2["comment"] != "")
+                        $tabcont .= '<br />' . htmlentities($row2["comment"]);
                     if($admin > 0):
                         $tabcont .= '<br /><span data-tab="' . $row2["tab_id"] . '" data-id="' . $row2["id"] . '">&#9998;<br />ID: ' . $row2["id"];
                         $tabcont .= '<br />Вкладка: ' . $row2["tab_id"];
                         $tabcont .= '<br />Блок: ' . htmlentities($row2["block"]);
-                        $tabcont .= '<br />Отдел: ' . htmlentities($row2["dept"]);
-                        $tabcont .= '<br />Keyword: ' . htmlentities($row2["keyword"]);
-                        $tabcont .= '<br />Порядок: ' . $row2["order"] . '</span>';
+                        $tabcont .= '<br />Порядок: ' . $row2["order"];
+                        $tabcont .= '<br />Keyword: ' . htmlentities($row2["keyword"]) . '</span>';
                     endif;
                     $tabcont .= '</div>';
                     $tabcont .= "</div>\n";
@@ -145,7 +146,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <?php
     $k = 0;
     foreach($tabs as $tab) {
-        if ($stmt = $db->prepare("SELECT list.id AS id, list.name AS name, alert FROM `list`, `group`, `group_list`, `user` WHERE tab_id = '" . $tab . "' AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC")):
+        if ($stmt = $db->prepare("SELECT list.id AS id, list.name AS name, alert, optgroup FROM `list`, `group`, `group_list`, `user` WHERE tab_id = '" . $tab . "' AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC")):
             $stmt->bind_param("s", $identity->getAuthKey());
             $stmt->execute();
             $result = $stmt->get_result();
@@ -162,6 +163,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                     echo ' class="single" size="2">';
                     echo '<option disabled></option>';
                 endif;
+                $optgroup = "";
                 $i = 0;
                 while($row = $result->fetch_array(MYSQLI_ASSOC)):
                     $i++;
@@ -186,6 +188,10 @@ if(($identity = Yii::$app->user->identity) != NULL):
                         endwhile;
                         $result2->free();
                     endif;
+                    if($row["optgroup"] != $optgroup) {
+                        $optgroup = $row["optgroup"];
+                        echo '<optgroup title="' . $optgroup . '" label="' . $optgroup . '"></optgroup>';
+                    }
                     echo '<option data-alert="' . htmlentities($row["alert"]) . '" value="' . $contacts . '" title="' . htmlentities($row["name"]) . '">' . htmlentities($row["name"]) . '</option>';
                 endwhile;
                 $result->free();

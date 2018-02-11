@@ -1,6 +1,6 @@
 <?php
 require('param.php');
-$cols = array('name', 'position', 'dept', 'mobile', 'work', 'home', 'email', 'keyword', 'block', 'order');
+$cols = array('name', 'position', 'dept', 'mobile', 'work', 'home', 'email', 'comment', 'keyword', 'block', 'order');
 
 function getName(&$db, $AuthKey, &$username) {
     $res = false;
@@ -25,7 +25,7 @@ $admin = getName($db, $AuthKey, $username);
 
 if($admin > USER_KEYWORD) {
     if(isset($_POST['save'])) {
-        if($stmt = $db->prepare("SELECT name, position, dept, mobile, work, home, email, keyword, block, `order` FROM `contact`, `contact_tab` WHERE contact_id = `contact`.id AND `contact`.id=? AND tab_id=?")) {
+        if($stmt = $db->prepare("SELECT name, position, dept, mobile, work, home, email, comment, keyword, block, `order` FROM `contact`, `contact_tab` WHERE contact_id = `contact`.id AND `contact`.id=? AND tab_id=?")) {
             $stmt->bind_param("ii", $id, $tab_id);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -54,19 +54,19 @@ if($admin > USER_KEYWORD) {
             unset($value);
             fclose($fout);
 
-            if($stmt = $db->prepare("UPDATE `contact` SET name=?, position=?, dept=?, mobile=?, work=?, home=?, email=?, keyword=? WHERE id=?")) {
-                $stmt->bind_param("sssissssi", $col[0], $col[1], $col[2], $col[3], $col[4], $col[5], $col[6], $col[7], $id);
+            if($stmt = $db->prepare("UPDATE `contact` SET name=?, position=?, dept=?, mobile=?, work=?, home=?, email=?, comment=?, keyword=? WHERE id=?")) {
+                $stmt->bind_param("sssisssssi", $col[0], $col[1], $col[2], $col[3], $col[4], $col[5], $col[6], $col[7], $col[8], $id);
                 $stmt->execute();
             }
             if($stmt = $db->prepare("UPDATE `contact_tab` SET block=?, `order`=? WHERE contact_id = ? AND tab_id = ?")) {
-                $stmt->bind_param("siii", $col[8], $col[9], $id, $tab_id);
+                $stmt->bind_param("siii", $col[9], $col[10], $id, $tab_id);
                 $stmt->execute();
             }
         }
         header('Location: /sms2/backend/web/?tab=' . $tab_id . '&id=' . $id, true, 303);
     }
     else {
-        if ($stmt = $db->prepare("SELECT mobile, name, dept, position, work, home, email, keyword, tab_id, block, `order` FROM `contact`, `contact_tab` WHERE contact_id = `contact`.id AND `contact`.id = ? AND tab_id = ?")) {
+        if ($stmt = $db->prepare("SELECT mobile, name, dept, position, work, home, email, comment, keyword, tab_id, block, `order` FROM `contact`, `contact_tab` WHERE contact_id = `contact`.id AND `contact`.id = ? AND tab_id = ?")) {
             $stmt->bind_param("ii", $id, $tab_id);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -87,6 +87,7 @@ if($admin > USER_KEYWORD) {
 <div>Рабочий <input name="work" value="<?= htmlentities($row['work']) ?>" /></div>
 <div>Домашний <input name="home" value="<?= htmlentities($row['home']) ?>" /></div>
 <div>E-mail <input name="email" value="<?= htmlentities($row['email']) ?>" /></div>
+<div>Комментарий <input name="comment" value="<?= htmlentities($row['comment']) ?>" /></div>
 <div>Блок <input name="block" value="<?= htmlentities($row['block']) ?>" /></div>
 <div>Порядок <input name="order" value="<?= htmlentities($row['order']) ?>" /></div>
 <?php
