@@ -21,7 +21,7 @@ $out .= " = $sum</li>";
 sort($files);
 $i = 0;
 foreach ($files as $line) {
-    if($i < 16) echo "<li>$line</li>";
+    if($i < 16) echo "<li>" . mb_substr($line, 0, 60) . "</li>";
     else echo ".";
     $i++;
 }
