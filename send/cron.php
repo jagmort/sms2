@@ -86,9 +86,9 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS
     //$mail->SMTPKeepAlive = true;
     $mail->isSMTP();                                      // Set mailer to use SMTP
     $mail->Host = $host;                                // Specify main and backup SMTP servers
-    $mail->SMTPAuth = false;                               // Enable SMTP authentication
-    $mail->Username = '';                                // SMTP username
-    $mail->Password = '';                               // SMTP password
+    $mail->SMTPAuth = true;                               // Enable SMTP authentication
+    $mail->Username = $muser;                                // SMTP username
+    $mail->Password = $mpass;                               // SMTP password
     $mail->SMTPSecure = $SMTPSecure;                            // Enable TLS encryption, `ssl` also accepted
     $mail->Port = $port;                                    // TCP port to connect to
     $mail->CharSet = 'utf-8'; 
