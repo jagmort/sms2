@@ -15,6 +15,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
     require('../../send/param.php');
 ?>
 <dialog id="edit"></dialog>
+<dialog id="add"></dialog>
 <dialog id="alert"><div class="msg"></div><div><button type="button" id="cancel" onclick="$('#alert')[0].close()">Закрыть</button></div></dialog>
 <div id="main">
 <div id="content">
@@ -119,7 +120,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                         $tabcont .= 'E-mail: <a href="mailto:' .  htmlentities($row2["email"]) . '">' . htmlentities($row2["email"]) . '</a>';
                     if($row2["comment"] != "")
                         $tabcont .= '<br />' . htmlentities($row2["comment"]);
-                    if($admin > 0):
+                    if($admin > USER_KEYWORD):
                         $tabcont .= '<br /><span data-tab="' . $row2["tab_id"] . '" data-id="' . $row2["id"] . '">&#9998;<br />ID: ' . $row2["id"];
                         $tabcont .= '<br />Вкладка: ' . $row2["tab_id"];
                         $tabcont .= '<br />Блок: ' . htmlentities($row2["block"]);
@@ -131,6 +132,9 @@ if(($identity = Yii::$app->user->identity) != NULL):
                 endwhile;
                 $result2->free();
             endif;
+            if($admin > USER_KEYWORD) {
+                $tabcont .= '<a class="addcontact" data-tab="' . $row["id"] . '">Добавить контакт</a>';
+            }
             $tabcont .= "</div>\n\n";
         }
         $result->free();
