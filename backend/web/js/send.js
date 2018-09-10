@@ -178,5 +178,20 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Add contact dialog
+    $(".addcontact").click(function(){
+        var tab = $(this).attr('data-tab');
+        var identity = $('#identity').val();
+        $.ajax({
+            type: 'POST',
+            url: '/sms2/send/addcontact.php',
+            data: 'authkey=' + identity + '&tab=' + tab,
+            success: function(data){
+                $('#add').html(data);
+                $('#add')[0].showModal();
+            }
+        });
+    });
 });
 
