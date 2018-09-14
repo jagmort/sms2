@@ -20,9 +20,10 @@ $out .= " = $sum</li>";
 
 sort($files);
 $i = 0;
+$d = 135;
 foreach ($files as $line) {
-    if($i < 16) echo "<li>" . mb_substr($line, 0, 60) . "</li>";
-    else echo ".";
+    if($i < 16) echo "<li>" . mb_substr($line, 0, 61) . "</li>";
+    else if ($d-- > 0) echo ".";
     $i++;
 }
 
