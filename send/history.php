@@ -98,7 +98,7 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
         if(($row["status"] & STATUS_NO_EMAIL) > 0)
             $status .= "; <i>No e-mail</i>";
         else {
-            if((($row["status"] & STATUS_EMAIL_SENT) > 0) && (($row["status"] & STATUS_SMS_SENT) <= 0))
+            if((($row["status"] & STATUS_EMAIL_SENT) > 0) && (($row["status"] & (STATUS_SMS_SENT | STATUS_INIT)) <= 0))
                 $status .= "; <i>E-mail only</i>";
         }
         // ---------------
