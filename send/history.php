@@ -88,17 +88,17 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
         }
 
         // статус отправки
-        if(($row["status"] & 4) > 0)
+        if(($row["status"] & STATUS_SMS_SENT) > 0)
             $status .= "; Sent " . $row["phone"];
         else {
-            if(($row["status"] & 2) > 0) $status .= "; Queue " . $row["phone"];
-            if(($row["status"] & 8) > 0) $status .= "; <b>Error</b>";
-            if(($row["status"] & 15) == 1) $status .= "; <b>SMS not sent</b>";
+            if(($row["status"] & STATUS_QUE) > 0) $status .= "; Queue " . $row["phone"];
+            if(($row["status"] & STATUS_EMAIL_ONLY) > 0) $status .= "; <b>Error</b>";
+            if(($row["status"] & STATUS_INIT) == 1) $status .= "; <b>SMS not sent</b>";
         }
-        if(($row["status"] & 64) > 0)
+        if(($row["status"] & STATUS_NO_EMAIL) > 0)
             $status .= "; <i>No e-mail</i>";
         else {
-            if((($row["status"] & 16) > 0) && (($row["status"] & 15) <= 0))
+            if((($row["status"] & STATUS_EMAIL_SENT) > 0) && (($row["status"] & STATUS_SMS_SENT) <= 0))
                 $status .= "; <i>E-mail only</i>";
         }
         // ---------------
