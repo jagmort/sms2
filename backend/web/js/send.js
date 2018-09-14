@@ -197,5 +197,6 @@ $(document).ready(function() {
 
 $(window).on("beforeunload", function() {
     if ($("#btn").prop('disabled') == true) {
+        return "Идёт отправка SMS";
     }
 })
