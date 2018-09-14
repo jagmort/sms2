@@ -194,7 +194,7 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS
 
 
 // Check SMS file
-if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS name, dept, mobile, contact.email AS tomail, group.email AS frommail, group.name AS fname, text, sign, uid, recipient.status AS status FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND recipient.status > 0")) {
+if ($stmt = $db->prepare("SELECT recipient.id AS id, uid, recipient.status AS status FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND recipient.status > 0 AND put >= (NOW() - INTERVAL 1 DAY)")) {
     //$stmt->bind_param("i", 0);
     $stmt->execute();
     $result = $stmt->get_result();
