@@ -115,7 +115,7 @@ ul.tabs li.current {
     display: none;
     background: #fff;
     border: 1px solid #999;
-    padding: .3em;
+    padding: .3em .3em 1.3em .3em;
     -webkit-column-count:4;  
     -moz-column-count:4;  
     column-count:4;
@@ -124,6 +124,7 @@ ul.tabs li.current {
     overflow-y: auto;
     margin-top: -1px;
     margin-bottom: 1em;
+    position:relative;
 }
 
 .tab-content.current {
@@ -199,6 +200,14 @@ ul.tabs li.current {
     color:#99c;
 }
 
+.tab-content a.addcontact {
+    display: block;
+    position: absolute;
+    bottom: .3em;
+    right: .3em;
+    cursor: pointer;
+}
+
 .list optgroup {
     font-weight: normal;
     color: #966;
@@ -241,10 +250,6 @@ ul.tabs li.current {
     outline: none;
 }
 
-#queue {
-    word-wrap: normal;
-}
-
 #queue li {
     font-size: 90%;
 }
@@ -274,6 +279,14 @@ ul.tabs li.current {
 
 .history tr.odd td {
     background: #fff;
+}
+
+.history tr.my td {
+    background: #eec;
+}
+
+.history tr.myodd td {
+    background: #ffd;
 }
 
 .history td.text {

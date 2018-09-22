@@ -1,5 +1,18 @@
 <?php
 require('param.php');
+
+function getName(&$db, $AuthKey) {
+    $res = false;
+    if ($stmt = $db->prepare("SELECT username FROM `user` WHERE auth_key = ?")) {
+        $stmt->bind_param("s", $AuthKey);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_array(MYSQLI_ASSOC);
+        $res = $row["username"];
+    }
+    return $res;
+}
+
 $authkey = $db->real_escape_string($_POST["authkey"]);
 try {
     $datetime1 = new DateTime($_POST["from_date"], new DateTimeZone('Europe/Moscow'));
@@ -57,7 +70,10 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
         $contact = '<span title="' . htmlentities($row["name"]) . "\n" . htmlentities($row["position"]) . "\n" . $row["mobile"] . "\n" . htmlentities($row["email"]) . '">' . $arr[0] . ' ' . mb_substr($arr[1], 0, 1) . ' ' . mb_substr($arr[2], 0, 1) . "</span> (" . $row["dept"] . ")";
         if($uid !== $row["uid"]) {
             if($uid !== "") {
-                echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
+                if($username == getName($db, $authkey)) {
+                    echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
+                }
+                else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
                 echo "<td>$uid</td><td>$username</td><td>$text</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
                 echo "</tr>\n";
             }
