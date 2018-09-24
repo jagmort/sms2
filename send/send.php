@@ -12,7 +12,7 @@ function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
         $group = $row["gname"];
     }
     $txt = mb_substr($text, 0, MAX_SMS_LENGTH - strlen($group) - 3) . " ($group)";
-    if($stmt = $db->prepare("INSERT INTO sms (text, put, user_id, gid, uid) VALUES (?, NOW(), ?, ?, ?)")) {
+    if($stmt = $db->prepare("INSERT INTO sms (text, user_id, gid, uid) VALUES (?, ?, ?, ?)")) {
         $stmt->bind_param("siis", $txt, $user_id, $group_id, $uid);
         $stmt->execute();
         $sms_id = $db->insert_id;
@@ -25,6 +25,10 @@ function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
                 $stmt->execute();
                 $res = true;    
             }
+        }
+        if($stmt = $db->prepare("UPDATE `sms` SET `put`=NOW() WHERE `id`=?")) {
+            $stmt->bind_param("i", $sms_id);
+            $stmt->execute();
         }
     }
     return $res;
