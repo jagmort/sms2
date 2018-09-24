@@ -51,7 +51,7 @@ function getName(&$db, $AuthKey) {
 
 if (isset($_POST["authkey"]) && isset($_POST["text"]) && isset($_POST["phones"])) {
     $text = trim($_POST["text"]);
-    $order = array("\n", "\r", "\t", "\0", "\x0B");
+    $order = array("\n", "\r", "\t", "\0", "\x0B", "^");
     $text = str_replace($order, ' ', $text);
     $text = preg_replace('/\s+/', ' ', $text);
     $AuthKey = $_POST["authkey"];
