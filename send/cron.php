@@ -76,7 +76,7 @@ require 'Exception.php';
 require 'param.php';
 
 // Create SMS file
-if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS name, dept, mobile, contact.email AS tomail, group.email AS frommail, group.name AS fname, text, sign, uid FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND recipient.status = 0 AND sms.put > '0000-00-00 00:00:00'")) {
+if ($stmt = $db->prepare("SELECT recipient.id AS id, contact.id AS contact_id, email_only, contact.name AS name, dept, mobile, contact.email AS tomail, group.email AS frommail, group.name AS fname, text, sign, uid FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND recipient.status = 0 AND sms.put > '0000-00-00 00:00:00'")) {
     //$stmt->bind_param("i", 0);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -108,7 +108,7 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS
         $status = STATUS_NONE;
         if($row["mobile"] < MIN_PHONE_NUM) $row["email_only"] = 1; // wrong mobile number
         if($row["email_only"] < 1) { // Skip SMS if e-mail only
-            if(SendSMS($row["uid"], $row["id"], $row["dept"], $row["mobile"], $row["tomail"], $row["text"])) {
+            if(SendSMS($row["uid"], $row["contact_id"], $row["dept"], $row["mobile"], $row["tomail"], $row["text"])) {
                 $status = $status | STATUS_INIT;
                 $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), status = ? WHERE id = ?");
                 $stmt->bind_param("ii", $status, $row["id"]);
@@ -195,7 +195,7 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS
 
 
 // Check SMS file
-if ($stmt = $db->prepare("SELECT recipient.id AS id, uid, recipient.status AS status FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND (recipient.status & 1) > 0 AND put >= (NOW() - INTERVAL 1 DAY)")) {
+if ($stmt = $db->prepare("SELECT recipient.id AS id, uid, recipient.status AS status, contact.id AS contact_id FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND (recipient.status & 1) > 0 AND put >= (NOW() - INTERVAL 1 DAY)")) {
     //$stmt->bind_param("i", 0);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -204,7 +204,7 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, uid, recipient.status AS st
         for ($i = 1; $i <= PHONES_QTY; $i++) {
             $response = file(dirname(__FILE__) . "/in/smsVB$i.txt");
             foreach($response as $line) {
-                $rid = "R" . substr("00000" . $row["id"], -6);
+                $rid = "R" . substr("00000" . $row["contact_id"], -6);
                 if((strpos($line, $row["uid"]) !== false) AND ((strpos($line, $rid) !== false))) {
                     $present = true;
                     $status = $row["status"] | STATUS_QUE;
