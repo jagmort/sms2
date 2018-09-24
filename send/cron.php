@@ -85,6 +85,7 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, email_only, contact.name AS
     $mail->SMTPDebug = 0;                                 // Enable verbose debug output
     //$mail->SMTPKeepAlive = true;
     //$mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail->isMail();                                      // Set mailer to use mail()
     //$mail->Host = $host;                                // Specify main and backup SMTP servers
     //$mail->SMTPAuth = true;                               // Enable SMTP authentication
     //$mail->Username = $muser;                                // SMTP username
