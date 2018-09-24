@@ -3,13 +3,16 @@ var timeout = 5000;
 
 // Submit form
 function sendAjaxForm(result_form, ajax_form, url) {
-    jQuery.ajax({
+    $.ajax({
         url:     url, 
         type:     "POST",
         dataType: "html",
-        data: jQuery("#" + ajax_form).serialize(),
+        data: $("#" + ajax_form).serialize(),
         success: function(response) {
             $("#result").html(response);
+        },
+        complete: function(response) {
+            $("#btn").prop('disabled', false);
         },
         error: function(response) {
             $("#result").html("Ошибка");
@@ -19,11 +22,11 @@ function sendAjaxForm(result_form, ajax_form, url) {
 
 // Clear all contacts' checkboxes
 function clearCheckboxes() {
-    var all_checkboxes = jQuery(':checkbox');
+    var all_checkboxes = $(':checkbox');
     all_checkboxes.prop('checked', false);
     all_checkboxes.prop('indeterminate', false);
     all_checkboxes.data('checked', 0);
-    var all_options = jQuery('option');
+    var all_options = $('option');
     all_options.prop('selected', false);
     $("#phones").empty();
 }
@@ -54,7 +57,7 @@ $(document).ready(function() {
     // List selection
     $('select').each(function () {
         $(this).on('change', function() {
-            var all_checkboxes = jQuery(':checkbox');
+            var all_checkboxes = $(':checkbox');
             all_checkboxes.prop('checked', false);
             all_checkboxes.prop('indeterminate', false);
             all_checkboxes.data('checked', 0);
@@ -93,7 +96,6 @@ $(document).ready(function() {
             $("#btn").prop('disabled', true);
             setTimeout(function(){
                 $("#result").html("");
-                $("#btn").prop('disabled', false);
             }, timeout);
             clearCheckboxes();
             return false; 
