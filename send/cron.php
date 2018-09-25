@@ -1,10 +1,10 @@
 <?php
 namespace PHPMailer\PHPMailer;
 
-function SendSMS($uid, $rid, $dept, $phone, $email, $text) {
+function SendSMS($uid, $contact_id, $dept, $phone, $email, $text) {
     mb_internal_encoding("UTF-8");
 
-    $rid = "R" . substr("00000$rid", -6);
+    $rid = "R" . substr("00000$contact_id", -6);
 
     $phone .= "F";
     if($phone[0] == "8") $phone[0] = "7";
@@ -30,7 +30,7 @@ function SendSMS($uid, $rid, $dept, $phone, $email, $text) {
     $count = substr("0".strtoupper(dechex(count($arText))), -2);
     $num = 0;
     $order = array("|"); // проблемный символ, зависает отправка
-    $at = "komy $rid wt	$dept	$phone	$email" . str_replace($order, "/", $txt) . "\r\n\r\n";
+    $at = "komy $contact_id wt	$dept	$phone	$email" . str_replace($order, "/", $txt) . "\r\n\r\n";
     foreach ($arText as $text) {
 
         $size = substr("0" . strtoupper(dechex(mb_strlen($text) * 2 + 6)), -2); // длина сообщения в HEX для вставки в хедер SMS
@@ -76,7 +76,7 @@ require 'Exception.php';
 require 'param.php';
 
 // Create SMS file
-if ($stmt = $db->prepare("SELECT recipient.id AS id, contact.id AS contact_id, email_only, contact.name AS name, dept, mobile, contact.email AS tomail, group.email AS frommail, group.name AS fname, text, sign, uid FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND recipient.status = 0 AND sms.put > '0000-00-00 00:00:00'")) {
+if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS contact_id, email_only, `contact`.name AS name, dept, mobile, `contact`.email AS tomail, `group`.email AS frommail, `group`.name AS fname, text, sign, uid FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE `sms`.user_id = `user`.id AND `user`.group_id = `group`.id AND `recipient`.contact_id = `contact`.id AND `recipient`.sms_id = `sms`.id AND `recipient`.status = 0 AND `sms`.put > '0000-00-00 00:00:00'")) {
     //$stmt->bind_param("i", 0);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -195,7 +195,7 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, contact.id AS contact_id, e
 
 
 // Check SMS file
-if ($stmt = $db->prepare("SELECT recipient.id AS id, uid, recipient.status AS status, contact.id AS contact_id FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND (recipient.status & 1) > 0 AND put >= (NOW() - INTERVAL 1 DAY)")) {
+if ($stmt = $db->prepare("SELECT recipient.id AS id, contact_id, uid, recipient.status AS status FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND (recipient.status & 1) > 0 AND put >= (NOW() - INTERVAL 1 DAY)")) {
     //$stmt->bind_param("i", 0);
     $stmt->execute();
     $result = $stmt->get_result();
