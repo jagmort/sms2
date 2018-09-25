@@ -4,7 +4,7 @@ namespace PHPMailer\PHPMailer;
 function SendSMS($uid, $contact_id, $dept, $phone, $email, $text) {
     mb_internal_encoding("UTF-8");
 
-    $rid = "R" . substr("00000$contact_id", -6);
+    $rid = "R" . substr("0000$contact_id", -5);
 
     $phone .= "F";
     if($phone[0] == "8") $phone[0] = "7";
@@ -204,7 +204,7 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, contact_id, uid, recipient.
         for ($i = 1; $i <= PHONES_QTY; $i++) {
             $response = file(dirname(__FILE__) . "/in/smsVB$i.txt");
             foreach($response as $line) {
-                $rid = "R" . substr("00000" . $row["contact_id"], -6);
+                $rid = "R" . substr("0000" . $row["contact_id"], -5);
                 if((strpos($line, $row["uid"]) !== false) AND ((strpos($line, $rid) !== false))) {
                     $present = true;
                     $status = $row["status"] | STATUS_QUE;
