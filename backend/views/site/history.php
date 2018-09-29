@@ -14,12 +14,13 @@ $this->registerCssFile('css/main.css');
 <div id="calendar">
 <form id="ajax_form" method="post" action="">
 <?php
+$datetime = new DateTime(null, new DateTimeZone('Europe/Moscow'));
 echo DatePicker::widget([
     'name' => 'from_date',
-    'value' => date('Y-m-d'),
+    'value' => $datetime->format('Y-m-d'),
     'type' => DatePicker::TYPE_RANGE,
     'name2' => 'to_date',
-    'value2' => date('Y-m-d'),
+    'value2' => $datetime->format('Y-m-d'),
     'pluginOptions' => [
         'autoclose'=>true,
         'format' => 'yyyy-mm-dd'
