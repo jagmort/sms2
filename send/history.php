@@ -121,7 +121,10 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
 
     }
     if($uid !== "") {
-        echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
+        if($username == getName($db, $authkey)) {
+            echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
+        }
+        else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
         echo "<td>$uid</td><td>$username</td><td>$text</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
         echo "</tr>\n";
     }
