@@ -7,6 +7,8 @@
     overflow: hidden;
     font-family: "Segoe UI", arial, helvetica, freesans, sans-serif;
     min-width: 1850px;
+    position: absolute;
+    top: 0;
 }
 
 #content {
