@@ -7,7 +7,7 @@
     overflow: hidden;
     font-family: "Segoe UI", arial, helvetica, freesans, sans-serif;
     min-width: 1850px;
-    position: absolute;
+    /*position: absolute;*/
     top: 0;
 }
 
@@ -259,6 +259,12 @@ ul.tabs li.current {
 #calendar {
     margin-top: 4em;
     width: 16em;
+}
+
+#refresh {
+    position: absolute;
+    left: 19em;
+    top: 4.5em;
 }
 
 #w0-kvdate input {

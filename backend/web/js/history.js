@@ -5,7 +5,9 @@ $(document).ready(function() {
         }
     );
     setInterval(function() {
-        sendAjaxForm('result_form', 'ajax_form', '/sms2/send/history.php');
+        if($("#refresh input").prop("checked")) {
+            sendAjaxForm('result_form', 'ajax_form', '/sms2/send/history.php');
+        }
     }, 10000);
     sendAjaxForm('result_form', 'ajax_form', '/sms2/send/history.php');
 });

@@ -30,6 +30,7 @@ if(($identity = Yii::$app->user->identity) != NULL) echo '<input type="hidden" n
 ?>
 </form>
 </div>
+<div id="refresh">Обновление&nbsp;<input type="checkbox" checked="checked" /></div>
 <div id="result"></div>
 </div>
 </div>
