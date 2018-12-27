@@ -10,7 +10,7 @@ for ($i = 1; $i < 7; $i++) {
     $response = file("$webdir/in/smsVB$i.txt");
     $count = sizeof($response);
     foreach($response as $line) {
-        $files[] = $line;
+        $files[] = $line . "($i)";
     }
     if($i < 2) $out .= $count; 
     else $out .= " + " . $count;
