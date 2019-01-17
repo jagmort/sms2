@@ -20,6 +20,19 @@ function sendAjaxForm(result_form, ajax_form, url) {
     });
 }
 
+function sendAjaxFormFile(result_form, ajax_form, url) {
+    var formData = new FormData($("#" + ajax_form)[0]);
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: formData,
+        async: false,
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+}
+  
 // Clear all contacts' checkboxes
 function clearCheckboxes() {
     var all_checkboxes = $(':checkbox');
@@ -29,6 +42,7 @@ function clearCheckboxes() {
     var all_options = $('option');
     all_options.prop('selected', false);
     $("#phones").empty();
+    $("#attach > input").val('');
 }
 
 // Fill phones textarea with contacts' checkboxes
@@ -92,7 +106,7 @@ $(document).ready(function() {
     // Send button
     $("#btn").click(
         function(){
-            sendAjaxForm('result_form', 'ajax_form', '/sms2/send/send.php');
+            sendAjaxFormFile('result_form', 'ajax_form', '/sms2/send/send.php');
             $("#btn").prop('disabled', true);
             setTimeout(function(){
                 $("#result").html("");
@@ -130,6 +144,7 @@ $(document).ready(function() {
     setInterval(function() {
         $("#queue").load("/sms2/send/queue.php", function() {
         });
+        $("#btn").prop('disabled', false);
     }, timeout);
 
     // Switch tabs

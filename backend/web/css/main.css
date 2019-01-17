@@ -47,7 +47,13 @@
 }
 
 #buttons button#clr {
-    float:right;
+    float: right;
+}
+
+#attach {
+}
+
+#attach input[type="file"] {
 }
 
 #phones {
@@ -223,7 +229,7 @@ ul.tabs li.current {
 .list {
     display: none;
     float: left;
-    margin: 6em 10px;
+    margin: 6em 10px 1em 10px;
 }
 
 .list.current {

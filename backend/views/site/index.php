@@ -19,13 +19,14 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <dialog id="alert"><div class="msg"></div><div><button type="button" id="cancel" onclick="$('#alert')[0].close()">Закрыть</button></div></dialog>
 <div id="main">
 <div id="content">
-<form id="ajax_form" method="post" action="">
+<form id="ajax_form" method="post" action="" enctype="multipart/form-data">
 <input id="identity" type="hidden" name="authkey" value="<?= $identity->getAuthKey() ?>" />
 <div id="left">
 <div>
 <textarea id="text" name="text" maxlength="<?= MAX_SMS_LENGTH ?>"></textarea>
 <span id="count"></span>
 </div>
+<div id="attach"><input type="file" name="file" id="file" /></div>
 <div id="buttons">
 <button type="submit" id="btn">Отправить</button> <span id="result"></span> <button type="button" id="clr">Очистить</button> 
 </div>
@@ -132,7 +133,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                 endwhile;
                 $result2->free();
             endif;
-            if($admin > USER_KEYWORD) {
+            if($admin > USER_ADMIN) {
                 $tabcont .= '<a class="addcontact" data-tab="' . $row["id"] . '">Добавить контакт</a>';
             }
             $tabcont .= "</div>\n\n";
@@ -156,7 +157,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
             $result = $stmt->get_result();
             $rlist = $result->num_rows;
             if($rlist > 0):
-                if($rlist > 38) $rlist = 38;
+                if($rlist > 42) $rlist = 42;
 ?>
 <div class="list<?= ($k < 1) ? ' current' : '' ?>" id="list-tab-<?= $tab ?>">
 <select id="list"
@@ -196,7 +197,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                         $optgroup = $row["optgroup"];
                         echo '<optgroup title="' . $optgroup . '" label="' . $optgroup . '"></optgroup>';
                     }
-                    echo '<option data-alert="' . htmlentities($row["alert"]) . '" value="' . $contacts . '" title="' . htmlentities($row["name"]) . '">' . htmlentities($row["name"]) . '</option>';
+                    echo '<option data-alert="' . htmlentities($row["alert"]) . '" value="' . $contacts . '" title="' . htmlentities($row["name"] . " (" . $row["id"] . ")") . '">' . htmlentities($row["name"]) . '</option>';
                 endwhile;
                 $result->free();
 ?>

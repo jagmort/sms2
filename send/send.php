@@ -1,7 +1,7 @@
 <?php
 require('param.php');
 
-function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
+function AddHistory3(&$db, $contacts, $text, $user_id, $uid, $put, $name) {
     $res = false;
     if ($stmt = $db->prepare("SELECT group_id, group.name AS gname FROM `user`, `group` WHERE group_id = `group`.id AND user.id = ?")) {
         $stmt->bind_param("i", $user_id);
@@ -12,8 +12,8 @@ function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
         $group = $row["gname"];
     }
     $txt = mb_substr($text, 0, MAX_SMS_LENGTH - strlen($group) - 3) . " ($group)";
-    if($stmt = $db->prepare("INSERT INTO sms (text, user_id, gid, uid) VALUES (?, ?, ?, ?)")) {
-        $stmt->bind_param("siis", $txt, $user_id, $group_id, $uid);
+    if($stmt = $db->prepare("INSERT INTO sms (text, user_id, gid, uid, filename) VALUES (?, ?, ?, ?, ?)")) {
+        $stmt->bind_param("siiss", $txt, $user_id, $group_id, $uid, $name);
         $stmt->execute();
         $sms_id = $db->insert_id;
         foreach($contacts as $contact_id) {
@@ -26,8 +26,8 @@ function AddHistory3(&$db, $contacts, $text, $user_id, $uid) {
                 $res = true;    
             }
         }
-        if($stmt = $db->prepare("UPDATE `sms` SET `put`=NOW() WHERE `id`=?")) {
-            $stmt->bind_param("i", $sms_id);
+        if($stmt = $db->prepare("UPDATE `sms` SET `put`=? WHERE `id`=?")) {
+            $stmt->bind_param("si", $put, $sms_id);
             $stmt->execute();
         }
     }
@@ -47,7 +47,20 @@ function getName(&$db, $AuthKey) {
     return $res;
 }
 
+function mkdir_force($dir) {
+    $parts = explode('/', $dir);
+    $dir = 'files';
+    foreach($parts as $part)
+        if(!is_dir($dir .= "/$part")) mkdir($dir);
+    //file_put_contents("$dir/$file", $contents);
+}
+
 // Main
+$year = $datetime->format('Y');
+$mon = $datetime->format('m');
+$day = $datetime->format('d');
+$dir = $year . "/" . $mon . "/" . $day;
+$name = '';
 
 if (isset($_POST["authkey"]) && isset($_POST["text"]) && isset($_POST["phones"])) {
     $text = trim($_POST["text"]);
@@ -57,9 +70,15 @@ if (isset($_POST["authkey"]) && isset($_POST["text"]) && isset($_POST["phones"])
     $AuthKey = $_POST["authkey"];
     if($user_id = getName($db, $AuthKey)) {
         $uid = $datetime->format('Ymd-His-') . substr("000$user_id", -4);
+        $put = $datetime->format('Y-m-d H:i:s');
         if(strlen($text) > 5) {
             $phones = explode("; ", trim($_POST["phones"]));
-            if(AddHistory3($db, $phones, $text, $user_id, $uid)) {
+            if($_FILES["file"]["error"] === UPLOAD_ERR_OK) {
+                mkdir_force($dir);
+                $name = $datetime->format('His-') . $_FILES['file']['name'];
+                move_uploaded_file($_FILES['file']['tmp_name'], "files/$dir/$name");
+            }
+            if(AddHistory3($db, $phones, $text, $user_id, $uid, $put, $name)) {
                 echo "В очереди на отправку";
             }
             else echo "Ошибка отправки";

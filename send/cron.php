@@ -74,9 +74,10 @@ require 'PHPMailer.php';
 require 'SMTP.php';
 require 'Exception.php';
 require 'param.php';
+use \DateTime;
 
 // Create SMS file
-if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS contact_id, email_only, `contact`.name AS name, dept, mobile, `contact`.email AS tomail, `group`.email AS frommail, `group`.name AS fname, text, sign, uid FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE `sms`.user_id = `user`.id AND `user`.group_id = `group`.id AND `recipient`.contact_id = `contact`.id AND `recipient`.sms_id = `sms`.id AND `recipient`.status = 0 AND `sms`.put > '0000-00-00 00:00:00'")) {
+if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS contact_id, email_only, `contact`.name AS name, dept, mobile, `contact`.email AS tomail, `group`.email AS frommail, `group`.name AS fname, text, sign, uid, filename, put FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE `sms`.user_id = `user`.id AND `user`.group_id = `group`.id AND `recipient`.contact_id = `contact`.id AND `recipient`.sms_id = `sms`.id AND `recipient`.status = 0 AND `sms`.put > '0000-00-00 00:00:00'")) {
     //$stmt->bind_param("i", 0);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -104,6 +105,8 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $fname = $row["fname"];
             $body = $row["text"] . $row["sign"] . "\n\nID: " . $row["uid"];
             $mail->addAddress($row["frommail"], $row["fname"]);
+            $dtput = new DateTime($row["put"]);
+            $filename = $dtput->format('Y/m/d/') . $row["filename"];
         }
         $status = STATUS_NONE;
         if($row["mobile"] < MIN_PHONE_NUM) $row["email_only"] = 1; // wrong mobile number
@@ -160,6 +163,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
                 $mail->setFrom($cc, $fname);
                 //$mail->addCC($cc);
                 $mail->Body = $body;
+                $mail->addAttachment("/var/www/html/sms2/send/files/$filename");
                 try {
                     $mail->send();
                 }
@@ -182,6 +186,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $mail->Subject = $subject;
             $mail->setFrom($cc, $fname);
             $mail->Body = $body;
+            $mail->addAttachment("/var/www/html/sms2/send/files/$filename");
             try {
                 $mail->send();
             }
