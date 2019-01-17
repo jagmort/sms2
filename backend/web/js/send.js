@@ -43,6 +43,10 @@ function clearCheckboxes() {
     all_options.prop('selected', false);
     $("#phones").empty();
     $("#attach > input").val('');
+    if($("#phones").val() != '' && $("#text").val().length >= 5) {
+        $("#btn").prop('disabled', false);
+    }
+    else $("#btn").prop('disabled', true);
 }
 
 // Fill phones textarea with contacts' checkboxes
@@ -64,6 +68,17 @@ function scanCheckboxes() {
             default:
         }
     });
+    if($("#phones").val() != '') {
+        $("#clr").prop('disabled', false);
+        if($("#text").val().length >= 5) {
+            $("#btn").prop('disabled', false);
+        }
+        else $("#btn").prop('disabled', true);
+    }
+    else {
+        $("#clr").prop('disabled', true);
+        $("#btn").prop('disabled', true);
+    }
 }
 
 $(document).ready(function() {
@@ -100,19 +115,23 @@ $(document).ready(function() {
     $("#clr").click(
         function(){
             clearCheckboxes();
+            $("#clr").prop('disabled', true);
         }
     );
 
     // Send button
     $("#btn").click(
         function(){
-            sendAjaxFormFile('result_form', 'ajax_form', '/sms2/send/send.php');
-            $("#btn").prop('disabled', true);
-            setTimeout(function(){
-                $("#result").html("");
-            }, timeout);
-            clearCheckboxes();
-            return false; 
+            if($("#phones").val() != '' && $("#text").val().length >= 5) {
+                sendAjaxFormFile('result_form', 'ajax_form', '/sms2/send/send.php');
+                $("#btn").prop('disabled', true);
+                setTimeout(function(){
+                    $("#result").html("");
+                }, timeout);
+                clearCheckboxes();
+                $("#clr").prop('disabled', true);
+            }
+            return false;
         }
     );
 
@@ -144,7 +163,6 @@ $(document).ready(function() {
     setInterval(function() {
         $("#queue").load("/sms2/send/queue.php", function() {
         });
-        $("#btn").prop('disabled', false);
     }, timeout);
 
     // Switch tabs
@@ -169,6 +187,10 @@ $(document).ready(function() {
     // Chars to go
     $("#text").keyup(function(){
         $('#count').text(maxlen - $(this).val().length);
+        if($("#phones").val() != '' && $("#text").val().length >= 5) {
+            $("#btn").prop('disabled', false);
+        }
+        else $("#btn").prop('disabled', true);
     });
 
     // Show contact details

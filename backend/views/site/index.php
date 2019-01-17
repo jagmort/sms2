@@ -28,7 +28,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 </div>
 <div id="attach"><input type="file" name="file" id="file" /></div>
 <div id="buttons">
-<button type="submit" id="btn">Отправить</button> <span id="result"></span> <button type="button" id="clr">Очистить</button> 
+<button type="submit" id="btn" disabled>Отправить</button> <span id="result"></span> <button type="button" id="clr" disabled>Очистить</button> 
 </div>
 <div>
 <textarea id="phones" name="phones" readonly></textarea>
