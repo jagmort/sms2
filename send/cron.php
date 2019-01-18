@@ -105,8 +105,13 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $fname = $row["fname"];
             $body = $row["text"] . $row["sign"] . "\n\nID: " . $row["uid"];
             $mail->addAddress($row["frommail"], $row["fname"]);
-            $dtput = new DateTime($row["put"]);
-            $filename = $dtput->format('Y/m/d/') . $row["filename"];
+            if(strlen($row["filename"]) > 0) {
+                $dtput = new DateTime($row["put"]);
+                $filename = $dtput->format('Y/m/d/') . $row["filename"];
+            }
+            else {
+                $filename = '';
+            }
         }
         $status = STATUS_NONE;
         if($row["mobile"] < MIN_PHONE_NUM) $row["email_only"] = 1; // wrong mobile number
@@ -163,7 +168,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
                 $mail->setFrom($cc, $fname);
                 //$mail->addCC($cc);
                 $mail->Body = $body;
-                $mail->addAttachment("/var/www/html/sms2/send/files/$filename");
+                if(strlen($filename) > 0) $mail->addAttachment("/var/www/html/sms2/send/files/$filename");
                 try {
                     $mail->send();
                 }
@@ -186,7 +191,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $mail->Subject = $subject;
             $mail->setFrom($cc, $fname);
             $mail->Body = $body;
-            $mail->addAttachment("/var/www/html/sms2/send/files/$filename");
+            if(strlen($filename) > 0) $mail->addAttachment("/var/www/html/sms2/send/files/$filename");
             try {
                 $mail->send();
             }
