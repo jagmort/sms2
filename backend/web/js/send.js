@@ -42,7 +42,7 @@ function clearCheckboxes() {
     var all_options = $('option');
     all_options.prop('selected', false);
     $("#phones").empty();
-    $("#attach > input").val('');
+    $("#file").val('');
     if($("#phones").val() != '' && $("#text").val().length >= 5) {
         $("#btn").prop('disabled', false);
     }
@@ -76,7 +76,9 @@ function scanCheckboxes() {
         else $("#btn").prop('disabled', true);
     }
     else {
-        $("#clr").prop('disabled', true);
+        if($("#file").val() == '') {
+            $("#clr").prop('disabled', true);
+        }
         $("#btn").prop('disabled', true);
     }
 }
@@ -110,6 +112,13 @@ $(document).ready(function() {
             }
        });
     })
+
+    // File input
+    $("#file").change(
+        function(){
+            $("#clr").prop('disabled', false);
+        }
+    );
 
     // Clear button
     $("#clr").click(
