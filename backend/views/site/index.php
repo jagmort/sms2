@@ -83,6 +83,8 @@ if(($identity = Yii::$app->user->identity) != NULL):
                 while($row2 = $result2->fetch_array(MYSQLI_ASSOC)):
                     $j++;
                     if($block != $row2["block"]):
+                        if($block != "") $tabcont .= "</div>\n";
+                        $tabcont .= "\n<div class=\"dept\">\n";
                         $tabcont .= '<div class="depthead">' . (strlen($row2["block"]) > 1 ? preg_replace('/(.*)\'(.*)\'(.*)/i', '${1}<strong>${2}</strong>${3}', preg_replace('/[^,]*,(.*)/i', '${1}', htmlentities($row2["block"]))) : '&nbsp;') . '</div>';
                         $tabcont .= '<div>';
                         $block = $row2["block"];
@@ -131,6 +133,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                     $tabcont .= '</div>';
                     $tabcont .= "</div>\n";
                 endwhile;
+                if($block != "") $tabcont .= "</div>\n";
                 $result2->free();
             endif;
             if($admin > USER_ADMIN) {

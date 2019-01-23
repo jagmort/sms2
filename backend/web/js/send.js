@@ -2,24 +2,6 @@ var maxlen = 600;
 var timeout = 5000;
 
 // Submit form
-function sendAjaxForm(result_form, ajax_form, url) {
-    $.ajax({
-        url:     url, 
-        type:     "POST",
-        dataType: "html",
-        data: $("#" + ajax_form).serialize(),
-        success: function(response) {
-            $("#result").html(response);
-        },
-        complete: function(response) {
-            $("#btn").prop('disabled', false);
-        },
-        error: function(response) {
-            $("#result").html("Ошибка");
-        }
-    });
-}
-
 function sendAjaxFormFile(result_form, ajax_form, url) {
     var formData = new FormData($("#" + ajax_form)[0]);
     $.ajax({
@@ -168,6 +150,31 @@ $(document).ready(function() {
         });
     });
 
+    // Select all dept
+    $('.depthead').each(function () {
+        var el1 = $(this);
+        el1.on('click', function() {
+            el = $(this).parent().find('input[type="checkbox"]');
+            switch(el.data('checked')) {
+                case 2:
+                    el.data('checked', 1);
+                    el.prop('indeterminate',true);
+                    el.prop('checked', false);
+                    break;
+                case 1:
+                    el.data('checked', 0);
+                    el.prop('indeterminate', false);
+                    el.prop('checked', false);
+                    break;
+                default:
+                    el.data('checked', 2);
+                    el.prop('indeterminate', false);
+                    el.prop('checked', true);
+            }
+            scanCheckboxes();
+        });
+    });
+
     // Get queue
     setInterval(function() {
         $("#queue").load("/sms2/send/queue.php", function() {
@@ -204,7 +211,7 @@ $(document).ready(function() {
 
     // Show contact details
     $("abbr").click(function(){
-        $(".current > div").removeClass("detailed");
+        $(".current > div > div").removeClass("detailed");
         $(".details").hide();
         $(this).parent().children(".details").slideToggle("fast");
         $(this).parent().addClass("detailed");
