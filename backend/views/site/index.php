@@ -24,7 +24,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <div id="left">
 <div id="priority">
 Приоритет
-<input type="radio" id="low" name="priority" value="9" title="Низкий">
+<input type="radio" id="low" name="priority" value="9" title="Низкий">&nbsp;
 <input type="radio" id="high" name="priority" value="0" title="Высокий" checked="checked">
 </div>
 <div>

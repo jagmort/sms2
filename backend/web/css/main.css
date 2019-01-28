@@ -35,23 +35,26 @@ input[type='radio']:after {
     top: 0px;
     left: -1px;
     position: relative;
-    background-color: #ddd;
+    background-color: #fff;
     content: '';
     display: inline-block;
     visibility: visible;
-    border: 1px solid white;
+    border: 1px solid #ddd;
 }
 
 input[type='radio']:checked:after {
     background-color: #333;
+    border: 1px solid #333;
 }
 
 input#low:checked:after {
     background-color: #3a3;
+    border: 1px solid #3a3;
 }
 
 input#high:checked:after {
     background-color: #d33;
+    border: 1px solid #d33;
 }
 
 #text {
