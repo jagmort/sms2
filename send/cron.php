@@ -1,7 +1,7 @@
 <?php
 namespace PHPMailer\PHPMailer;
 
-function SendSMS($uid, $contact_id, $dept, $phone, $email, $text) {
+function SendSMS($uid, $contact_id, $dept, $phone, $email, $text, $priority) {
     mb_internal_encoding("UTF-8");
 
     $rid = "R" . substr("0000$contact_id", -5);
@@ -55,7 +55,7 @@ function SendSMS($uid, $contact_id, $dept, $phone, $email, $text) {
 
     } //foreach
 
-    $fname = "00-$uid-" . rand(10, 99) . "-$rid.txt";
+    $fname = $priority . $priority . "-$uid-" . rand(10, 99) . "-$rid.txt";
 
     $fout = fopen(dirname(__FILE__) . "/out/$fname", "w");
     if(!$fout) {
@@ -77,8 +77,7 @@ require 'param.php';
 use \DateTime;
 
 // Create SMS file
-if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS contact_id, email_only, `contact`.name AS name, dept, mobile, `contact`.email AS tomail, `group`.email AS frommail, `group`.name AS fname, text, sign, uid, filename, put FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE `sms`.user_id = `user`.id AND `user`.group_id = `group`.id AND `recipient`.contact_id = `contact`.id AND `recipient`.sms_id = `sms`.id AND `recipient`.status = 0 AND `sms`.put > '0000-00-00 00:00:00'")) {
-    //$stmt->bind_param("i", 0);
+if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS contact_id, email_only, `contact`.name AS name, dept, mobile, `contact`.email AS tomail, `group`.email AS frommail, `group`.name AS fname, text, sign, uid, filename, priority, put FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE `sms`.user_id = `user`.id AND `user`.group_id = `group`.id AND `recipient`.contact_id = `contact`.id AND `recipient`.sms_id = `sms`.id AND `recipient`.status = 0 AND `sms`.put > '0000-00-00 00:00:00'")) {
     $stmt->execute();
     $result = $stmt->get_result();
     $mail = new PHPMailer(true);
@@ -116,7 +115,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
         $status = STATUS_NONE;
         if($row["mobile"] < MIN_PHONE_NUM) $row["email_only"] = 1; // wrong mobile number
         if($row["email_only"] < 1) { // Skip SMS if e-mail only
-            if(SendSMS($row["uid"], $row["contact_id"], $row["dept"], $row["mobile"], $row["tomail"], $row["text"])) {
+            if(SendSMS($row["uid"], $row["contact_id"], $row["dept"], $row["mobile"], $row["tomail"], $row["text"], $row["priority"])) {
                 $status = $status | STATUS_INIT;
                 $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), status = ? WHERE id = ?");
                 $stmt->bind_param("ii", $status, $row["id"]);

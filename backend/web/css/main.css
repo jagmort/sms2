@@ -24,6 +24,46 @@
     margin: -2em 1em;
 }
 
+#priority {
+    position: absolute;
+    margin: -2em 0em;
+}
+input[type='radio']:after {
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    top: 0px;
+    left: -1px;
+    position: relative;
+    background-color: #dddddd;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 1px solid white;
+}
+
+input[type='radio']:checked:after {
+    width: 15px;
+    height: 15px;
+    border-radius: 15px;
+    top: 0px;
+    left: -1px;
+    position: relative;
+    background-color: #333333;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 1px solid white;
+}
+
+input#low:checked:after {
+    background-color: #66cc66;
+}
+
+input#high:checked:after {
+    background-color: #ee6666;
+}
+
 #text {
     width: 30em;
     height: 20em;
@@ -365,6 +405,9 @@ dialog button {
     margin: .3em .3em;
 }
 
+dialog#alert {
+    display: none;
+}
 dialog div.msg {
     text-align: center;
     margin: .3em .3em;

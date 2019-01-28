@@ -22,6 +22,11 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <form id="ajax_form" method="post" action="" enctype="multipart/form-data">
 <input id="identity" type="hidden" name="authkey" value="<?= $identity->getAuthKey() ?>" />
 <div id="left">
+<div id="priority">
+Приоритет
+<input type="radio" id="low" name="priority" value="9" title="Низкий">
+<input type="radio" id="high" name="priority" value="0" title="Высокий" checked="checked">
+</div>
 <div>
 <textarea id="text" name="text" maxlength="<?= MAX_SMS_LENGTH ?>"></textarea>
 <span id="count"></span>
