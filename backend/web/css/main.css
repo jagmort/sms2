@@ -206,7 +206,7 @@ ul.tabs li.current {
     width: 16px;
     height: 16px;
     border-radius: 3px;
-    top: -1px;
+    top: 0px;
     left: -1px;
     position: relative;
     background-color: #fff;
@@ -217,13 +217,13 @@ ul.tabs li.current {
 }
 
 .tab-content div input[type='checkbox']:checked:after {
-    background: url("/sms2/backend/web/img/blue-phone.png") #fff;
-    border: 1px solid #fff;
+    background: url("/sms2/backend/web/img/iphone.png") #fff;
+    border: 0px solid #fff;
 }
 
 .tab-content div input[type='checkbox']:indeterminate:after {
-    background: url("/sms2/backend/web/img/blue-mail.png") #fff;
-    border: 1px solid #fff;
+    background: url("/sms2/backend/web/img/mail.png") #fff;
+    border: 0px solid #fff;
 }
 
 .tab-content abbr {
