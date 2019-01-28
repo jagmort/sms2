@@ -252,3 +252,6 @@ $(document).ready(function() {
 
 $(window).on("beforeunload", function() {
 })
+
+$(window).on("onload", function() {
+})
