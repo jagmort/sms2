@@ -102,6 +102,14 @@ $(document).ready(function() {
         }
     );
 
+    // Priority change
+    $("#priority > input[type='checkbox']").change(
+        function(){
+            if($(this).prop('checked')) $(this).prop('title', 'Высокий');
+            else $(this).prop('title', 'Низкий');
+        }
+    );
+
     // Clear button
     $("#clr").click(
         function(){

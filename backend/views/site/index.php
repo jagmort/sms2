@@ -25,7 +25,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <div id="priority">
 Приоритет
 <input type="hidden" name="priority" value="9">
-<input type="checkbox" name="priority" value="0" checked>
+<input type="checkbox" name="priority" value="0" checked title="Высокий">
 </div>
 <div>
 <textarea id="text" name="text" maxlength="<?= MAX_SMS_LENGTH ?>"></textarea>
