@@ -35,9 +35,7 @@
     top: 0px;
     left: -1px;
     position: relative;
-    background: url("/sms2/backend/web/img/black.png") #fff;
-    -webkit-transform: rotate(-90deg);
-    transform: rotate(-90deg);
+    background: url("/sms2/backend/web/img/down.png") #fff;
     content: '';
     display: inline-block;
     visibility: visible;
@@ -46,8 +44,7 @@
 }
 
 #priority input[type='checkbox']:checked:after {
-    -webkit-transform: rotate(90deg);
-    transform: rotate(90deg);
+    background: url("/sms2/backend/web/img/up.png") #fff;
 }
 
 #text {
