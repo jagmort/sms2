@@ -28,33 +28,26 @@
     position: absolute;
     margin: -2em 0em;
 }
-input[type='radio']:after {
+#priority input[type='checkbox']:after {
     width: 15px;
     height: 15px;
-    border-radius: 15px;
+    border-radius:3px;
     top: 0px;
     left: -1px;
     position: relative;
-    background-color: #fff;
+    background: url("/sms2/backend/web/img/black.png") #fff;
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);
     content: '';
     display: inline-block;
     visibility: visible;
-    border: 1px solid #ddd;
+    border: 0px solid #fff;
+    cursor: pointer;
 }
 
-input[type='radio']:checked:after {
-    background-color: #333;
-    border: 1px solid #333;
-}
-
-input#low:checked:after {
-    background-color: #3a3;
-    border: 1px solid #3a3;
-}
-
-input#high:checked:after {
-    background-color: #d33;
-    border: 1px solid #d33;
+#priority input[type='checkbox']:checked:after {
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
 }
 
 #text {
@@ -175,6 +168,9 @@ ul.tabs li.current {
 }
 
 .tab-content div.dept div {
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
     padding-left: 1.8em;
     border: none;
     background-color: #fff;
@@ -217,6 +213,7 @@ ul.tabs li.current {
     display: inline-block;
     visibility: visible;
     border: 1px solid #ddd;
+    cursor: pointer;
 }
 
 .tab-content div input[type='checkbox']:checked:after {

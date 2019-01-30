@@ -17,7 +17,7 @@ function sendAjaxFormFile(result_form, ajax_form, url) {
   
 // Clear all contacts' checkboxes
 function clearCheckboxes() {
-    var all_checkboxes = $(':checkbox');
+    var all_checkboxes = $('#tabs input:checkbox');
     all_checkboxes.prop('checked', false);
     all_checkboxes.prop('indeterminate', false);
     all_checkboxes.data('checked', 0);
@@ -36,7 +36,7 @@ var program = [];
 function scanCheckboxes() {
     program = [];
     $("#phones").empty();
-    $('input:checkbox').each(function () {
+    $('#tabs input:checkbox').each(function () {
         var el = $(this);
         switch(el.data('checked')) {
             case 2:
@@ -70,7 +70,7 @@ $(document).ready(function() {
     // List selection
     $('select').each(function () {
         $(this).on('change', function() {
-            var all_checkboxes = $(':checkbox');
+            var all_checkboxes = $('#tabs input:checkbox');
             all_checkboxes.prop('checked', false);
             all_checkboxes.prop('indeterminate', false);
             all_checkboxes.data('checked', 0);
@@ -127,7 +127,7 @@ $(document).ready(function() {
     );
 
     // Change contact checkbox status
-    $('input:checkbox').each(function () {
+    $('#tabs input:checkbox').each(function () {
         var el = $(this);
         el.on('change', function() {
             switch(el.data('checked')) {
