@@ -77,7 +77,7 @@ require 'param.php';
 use \DateTime;
 
 // Create SMS file
-if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS contact_id, email_only, `contact`.name AS name, dept, mobile, `contact`.email AS tomail, `group`.email AS frommail, `group`.name AS fname, text, sign, uid, filename, priority, put FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE `sms`.user_id = `user`.id AND `user`.group_id = `group`.id AND `recipient`.contact_id = `contact`.id AND `recipient`.sms_id = `sms`.id AND `recipient`.status = 0 AND `sms`.put > '0000-00-00 00:00:00'")) {
+if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS contact_id, email_only, `contact`.name AS name, dept, mobile, `contact`.email AS tomail, `group`.email AS frommail, `group`.supervisor AS supervisor, `group`.name AS fname, text, sign, uid, filename, priority, put FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE `sms`.user_id = `user`.id AND `user`.group_id = `group`.id AND `recipient`.contact_id = `contact`.id AND `recipient`.sms_id = `sms`.id AND `recipient`.status = 0 AND `sms`.put > '0000-00-00 00:00:00'")) {
     $stmt->execute();
     $result = $stmt->get_result();
     $mail = new PHPMailer(true);
@@ -101,9 +101,11 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
         if($uid == "") {
             $uid = $row["uid"];
             $cc = $row["frommail"];
+            $bcc = $row["supervisor"];
             $fname = $row["fname"];
             $body = $row["text"] . $row["sign"] . "\n\nID: " . $row["uid"];
             $mail->addAddress($row["frommail"], $row["fname"]);
+            if($bcc !== '') $mail->addAddress($bcc, $row["fname"]);
             if(strlen($row["filename"]) > 0) {
                 $dtput = new DateTime($row["put"]);
                 $filename = $dtput->format('Y/m/d/') . $row["filename"];
@@ -165,7 +167,6 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             if($sendmail) {
                 $mail->Subject = $subject;
                 $mail->setFrom($cc, $fname);
-                //$mail->addCC($cc);
                 $mail->Body = $body;
                 if(strlen($filename) > 0) $mail->addAttachment("/var/www/html/sms2/send/files/$filename");
                 try {
@@ -179,6 +180,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
 
             $uid = $row["uid"];
             $cc = $row["frommail"];
+            $bcc = $row["supervisor"];
             $fname = $row["fname"];
             $body = $row["text"] . $row["sign"] . "\n\nID: " . $row["uid"];
         }

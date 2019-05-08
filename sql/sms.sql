@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.2.12deb2+deb8u2
+-- version 4.2.12deb2+deb8u3
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 10, 2018 at 08:46 AM
+-- Generation Time: May 08, 2019 at 10:24 AM
 -- Server version: 5.5.60-0+deb8u1
--- PHP Version: 5.6.36-0+deb8u1
+-- PHP Version: 5.6.38-0+deb8u1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `contact` (
   `email` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
   `keyword` varchar(255) NOT NULL,
   `comment` varchar(255) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2607 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2942 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `contact_list` (
   `contact_id` int(11) NOT NULL,
   `list_id` int(11) NOT NULL,
   `email_only` tinyint(1) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=22823 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=23813 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `contact_tab` (
   `tab_id` int(11) NOT NULL,
   `order` int(11) NOT NULL,
   `block` varchar(255) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2797 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3220 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -76,8 +76,9 @@ CREATE TABLE IF NOT EXISTS `group` (
 `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `sign` varchar(600) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+  `sign` varchar(600) NOT NULL,
+  `supervisor` varchar(255) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -89,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `group_list` (
 `id` int(11) NOT NULL,
   `group_id` int(11) NOT NULL,
   `list_id` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=717 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=902 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -101,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `group_tab` (
 `id` int(11) NOT NULL,
   `group_id` int(11) NOT NULL,
   `tab_id` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -129,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `list` (
   `alert` varchar(255) NOT NULL,
   `optgroup` varchar(512) NOT NULL,
   `parent_id` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=832 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1017 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -147,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `recipient` (
   `phone` int(11) NOT NULL,
   `status` int(11) NOT NULL,
   `error` varchar(255) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=252836 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=616428 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -161,8 +162,10 @@ CREATE TABLE IF NOT EXISTS `sms` (
   `user_id` int(11) NOT NULL,
   `gid` int(11) NOT NULL,
   `text` varchar(600) NOT NULL,
-  `put` datetime NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=52082 DEFAULT CHARSET=utf8;
+  `put` datetime NOT NULL,
+  `filename` varchar(255) NOT NULL,
+  `Priority` int(11) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=116031 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -174,7 +177,7 @@ CREATE TABLE IF NOT EXISTS `tab` (
 `id` int(11) NOT NULL,
   `name` varchar(32) NOT NULL,
   `order` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -207,7 +210,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `status` smallint(6) NOT NULL DEFAULT '10',
   `created_at` int(11) NOT NULL,
   `updated_at` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=91 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Indexes for dumped tables
@@ -271,7 +274,7 @@ ALTER TABLE `recipient`
 -- Indexes for table `sms`
 --
 ALTER TABLE `sms`
- ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `uid` (`uid`), ADD KEY `user_id` (`user_id`), ADD KEY `put` (`put`), ADD KEY `group_id` (`gid`);
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `uid` (`uid`), ADD KEY `user_id` (`user_id`), ADD KEY `put` (`put`), ADD KEY `group_id` (`gid`), ADD KEY `Priority` (`Priority`);
 
 --
 -- Indexes for table `tab`
@@ -299,32 +302,32 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `contact`
 --
 ALTER TABLE `contact`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2607;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2942;
 --
 -- AUTO_INCREMENT for table `contact_list`
 --
 ALTER TABLE `contact_list`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=22823;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=23813;
 --
 -- AUTO_INCREMENT for table `contact_tab`
 --
 ALTER TABLE `contact_tab`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2797;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3220;
 --
 -- AUTO_INCREMENT for table `group`
 --
 ALTER TABLE `group`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `group_list`
 --
 ALTER TABLE `group_list`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=717;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=902;
 --
 -- AUTO_INCREMENT for table `group_tab`
 --
 ALTER TABLE `group_tab`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=30;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=47;
 --
 -- AUTO_INCREMENT for table `group_template`
 --
@@ -334,22 +337,22 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT for table `list`
 --
 ALTER TABLE `list`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=832;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1017;
 --
 -- AUTO_INCREMENT for table `recipient`
 --
 ALTER TABLE `recipient`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=252836;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=616428;
 --
 -- AUTO_INCREMENT for table `sms`
 --
 ALTER TABLE `sms`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=52082;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=116031;
 --
 -- AUTO_INCREMENT for table `tab`
 --
 ALTER TABLE `tab`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=44;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=60;
 --
 -- AUTO_INCREMENT for table `template`
 --
@@ -359,7 +362,7 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=39;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=91;
 --
 -- Constraints for dumped tables
 --
@@ -409,7 +412,7 @@ ADD CONSTRAINT `list_ibfk_1` FOREIGN KEY (`tab_id`) REFERENCES `tab` (`id`);
 -- Constraints for table `recipient`
 --
 ALTER TABLE `recipient`
-ADD CONSTRAINT `recipient_ibfk_2` FOREIGN KEY (`contact_id`) REFERENCES `contact` (`id`),
+ADD CONSTRAINT `recipient_ibfk_4` FOREIGN KEY (`contact_id`) REFERENCES `contact` (`id`),
 ADD CONSTRAINT `recipient_ibfk_3` FOREIGN KEY (`sms_id`) REFERENCES `sms` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
