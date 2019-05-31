@@ -272,7 +272,7 @@ ul.tabs li.current {
 .list optgroup {
     font-weight: normal;
     color: #966;
-    margin-top: 0.1em;
+    /*margin-top: 0.1em;*/
 }
 
 .list option {

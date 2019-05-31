@@ -159,61 +159,67 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <?php
     $k = 0;
     foreach($tabs as $tab) {
-        if ($stmt = $db->prepare("SELECT list.id AS id, list.name AS name, alert, optgroup FROM `list`, `group`, `group_list`, `user` WHERE tab_id = '" . $tab . "' AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC")):
-            $stmt->bind_param("s", $identity->getAuthKey());
+        if ($stmt = $db->prepare("SELECT optgroup FROM `list`, `group`, `group_list`, `user` WHERE tab_id = ? AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND optgroup <> '' AND auth_key = ? GROUP BY optgroup")):
+            $stmt->bind_param("is", $tab, $identity->getAuthKey());
             $stmt->execute();
             $result = $stmt->get_result();
             $rlist = $result->num_rows;
-            if($rlist > 0):
-                if($rlist > 42) $rlist = 42;
+            if ($stmt = $db->prepare("SELECT list.id AS id, list.name AS name, alert, optgroup FROM `list`, `group`, `group_list`, `user` WHERE tab_id = ? AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC")):
+                $stmt->bind_param("is", $tab, $identity->getAuthKey());
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $rlist = $rlist + $result->num_rows;
+                if($rlist > 0):
+                    if($rlist > 40) $rlist = 40;
 ?>
 <div class="list<?= ($k < 1) ? ' current' : '' ?>" id="list-tab-<?= $tab ?>">
 <select id="list"
 <?php
-                if($rlist != 1):
-                    echo ' size="' . $rlist . '">';
-                else: 
-                    echo ' class="single" size="2">';
-                    echo '<option disabled></option>';
-                endif;
-                $optgroup = "";
-                $i = 0;
-                while($row = $result->fetch_array(MYSQLI_ASSOC)):
-                    $i++;
-                    if($stmt = $db->prepare("SELECT contact.id AS id, email_only FROM `contact`, `contact_list` WHERE contact.id = contact_id AND list_id = ?")):
-                        $stmt->bind_param("i", $row["id"]);
-                        $stmt->execute();
-                        $result2 = $stmt->get_result();
-                        $first = true;
-                        $contacts = "";
-                        while($row2 = $result2->fetch_array(MYSQLI_ASSOC)):
-                            if($row2["email_only"] <> "0"):
-                                $email_only = "-";
-                            else:
-                                $email_only = "";
-                            endif;
-                            if($first):
-                                $contacts = $row2["id"] . $email_only;
-                                $first = false;
-                            else:
-                                $contacts .= "," . $row2["id"] . $email_only;
-                            endif;
-                        endwhile;
-                        $result2->free();
+                    if($rlist != 1):
+                        echo ' size="' . $rlist . '">';
+                    else: 
+                        echo ' class="single" size="2">';
+                        echo '<option disabled></option>';
                     endif;
-                    if($row["optgroup"] != $optgroup) {
-                        $optgroup = $row["optgroup"];
-                        echo '<optgroup title="' . $optgroup . '" label="' . $optgroup . '"></optgroup>';
-                    }
-                    echo '<option data-alert="' . htmlentities($row["alert"]) . '" value="' . $contacts . '" title="' . htmlentities($row["name"] . " (" . $row["id"] . ")") . '">' . htmlentities($row["name"]) . '</option>';
-                endwhile;
-                $result->free();
+                    $optgroup = "";
+                    $i = 0;
+                    while($row = $result->fetch_array(MYSQLI_ASSOC)):
+                        $i++;
+                        if($stmt = $db->prepare("SELECT contact.id AS id, email_only FROM `contact`, `contact_list` WHERE contact.id = contact_id AND list_id = ?")):
+                            $stmt->bind_param("i", $row["id"]);
+                            $stmt->execute();
+                            $result2 = $stmt->get_result();
+                            $first = true;
+                            $contacts = "";
+                            while($row2 = $result2->fetch_array(MYSQLI_ASSOC)):
+                                if($row2["email_only"] <> "0"):
+                                    $email_only = "-";
+                                else:
+                                    $email_only = "";
+                                endif;
+                                if($first):
+                                    $contacts = $row2["id"] . $email_only;
+                                    $first = false;
+                                else:
+                                    $contacts .= "," . $row2["id"] . $email_only;
+                                endif;
+                            endwhile;
+                            $result2->free();
+                        endif;
+                        if($row["optgroup"] != $optgroup) {
+                            $optgroup = $row["optgroup"];
+                            echo '<optgroup title="' . $optgroup . '" label="' . $optgroup . '"></optgroup>';
+                        }
+                        echo '<option data-alert="' . htmlentities($row["alert"]) . '" value="' . $contacts . '" title="' . htmlentities($row["name"] . " (" . $row["id"] . ")") . '">' . htmlentities($row["name"]) . '</option>';
+                    endwhile;
+                    $result->free();
 ?>
 </select>
 </div>
 <?php
+                endif;
+                $k++;
             endif;
-            $k++;
         endif;
     } //foreach
 
