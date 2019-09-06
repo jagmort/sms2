@@ -19,9 +19,9 @@
     margin: 6em 10px 0 0;
 }
 
-#left div span#count {
+#left span#count {
     position: absolute;
-    margin: -2em 1em;
+    margin: -2em 28em;
 }
 
 #priority {

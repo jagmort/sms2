@@ -29,8 +29,8 @@ if(($identity = Yii::$app->user->identity) != NULL):
 </div>
 <div>
 <textarea id="text" name="text" maxlength="<?= MAX_SMS_LENGTH ?>"></textarea>
-<span id="count"></span>
 </div>
+<span id="count"></span>
 <div id="attach"><input type="file" name="file" id="file" /></div>
 <div id="buttons">
 <button type="submit" id="btn" disabled>Отправить</button> <span id="result"></span> <button type="button" id="clr" disabled>Очистить</button> 
