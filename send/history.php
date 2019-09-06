@@ -27,7 +27,7 @@ try {
 $from_date = $datetime1->format('Y-m-d');
 $to_date = $datetime2->format('Y-m-d');
 
-if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dept, text, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, put FROM recipient, sms, contact, user, `group` WHERE put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT group_id FROM user, `group` WHERE `group`.id = group_id AND auth_key = ?) ORDER BY put DESC, name ASC")) {
+if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dept, text, argus, sms.recovery AS recovery, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, put FROM recipient, sms, contact, user, `group` WHERE put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT group_id FROM user, `group` WHERE `group`.id = group_id AND auth_key = ?) ORDER BY put DESC, name ASC")) {
 
     $stmt->bind_param("sss", $from_date, $to_date, $authkey);
     $stmt->execute();
@@ -61,7 +61,7 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
 
 ?>
 <table class="history">
-<tr><th>ID</th><th>User</th><th>Text</th><th>To</th><th>Created</th><th>SMS Sent</th><th>Status</th></tr>
+<tr><th>ID</th><th>User</th><th>Text</th><th>Argus</th><th>To</th><th>Created</th><th>SMS Sent</th><th>Status</th></tr>
 <?php
     $i = 0;
     $uid = '';
@@ -74,7 +74,7 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
                     echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
                 }
                 else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
-                echo "<td>$uid</td><td>$username</td><td>$text $filename</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
+                echo "<td>$uid</td><td>$username</td><td>$text $filename</td><td>$argus</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
                 echo "</tr>\n";
             }
             $i++;
@@ -83,6 +83,7 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
             $group = $row["gname"];
             $name = $contact;
             $text = $row["text"];
+            $argus = $row["argus"] . ($row["recovery"] > 0 ? "<br />+" : "");
             if(strlen($row["filename"]) > 0) {
                 $dtput = new DateTime($row["put"]);
                 $filename = '<a href="/sms2/send/files/' . $dtput->format('Y/m/d/') . $row["filename"] . '">&#128193;</a>';
@@ -130,7 +131,7 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
             echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
         }
         else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
-        echo "<td>$uid</td><td>$username</td><td>$text $filename</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
+        echo "<td>$uid</td><td>$username</td><td>$text $filename</td><td>$argus</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
         echo "</tr>\n";
     }
 ?>
