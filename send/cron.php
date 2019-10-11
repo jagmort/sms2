@@ -31,6 +31,11 @@ function SendSMS($uid, $contact_id, $dept, $phone, $email, $text, $priority) {
     $num = 0;
     $order = array("|"); // проблемный символ, зависает отправка
     $at = "komy $contact_id wt	$dept	$phone	$email" . str_replace($order, "/", $txt) . "\r\n\r\n";
+    $at .= "ATZ^\r\n";
+    $at .= "1 pause\r\n";
+    $at .= "ATE0^\r\n";
+    $at .= "1 pause\r\n";
+
     foreach ($arText as $text) {
 
         $size = substr("0" . strtoupper(dechex(mb_strlen($text) * 2 + 6)), -2); // длина сообщения в HEX для вставки в хедер SMS
@@ -42,12 +47,6 @@ function SendSMS($uid, $contact_id, $dept, $phone, $email, $text, $priority) {
         $pdu_data = "0051000B91" . $pdu_number . "000808" . $size . "050003" . $rand . $count . $snum . $hex; // Начало формирования, заголовок + номер + текст
         $length = (strlen($pdu_data) - 2) / 2; // длина для AT+CMGS=
 
-        $at .= "ATZ^\r\n";
-        $at .= "1 pause\r\n";
-        $at .= "ATE0^\r\n";
-        $at .= "1 pause\r\n";
-        $at .= "AT+CSMS=0^\r\n";
-        $at .= "1 pause\r\n";
         $at .= "AT+CMGS=$length^\r\n";
         $at .= "1 pause\r\n";
         $at .= "$pdu_data|\r\n";
