@@ -1,11 +1,12 @@
 <?php
+require('param.php');
 
 $webdir = "/var/www/html/sms2/send";
 
 $files = array();
 $out = "<li>";
 $sum = 0;
-for ($i = 1; $i < 7; $i++) {
+for ($i = 1; $i <= PHONES_QTY; $i++) {
     unset($response);
     $response = file("$webdir/in/smsVB$i.txt");
     $count = sizeof($response);
