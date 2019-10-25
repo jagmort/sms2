@@ -12,10 +12,10 @@ function AddHistory3(&$db, $contacts, $text, $user_id, $uid, $put, $name, $prior
         $group = $row["gname"];
     }
     $txt = mb_substr($text, 0, MAX_SMS_LENGTH - strlen($group) - 3) . " ($group)";
-    if(mb_eregi('.*ПРМОН\-(\d+).*', $txt, $reg))
-        $argus = $reg[1];
-    else
-        $argus = 0;
+    $argus = 0;
+    if(preg_match_all('/ПРМОН\-(\d+)/', $txt, $reg, PREG_SET_ORDER))
+        if(count($reg) < 2)
+            $argus = $reg[0][1];
     if($stmt = $db->prepare("INSERT INTO sms (text, argus, recovery, user_id, gid, uid, filename, priority) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
         $stmt->bind_param("siiiissi", $txt, $argus, $recovery, $user_id, $group_id, $uid, $name, $priority);
         $stmt->execute();
