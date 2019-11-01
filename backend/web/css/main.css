@@ -333,13 +333,16 @@ ul.tabs li.current {
     padding: 2px;
 }
 
-.history {
+table.history {
     margin: 1em 0;
     width: 100%;
+    border-collapse:separate;
+    border:none;
 }
 
 .history td {
-    border: 1px solid #999;
+    border-left:solid #999 1px;
+    border-top:solid #999 1px;
     padding: .2em;
     max-width: 600px;
     font-size: 90%;
@@ -364,9 +367,43 @@ ul.tabs li.current {
     min-width: 400px;
 }
 .history th {
-    border: 1px solid #999;
+    border-left:solid #999 1px;
+    border-top: none;
     padding: .2em;
     background: #eee;
+}
+
+.history tr:first-child th {
+     border-top: solid #999 1px;
+}
+
+.history tr:last-child td {
+     border-bottom: solid #999 1px;
+}
+
+.history tr:last-child td:first-child {
+     border-bottom: solid #999 1px;
+     border-radius: 0 0 0 5px;
+}
+
+.history th:first-child {
+     border-left: solid #999 1px;
+     border-radius: 5px 0;
+
+}
+
+.history th:last-child {
+     border-right: solid #999 1px;
+     border-radius: 0 5px 0 0;
+}
+
+.history td:last-child {
+     border-right: solid #999 1px;
+}
+
+.history tr:last-child td:last-child {
+     border-right: solid #999 1px;
+     border-radius: 0 0 5px 0;
 }
 
 .history i {
