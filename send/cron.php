@@ -132,7 +132,10 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
 
         if($uid == $row["uid"]) {
             if($row["tomail"] != "") {
-                $mail->addAddress($row["tomail"], $row["name"]);     // Add address to multirecipient email
+                $arr = explode(",", $row["tomail"]);
+                reset($arr);
+                while (list($k, $v) = each($arr))
+                    $mail->addAddress($v, $row["name"]);     // Add address to multirecipient email
                 $sendmail = true;
                 if($row["email_only"] > 0) {
                     $status = $status | STATUS_EMAIL_SENT;
