@@ -38,16 +38,18 @@ function scanCheckboxes() {
     $("#phones").empty();
     $('#tabs input:checkbox').each(function () {
         var el = $(this);
-        switch(el.data('checked')) {
-            case 2:
-                program.push(el.val());
-                $("#phones").append(el.val() + "; ");
-                break;
-            case 1:
-                program.push(el.val());
-                $("#phones").append(el.val() + "-; ");
-                break;
-            default:
+        if(el.is(':disabled') != true) {
+            switch(el.data('checked')) {
+                case 2:
+                    program.push(el.val());
+                    $("#phones").append(el.val() + "; ");
+                    break;
+                case 1:
+                    program.push(el.val());
+                    $("#phones").append(el.val() + "-; ");
+                    break;
+                default:
+            }
         }
     });
     if($("#phones").val() != '') {
