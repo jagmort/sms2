@@ -1,5 +1,4 @@
 <?php
-
 $this->title = 'SMS 2+';
 $this->registerJsFile('js/jquery-3.2.1.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerJsFile('js/send.js', ['position' => yii\web\View::POS_HEAD]);
@@ -79,7 +78,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                 $tabcont .= '<div id="tab-' . $row["id"] . '" class="tab-content' . ($i != 1 ? '' : ' current') . "\">\n";
             }
 
-            if ($stmt = $db->prepare("SELECT contact.id AS id, mobile, name, dept, block, position, work, home, email, comment, keyword, contact_tab.`order` AS `order`, tab_id FROM contact, contact_tab WHERE contact.id = contact_id AND tab_id = ? ORDER BY block, `order` DESC, name")):
+            if ($stmt = $db->prepare("SELECT contact.id AS id, mobile, name, dept, block, position, work, home, email, comment, keyword, contact_tab.`order` AS `order`, tab_id, work_from, work_to, vac_from, vac_to FROM contact, contact_tab WHERE contact.id = contact_id AND tab_id = ? ORDER BY block, `order` DESC, name")):
                 $stmt->bind_param("i", $row["id"]);
                 $stmt->execute();
                 $result2 = $stmt->get_result();
@@ -100,7 +99,28 @@ if(($identity = Yii::$app->user->identity) != NULL):
                         if(isset($_GET['id']) && ($_GET['id'] == $row2["id"])) $tabcont .= ' class="detailed"';
                         $tabcont .= '>';
                     endif;
-                    $tabcont .= "<input title=\"&#128241; SMS и e-mail\n&#9993;  только e-mail\" type=\"checkbox\" id=\"phone" . $row2["id"] . '" value="' . $row2["id"] . '" data-keyword="' . htmlentities($row2["keyword"]) . '"/>';
+                    if($row2['vac_from'] != '0000-00-00' && $row2['vac_to'] != '0000-00-00') {
+                        $vac_from = DateTime::createFromFormat('Y-m-d', $row2['vac_from']);
+                        $vac_to = DateTime::createFromFormat('Y-m-d', $row2['vac_to']);
+                    }
+                    else {
+                        $vac_from = new DateTime(null, new DateTimeZone('Europe/Moscow'));
+                        $vac_from->sub(new DateInterval('P1D'));
+                        $vac_to = new DateTime(null, new DateTimeZone('Europe/Moscow'));
+                        $vac_to->sub(new DateInterval('P1D'));
+                    }
+                    if($row2['work_from'] != '00:00:00' && $row2['work_to'] != '00:00:00') {
+                        $work_from = DateTime::createFromFormat('Y-m-d H:i:s', $datetime->format('Y-m-d ') . $row2['work_from']);
+                        $work_to = DateTime::createFromFormat('Y-m-d H:i:s', $datetime->format('Y-m-d ') . $row2['work_to']);
+                    }
+                    else {
+                        $work_from = 0;
+                        $work_to = 0;
+                    }
+                    if($vac_from <= $datetime && $vac_to >= $datetime) // отпуск
+                        $tabcont .= "<input title=\"&#128241; SMS и e-mail\n&#9993;  только e-mail\n&times; недоступен\" type=\"checkbox\" id=\"phone" . $row2["id"] . '" value="' . $row2["id"] . '" data-keyword="' . htmlentities($row2["keyword"]) . '" disabled />';
+                    else 
+                        $tabcont .= "<input title=\"&#128241; SMS и e-mail\n&#9993;  только e-mail\n&times; недоступен\" type=\"checkbox\" id=\"phone" . $row2["id"] . '" value="' . $row2["id"] . '" data-keyword="' . htmlentities($row2["keyword"]) . '"/>';
                     $tabcont .= '<abbr order="' . $row2["order"] . '">';
                     $tabcont .= preg_replace('/(.*)\'(.*)\'(.*)/i', '${1}<strong>${2}</strong>${3}', preg_replace('/_/i', ' ', htmlentities($row2["name"]))) . '<br />';
                     $tabcont .= '<span>' . $row2["position"] . ', ' . $row2["dept"] . '</span>';
@@ -133,6 +153,10 @@ if(($identity = Yii::$app->user->identity) != NULL):
                         $tabcont .= '<br />Вкладка: ' . $row2["tab_id"];
                         $tabcont .= '<br />Блок: ' . htmlentities($row2["block"]);
                         $tabcont .= '<br />Порядок: ' . $row2["order"];
+                        if($vac_to > $datetime)
+                            $tabcont .= '<br />Отпуск: ' . $vac_from->format('d.m.Y') . ' — ' . $vac_to->format('d.m.Y');
+                        if($work_to != 0)
+                            $tabcont .= '<br />Время работы: ' . $work_from->format('H:i') . ' — ' . $work_to->format('H:i') . ' MSK';
                         $tabcont .= '<br />Keyword: ' . htmlentities($row2["keyword"]) . '</span>';
                     endif;
                     $tabcont .= '</div>';
