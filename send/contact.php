@@ -77,6 +77,7 @@ if($admin > USER_KEYWORD) {
 <input type="hidden" name="id" value="<?= $id ?>" />
 <input type="hidden" name="tab" value="<?= $tab_id ?>" />
 <div class="readonly">ID <?= $id ?></div>
+<div class="readonly">Tab <?= $tab_id ?></div>
 <?php
     if($admin > USER_EDITOR) {
 ?>
