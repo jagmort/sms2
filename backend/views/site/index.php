@@ -4,7 +4,8 @@ $this->registerJsFile('js/jquery-3.2.1.js', ['position' => yii\web\View::POS_HEA
 $this->registerJsFile('js/send.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerCssFile('css/main.css');
 
-$datetime = new DateTime(null, new DateTimeZone('Europe/Moscow'));
+$tz = new DateTimeZone('Europe/Moscow');
+$datetime = new DateTime(null, $tz);
 $tabs = array();
 ?>
 
@@ -47,6 +48,23 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <?php
     if(isset($_GET["tab"]))
         $tab_id = $_GET["tab"];
+
+    if($datetime->format('N') < 6) // Today is a workday
+        $workday = true;
+    else
+        $workday = false;
+    if ($stmt = $db->prepare("SELECT `workday` FROM `calendar` WHERE dt = ?")) {
+        $stmt->bind_param("s", $datetime->format('Y-m-d'));
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if(($wd = $result->fetch_array(MYSQLI_NUM)) !== NULL) {
+            if($wd[0] < 1)
+                $workday = false;
+            else
+                $workday = true;
+        }
+        $result->free();
+    }
 
     if ($stmt = $db->prepare("SELECT tab.id AS id, tab.name AS name, admin FROM `tab`, `group`, `group_tab`, `user` WHERE `group`.id = group_tab.group_id AND tab.id = tab_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC, tab.name")):
         $stmt->bind_param("s", $identity->getAuthKey());
@@ -100,27 +118,27 @@ if(($identity = Yii::$app->user->identity) != NULL):
                         $tabcont .= '>';
                     endif;
                     if($row2['vac_from'] != '0000-00-00' && $row2['vac_to'] != '0000-00-00') {
-                        $vac_from = DateTime::createFromFormat('Y-m-d', $row2['vac_from']);
-                        $vac_to = DateTime::createFromFormat('Y-m-d', $row2['vac_to']);
+                        $vac_from = DateTime::createFromFormat('Y-m-d', $row2['vac_from'], $tz);
+                        $vac_to = DateTime::createFromFormat('Y-m-d', $row2['vac_to'], $tz);
                     }
                     else {
-                        $vac_from = new DateTime(null, new DateTimeZone('Europe/Moscow'));
+                        $vac_from = new DateTime(null, $tz);
                         $vac_from->sub(new DateInterval('P1D'));
-                        $vac_to = new DateTime(null, new DateTimeZone('Europe/Moscow'));
+                        $vac_to = new DateTime(null, $tz);
                         $vac_to->sub(new DateInterval('P1D'));
                     }
                     if($row2['work_from'] != '00:00:00' && $row2['work_to'] != '00:00:00') {
-                        $work_from = DateTime::createFromFormat('Y-m-d H:i:s', $datetime->format('Y-m-d ') . $row2['work_from']);
-                        $work_to = DateTime::createFromFormat('Y-m-d H:i:s', $datetime->format('Y-m-d ') . $row2['work_to']);
+                        $work_from = DateTime::createFromFormat('Y-m-d H:i:s', $datetime->format('Y-m-d ') . $row2['work_from'], $tz);
+                        $work_to = DateTime::createFromFormat('Y-m-d H:i:s', $datetime->format('Y-m-d ') . $row2['work_to'], $tz);
                     }
                     else {
-                        $work_from = 0;
-                        $work_to = 0;
+                        $work_from = DateTime::createFromFormat('Y-m-d H:i:s', $datetime->format('Y-m-d 00:00:00'), $tz);
+                        $work_to = DateTime::createFromFormat('Y-m-d H:i:s', $datetime->format('Y-m-d 00:00:00'), $tz);
                     }
-                    if($vac_from <= $datetime && $vac_to >= $datetime) // отпуск
-                        $tabcont .= "<input title=\"&#128241; SMS и e-mail\n&#9993;  только e-mail\n&times; недоступен\" type=\"checkbox\" id=\"phone" . $row2["id"] . '" value="' . $row2["id"] . '" data-keyword="' . htmlentities($row2["keyword"]) . '" disabled />';
-                    else 
-                        $tabcont .= "<input title=\"&#128241; SMS и e-mail\n&#9993;  только e-mail\n&times; недоступен\" type=\"checkbox\" id=\"phone" . $row2["id"] . '" value="' . $row2["id"] . '" data-keyword="' . htmlentities($row2["keyword"]) . '"/>';
+                    $tabcont .= "<input title=\"&#128241; SMS и e-mail\n&#9993;  только e-mail\n&times; недоступен\" type=\"checkbox\" id=\"phone" . $row2["id"] . '" value="' . $row2["id"] . '" data-keyword="' . htmlentities($row2["keyword"]) .'"';
+                    if(($vac_from <= $datetime && $vac_to >= $datetime) || (($work_from != $work_to) && ($work_from > $datetime || $work_to < $datetime || !$workday))) // Vacation or not a worktime
+                        $tabcont .= ' disabled';
+                    $tabcont .= ' wd="' . $workday . '" />';
                     $tabcont .= '<abbr order="' . $row2["order"] . '">';
                     $tabcont .= preg_replace('/(.*)\'(.*)\'(.*)/i', '${1}<strong>${2}</strong>${3}', preg_replace('/_/i', ' ', htmlentities($row2["name"]))) . '<br />';
                     $tabcont .= '<span>' . $row2["position"] . ', ' . $row2["dept"] . '</span>';
@@ -155,8 +173,8 @@ if(($identity = Yii::$app->user->identity) != NULL):
                         $tabcont .= '<br />Порядок: ' . $row2["order"];
                         if($vac_to > $datetime)
                             $tabcont .= '<br />Отпуск: ' . $vac_from->format('d.m.Y') . ' — ' . $vac_to->format('d.m.Y');
-                        if($work_to != 0)
-                            $tabcont .= '<br />Время работы: ' . $work_from->format('H:i') . ' — ' . $work_to->format('H:i') . ' MSK';
+                        if($work_from != $work_to)
+                            $tabcont .= '<br />Время работы: ' . $work_from->format('H:i') . ' — ' . $work_to->format('H:i T');
                         $tabcont .= '<br />Keyword: ' . htmlentities($row2["keyword"]) . '</span>';
                     endif;
                     $tabcont .= '</div>';

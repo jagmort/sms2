@@ -229,7 +229,6 @@ ul.tabs li.current {
 .tab-content div input[type='checkbox']:disabled:after {
     background: url("/sms2/backend/web/img/disabled.png") #fff;
     border: 0px solid #fff;
-    cursor: not-allowed;
 }
 
 .tab-content abbr {

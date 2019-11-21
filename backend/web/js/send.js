@@ -94,7 +94,7 @@ $(document).ready(function() {
                 $('#alert>.msg').html(alert);
                 $('#alert')[0].showModal();
             }
-       });
+        });
     })
 
     // File input
@@ -220,12 +220,32 @@ $(document).ready(function() {
     });
 
     // Show contact details
-    $("abbr").click(function(){
-        $(".current > div > div").removeClass("detailed");
-        $(".details").hide();
-        $(this).parent().children(".details").slideToggle("fast");
-        $(this).parent().addClass("detailed");
-
+    var clicks = 0;
+    $("abbr").click(function(e){
+        var self = $(this);
+        clicks++;
+        if (clicks == 1) {
+            setTimeout(function(){
+                if(clicks == 1) {
+                    if(self.parent().hasClass("detailed")) {
+                        $(".current > div > div").removeClass("detailed");
+                        $(".details").hide();
+                    }
+                    else {
+                        $(".current > div > div").removeClass("detailed");
+                        $(".details").hide();
+                        self.siblings(".details").slideToggle("fast");
+                        self.parent().addClass("detailed");
+                    }
+                } else {
+                    if(self.siblings('input').is(":disabled"))
+                        self.siblings('input').removeAttr('disabled');
+                    else
+                        self.siblings('input').prop('disabled', true);
+                }
+                    clicks = 0;
+            }, 300);
+        }
     });
 
     // Edit contact dialog
