@@ -111,6 +111,15 @@
     font-size: 90%;
 }
 
+#queue li.max {
+    color: red;
+    font-weight: bold;
+}
+
+#queue li span {
+    font-weight: bold;
+}
+
 #tabs {
     float: left;
     margin: 3.9em auto 0 auto;
