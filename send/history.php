@@ -55,7 +55,7 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
         echo '<p';
         if($sum > PHONES_ALL)
             echo ' class="max"';
-        echo '>Queue: ' . $out . '</p>';
+        echo '>Lines: ' . $out . '</p>';
     }
     // ---------------------
 
@@ -83,7 +83,7 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
             $group = $row["gname"];
             $name = $contact;
             $text = $row["text"];
-            $argus = $row["argus"] . ($row["recovery"] > 0 ? "<br />+" : "");
+            $argus = ($row["argus"] > 0 ? $row["argus"] : "") . ($row["recovery"] > 0 ? "<br />+" : "");
             if(strlen($row["filename"]) > 0) {
                 $dtput = new DateTime($row["put"]);
                 $filename = '<a href="/sms2/send/files/' . $dtput->format('Y/m/d/') . $row["filename"] . '">&#128193;</a>';
