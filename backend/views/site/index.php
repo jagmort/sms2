@@ -11,8 +11,16 @@ $tabs = array();
 
 <!-- view -->
 <?php
+if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+    $userip = $_SERVER['HTTP_CLIENT_IP'];
+} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    $userip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+} else {
+    $userip = $_SERVER['REMOTE_ADDR'];
+}
 if(($identity = Yii::$app->user->identity) != NULL):
     require('../../send/param.php');
+
 ?>
 <dialog id="edit"></dialog>
 <dialog id="add"></dialog>
@@ -21,6 +29,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <div id="content">
 <form id="ajax_form" method="post" action="" enctype="multipart/form-data">
 <input id="identity" type="hidden" name="authkey" value="<?= $identity->getAuthKey() ?>" />
+<input id="userip" type="hidden" name="userip" value="<?= $userip ?>" />
 <div id="left">
 <div id="priority">
 Приоритет
