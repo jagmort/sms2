@@ -215,7 +215,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
             $stmt->execute();
             $result = $stmt->get_result();
             $rlist = $result->num_rows;
-            if ($stmt = $db->prepare("SELECT list.id AS id, list.name AS name, alert, optgroup FROM `list`, `group`, `group_list`, `user` WHERE tab_id = ? AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC")):
+            if ($stmt = $db->prepare("SELECT list.id AS id, list.name AS name, alert, optgroup FROM `list`, `group`, `group_list`, `user` WHERE tab_id = ? AND list.id = list_id AND `group`.id = group_list.group_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC, `id` ASC")):
                 $stmt->bind_param("is", $tab, $identity->getAuthKey());
                 $stmt->execute();
                 $result = $stmt->get_result();
