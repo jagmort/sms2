@@ -54,6 +54,10 @@
     margin:0 0 4px 0;
 }
 
+.opt1 {
+    background-color: #fcc;
+}
+
 #text {
     width: 30em;
     height: 20em;
