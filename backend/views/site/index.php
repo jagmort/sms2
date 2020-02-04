@@ -224,7 +224,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                     if($rlist > 40) $rlist = 40;
 ?>
 <div class="list<?= ($k < 1) ? ' current' : '' ?>" id="list-tab-<?= $tab ?>">
-<select id="list"
+<select
 <?php
                     if($rlist != 1):
                         echo ' size="' . $rlist . '">';
