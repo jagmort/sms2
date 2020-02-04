@@ -47,6 +47,13 @@
     background: url("/sms2/backend/web/img/up.png") #fff;
 }
 
+#subject {
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #999;
+    margin:0 0 4px 0;
+}
+
 #text {
     width: 30em;
     height: 20em;
@@ -113,10 +120,10 @@
 
 #queue li.max {
     color: red;
-    font-weight: bold;
 }
 
 #queue li span {
+    color: red;
     font-weight: bold;
 }
 

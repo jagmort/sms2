@@ -37,6 +37,22 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <input type="checkbox" name="priority" value="0" checked title="Высокий">
 </div>
 <div>
+<select name="subject" id="subject">
+<?php
+    if ($stmt = $db->prepare("SELECT * FROM subject ORDER BY id")) {
+        $stmt->execute();
+        $result = $stmt->get_result();
+        while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+?>
+    <option value="<?= $row["id"] ?>"><?= $row["text"] ?> SMS...</option>
+<?php
+        }
+        $result->free();
+    }
+?>
+</select>
+</div>
+<div>
 <textarea id="text" name="text" maxlength="<?= MAX_SMS_LENGTH ?>"></textarea>
 </div>
 <span id="count"></span>
