@@ -37,7 +37,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <input type="checkbox" name="priority" value="0" checked title="Высокий">
 </div>
 <div>
-<select name="subject" id="subject">
+<select name="subject" id="subject" title="Тема e-mail">
 <?php
     if ($stmt = $db->prepare("SELECT * FROM subject ORDER BY id")) {
         $stmt->execute();
