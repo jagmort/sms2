@@ -70,7 +70,7 @@ function scanCheckboxes() {
 $(document).ready(function() {
 
     // List selection
-    $('select').each(function () {
+    $('.list > select').each(function () {
         $(this).on('change', function() {
             var all_checkboxes = $('#tabs input:checkbox');
             all_checkboxes.prop('checked', false);
