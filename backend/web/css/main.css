@@ -358,6 +358,14 @@ ul.tabs li.current {
     padding: 2px;
 }
 
+#w0 {
+    border-radius: 5px 0 0 5px;
+}
+
+#w0-2 {
+    border-radius: 0 5px 5px 0;
+}
+
 table.history {
     margin: 1em 0;
     width: 100%;
