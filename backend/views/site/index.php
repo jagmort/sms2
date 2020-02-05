@@ -204,6 +204,11 @@ if(($identity = Yii::$app->user->identity) != NULL):
                     endif;
                     $tabcont .= '</div>';
                     $tabcont .= "</div>\n";
+
+                    unset($vac_from);
+                    unset($vac_to);
+                    unset($work_from);
+                    unset($work_to);
                 endwhile;
                 if($block != "") $tabcont .= "</div>\n";
                 $result2->free();
