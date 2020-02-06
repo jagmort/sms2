@@ -75,7 +75,8 @@ $(document).ready(function() {
             var text = $("#text").val();
             var subject = $(this).children("option:selected").attr("text");
             if(text.indexOf(subject) < 0) {
-                $("#text").val(subject + text);
+                text = subject + text;
+                $("#text").val(text.slice(0, 600));
             }
         });
     });
