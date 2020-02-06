@@ -44,7 +44,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
         $result = $stmt->get_result();
         while($row = $result->fetch_array(MYSQLI_ASSOC)) {
 ?>
-    <option value="<?= $row["id"] ?>" class="opt<?= $row["priority"] ?>"><?= $row["text"] . $subject ?></option>
+    <option value="<?= $row["id"] ?>" text="<?= $row["text"] ?>" class="opt<?= $row["priority"] ?>"><?= $row["text"] . $subject ?></option>
 <?php
         }
         $result->free();

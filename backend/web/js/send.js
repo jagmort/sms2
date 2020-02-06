@@ -69,6 +69,17 @@ function scanCheckboxes() {
 
 $(document).ready(function() {
 
+    // Add subject to SMS text
+    $('#subject').each(function () {
+        $(this).on('change', function() {
+            var text = $("#text").val();
+            var subject = $(this).children("option:selected").attr("text");
+            if(text.indexOf(subject) < 0) {
+                $("#text").val(subject + text);
+            }
+        });
+    });
+
     // List selection
     $('.list > select').each(function () {
         $(this).on('change', function() {
