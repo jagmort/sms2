@@ -84,6 +84,7 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
             $name = $contact;
             $subject = $row["subject_id"];
             $text = $row["text"];
+            $text = str_replace("\n", '<br />', $text);
             $argus = ($row["argus"] > 0 ? $row["argus"] : "") . ($row["recovery"] > 0 ? "<br />+" : "");
             if(strlen($row["filename"]) > 0) {
                 $dtput = new DateTime($row["put"]);
