@@ -98,15 +98,24 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
     $sendmail = false;
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
         if($uid == "") {
+            $namelist = "\n\nОповещены: ";
             $uid = $row["uid"];
             $cc = $row["frommail"];
             $bcc = $row["supervisor"];
             $fname = $row["fname"];
-            $body = $row["text"] . $row["sign"] . "\n\nID: " . $row["uid"];
+            $body = $row["text"];
+            $footer = $row["sign"] . "\n\nID: " . $row["uid"];
             $mail->addAddress($row["frommail"], $row["fname"]);
             $mail_subject = $row["subject"] . $subject;
             $mail_priority = $row["mail_priority"];
-            if($bcc !== '') $mail->addAddress($bcc, $row["fname"]);
+            $bccarr = array();
+            if($bcc !== '') {
+                $bccarr = explode(',', $bcc);
+                foreach ($bccarr as $v) {
+                    $mail->addCC($v);
+                }
+            }
+            unset($bccarr);
             if(strlen($row["filename"]) > 0) {
                 $dtput = new DateTime($row["put"]);
                 $filename = $dtput->format('Y/m/d/') . $row["filename"];
@@ -133,6 +142,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
         }
 
         if($uid == $row["uid"]) {
+            $namelist .= $row["name"] . "; ";
             if($row["tomail"] != "") {
                 $arr = explode(",", $row["tomail"]);
                 reset($arr);
@@ -171,7 +181,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             if($sendmail) {
                 $mail->Subject = $mail_subject;
                 $mail->setFrom($cc, $fname);
-                $mail->Body = $body;
+                $mail->Body = $body . $namelist . $footer;
                 $mail->Priority = $mail_priority;
                 if(strlen($filename) > 0) $mail->addAttachment("/var/www/html/sms2/send/files/$filename");
                 try {
@@ -187,18 +197,18 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $cc = $row["frommail"];
             $bcc = $row["supervisor"];
             $fname = $row["fname"];
-            $body = $row["text"] . $row["sign"] . "\n\nID: " . $row["uid"];
+            $body = $row["text"];
+            $footer = $row["sign"] . "\n\nID: " . $row["uid"];
             $mail_subject = $row["subject"] . $subject;
             $mail_priority = $row["mail_priority"];
         }
-
     }
 
     if($uid != "") { // Sent last email if exist
         if($sendmail) {
             $mail->Subject = $mail_subject;
             $mail->setFrom($cc, $fname);
-            $mail->Body = $body;
+            $mail->Body = $body . $namelist . $footer;
             $mail->Priority = $mail_priority;
             if(strlen($filename) > 0) $mail->addAttachment("/var/www/html/sms2/send/files/$filename");
             try {
