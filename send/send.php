@@ -3,7 +3,7 @@ require('param.php');
 
 function AddHistory3(&$db, $contacts, $subject, $text, $user_id, $userip, $uid, $put, $name, $priority, $recovery) {
     $res = false;
-    if ($stmt = $db->prepare("SELECT group_id, group.name AS gname FROM `user`, `group` WHERE group_id = `group`.id AND user.id = ?")) {
+    if ($stmt = $db->prepare("SELECT group_id, group.name AS gname, recovery FROM `user`, `group` WHERE group_id = `group`.id AND user.id = ?")) {
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -13,9 +13,11 @@ function AddHistory3(&$db, $contacts, $subject, $text, $user_id, $userip, $uid, 
     }
     $txt = mb_substr($text, 0, MAX_SMS_LENGTH - strlen($group) - 3) . " ($group)";
     $argus = 0;
-    if(preg_match_all('/ПРМОН\-(\d+)/', $txt, $reg, PREG_SET_ORDER))
-        if(count($reg) < 2)
-            $argus = $reg[0][1];
+    if($row["recovery"] > 0) {
+        if(preg_match_all('/ПРМОН\-(\d+)/', $txt, $reg, PREG_SET_ORDER))
+            if(count($reg) < 2)
+                $argus = $reg[0][1];
+    }
     if($stmt = $db->prepare("INSERT INTO sms (subject_id, text, argus, recovery, user_id, ip, gid, uid, filename, priority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
         $stmt->bind_param("isiiisissi", $subject, $txt, $argus, $recovery, $user_id, $userip, $group_id, $uid, $name, $priority);
         $stmt->execute();
@@ -73,9 +75,9 @@ if (isset($_POST["authkey"]) && isset($_POST["text"]) && isset($_POST["phones"])
     else
         $subject = 1;
     $text = trim($_POST["text"]);
-    $order = array("\n", "\r", "\t", "\0", "\x0B", "^");
+    $order = array("\r", "\t", "\0", "\x0B", "^");
     $text = str_replace($order, ' ', $text);
-    $text = preg_replace('/\s+/', ' ', $text);
+    $text = mb_ereg_replace('/\h+/', ' ', $text);
     $AuthKey = $_POST["authkey"];
     if($user_id = getName($db, $AuthKey)) {
         $uid = $datetime->format('Ymd-His-') . substr("000$user_id", -4);
