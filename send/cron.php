@@ -97,33 +97,6 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
     $uid = "";
     $sendmail = false;
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-        if($uid == "") {
-            $namelist = "\n\nОповещены: ";
-            $uid = $row["uid"];
-            $cc = $row["frommail"];
-            $bcc = $row["supervisor"];
-            $fname = $row["fname"];
-            $body = $row["text"];
-            $footer = $row["sign"] . "\n\nID: " . $row["uid"];
-            $mail->addAddress($row["frommail"], $row["fname"]);
-            $mail_subject = $row["subject"] . $subject;
-            $mail_priority = $row["mail_priority"];
-            $bccarr = array();
-            if($bcc !== '') {
-                $bccarr = explode(',', $bcc);
-                foreach ($bccarr as $v) {
-                    $mail->addCC($v);
-                }
-            }
-            unset($bccarr);
-            if(strlen($row["filename"]) > 0) {
-                $dtput = new DateTime($row["put"]);
-                $filename = $dtput->format('Y/m/d/') . $row["filename"];
-            }
-            else {
-                $filename = '';
-            }
-        }
         $status = STATUS_NONE;
         if($row["mobile"] < MIN_PHONE_NUM) $row["email_only"] = 1; // wrong mobile number
         if($row["email_only"] < 1) { // Skip SMS if e-mail only
@@ -141,50 +114,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             }
         }
 
-        if($uid == $row["uid"]) {
-            $arr = preg_split("/[\s,_]+/", $row["name"]);
-            $namelist .= str_replace("'", "", $arr[0]);
-            if(count($arr) > 1) {
-                $namelist .= ' ' . mb_substr($arr[1], 0, 1);
-                if(count($arr) > 2)
-                    $namelist .= ' ' . mb_substr($arr[2], 0, 1);
-            }
-            $namelist .= '; ';
-            if($row["tomail"] != "") {
-                $arr = explode(",", $row["tomail"]);
-                reset($arr);
-                while (list($k, $v) = each($arr))
-                    $mail->addAddress($v, $row["name"]);     // Add address to multirecipient email
-                $sendmail = true;
-                if($row["email_only"] > 0) {
-                    $status = $status | STATUS_EMAIL_SENT;
-                    $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), done = NOW(), status = ? WHERE id = ?");
-                    $stmt->bind_param("ii", $status, $row["id"]);
-                    $stmt->execute();
-                }
-                else {
-                    $status = $status | STATUS_EMAIL_SENT;
-                    $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
-                    $stmt->bind_param("ii", $status, $row["id"]);
-                    $stmt->execute();
-                }
-            }
-            else { // blank email
-                if($row["email_only"] > 0) {
-                    $status = $status | STATUS_NO_EMAIL;
-                    $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), done = NOW(), status = ? WHERE id = ?");
-                    $stmt->bind_param("ii", $status, $row["id"]);
-                    $stmt->execute();
-                }
-                else {
-                    $status = $status | STATUS_NO_EMAIL;
-                    $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
-                    $stmt->bind_param("ii", $status, $row["id"]);
-                    $stmt->execute();
-                }
-            }
-        }
-        else { // Sent email and start next message
+        if($uid == "" || $uid != $row["uid"]) { // Sent email and start next message
             if($sendmail) {
                 $mail->Subject = $mail_subject;
                 $mail->setFrom($cc, $fname);
@@ -200,6 +130,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             }
             $mail->clearAddresses();
 
+            // Start new mail
             $namelist = "\n\nОповещены: ";
             $uid = $row["uid"];
             $cc = $row["frommail"];
@@ -225,47 +156,46 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             else {
                 $filename = '';
             }
-
-            $arr = preg_split("/[\s,_]+/", $row["name"]);
-            $namelist .= str_replace("'", "", $arr[0]);
-            if(count($arr) > 1) {
-                $namelist .= ' ' . mb_substr($arr[1], 0, 1);
-                if(count($arr) > 2)
-                    $namelist .= ' ' . mb_substr($arr[2], 0, 1);
+        }
+        $arr = preg_split("/[\s,_]+/", $row["name"]);
+        $namelist .= str_replace("'", "", $arr[0]);
+        if(count($arr) > 1) {
+            $namelist .= ' ' . mb_substr($arr[1], 0, 1);
+            if(count($arr) > 2)
+                $namelist .= ' ' . mb_substr($arr[2], 0, 1);
+        }
+        $namelist .= '; ';
+        if($row["tomail"] != "") {
+            $arr = explode(",", $row["tomail"]);
+            reset($arr);
+            while (list($k, $v) = each($arr))
+                $mail->addAddress($v, $row["name"]);     // Add address to multirecipient email
+            $sendmail = true;
+            if($row["email_only"] > 0) {
+                $status = $status | STATUS_EMAIL_SENT;
+                $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), done = NOW(), status = ? WHERE id = ?");
+                $stmt->bind_param("ii", $status, $row["id"]);
+                $stmt->execute();
             }
-            $namelist .= '; ';
-            if($row["tomail"] != "") {
-                $arr = explode(",", $row["tomail"]);
-                reset($arr);
-                while (list($k, $v) = each($arr))
-                    $mail->addAddress($v, $row["name"]);     // Add address to multirecipient email
-                $sendmail = true;
-                if($row["email_only"] > 0) {
-                    $status = $status | STATUS_EMAIL_SENT;
-                    $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), done = NOW(), status = ? WHERE id = ?");
-                    $stmt->bind_param("ii", $status, $row["id"]);
-                    $stmt->execute();
-                }
-                else {
-                    $status = $status | STATUS_EMAIL_SENT;
-                    $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
-                    $stmt->bind_param("ii", $status, $row["id"]);
-                    $stmt->execute();
-                }
+            else {
+                $status = $status | STATUS_EMAIL_SENT;
+                $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
+                $stmt->bind_param("ii", $status, $row["id"]);
+                $stmt->execute();
             }
-            else { // blank email
-                if($row["email_only"] > 0) {
-                    $status = $status | STATUS_NO_EMAIL;
-                    $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), done = NOW(), status = ? WHERE id = ?");
-                    $stmt->bind_param("ii", $status, $row["id"]);
-                    $stmt->execute();
-                }
-                else {
-                    $status = $status | STATUS_NO_EMAIL;
-                    $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
-                    $stmt->bind_param("ii", $status, $row["id"]);
-                    $stmt->execute();
-                }
+        }
+        else { // blank email
+            if($row["email_only"] > 0) {
+                $status = $status | STATUS_NO_EMAIL;
+                $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), done = NOW(), status = ? WHERE id = ?");
+                $stmt->bind_param("ii", $status, $row["id"]);
+                $stmt->execute();
+            }
+            else {
+                $status = $status | STATUS_NO_EMAIL;
+                $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
+                $stmt->bind_param("ii", $status, $row["id"]);
+                $stmt->execute();
             }
         }
     }
