@@ -29,7 +29,7 @@ function AddHistory3(&$db, $contacts, $subject, $text, $user_id, $userip, $uid, 
             if ($stmt = $db->prepare("INSERT INTO recipient (sms_id, contact_id, email_only, status) VALUES (?, ?, ?, 0)")) {
                 $stmt->bind_param("iii", $sms_id, $contact_id, $email_only);
                 $stmt->execute();
-                $res = true;    
+                $res = true;
             }
         }
         if($stmt = $db->prepare("UPDATE `sms` SET `put`=? WHERE `id`=?")) {
