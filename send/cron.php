@@ -149,7 +149,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
                 $filename = '';
             }
         }
-        $arr = preg_split("/[\s,_]+/", $row["name"]);
+        $arr = mb_split("[\s,_]+", $row["name"]);
         $namelist .= str_replace("'", "", $arr[0]);
         if(count($arr) > 1) {
             $namelist .= ' ' . mb_substr($arr[1], 0, 1);
