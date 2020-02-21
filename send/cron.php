@@ -56,7 +56,7 @@ function SendSMS($uid, $contact_id, $dept, $phone, $email, $text, $priority) {
 
     $fname = $priority . $priority . "-$uid-" . rand(10, 99) . "-$rid.txt";
 
-    $fout = fopen(dirname(__FILE__) . "/out/$fname", "w");
+    $fout = fopen(__DIR__ . "/out/$fname", "w");
     if(!$fout) {
         $err = error_get_last();
         return $err["message"];
