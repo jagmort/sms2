@@ -67,7 +67,7 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
     $uid = '';
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
         $arr = mb_split("[\s,_]+", $row["name"]);
-        $contact = '<span title="' . htmlentities($row["name"]) . "\n" . htmlentities($row["position"]) . "\n" . $row["mobile"] . "\n" . htmlentities($row["email"]) . '">' . $arr[0] . ' ' . mb_substr($arr[1], 0, 1) . ' ' . mb_substr($arr[2], 0, 1) . "</span> (" . $row["dept"] . ")";
+        $contact = '<span title="' . htmlentities($row["name"]) . "\n" . htmlentities($row["position"]) . "\n" . $row["mobile"] . "\n" . htmlentities($row["email"]) . '">' . str_replace("'", "", $arr[0]) . ' ' . mb_substr($arr[1], 0, 1) . ' ' . mb_substr($arr[2], 0, 1) . "</span> (" . $row["dept"] . ")";
         if($uid !== $row["uid"]) {
             if($uid !== "") {
                 if($username == getName($db, $authkey)) {
