@@ -139,7 +139,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $fname = $row["fname"];
             $body = $row["text"];
             $footer = $row["sign"] . "\n\nID: " . $row["uid"];
-            $mail->addAddress($row["frommail"], $row["fname"]);
+            $mail->addCC($row["frommail"], $row["fname"]);
             $mail_subject = $row["subject"] . $subject;
             $mail_priority = $row["mail_priority"];
             $bccarr = array();
