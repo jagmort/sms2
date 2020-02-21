@@ -121,7 +121,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
                 $mail->setFrom($cc, $fname);
                 $mail->Body = $body . $namelist . $footer;
                 $mail->Priority = $mail_priority;
-                if(strlen($filename) > 0) $mail->addAttachment(dirname(__FILE__) . "/files/$filename");
+                if(strlen($filename) > 0) $mail->addAttachment(__DIR__ . "/files/$filename");
                 try {
                     $mail->send();
                 }
@@ -207,7 +207,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $mail->setFrom($cc, $fname);
             $mail->Body = $body . $namelist . $footer;
             $mail->Priority = $mail_priority;
-            if(strlen($filename) > 0) $mail->addAttachment(dirname(__FILE__) . "/files/$filename");
+            if(strlen($filename) > 0) $mail->addAttachment(__DIR__ . "/files/$filename");
             try {
                 $mail->send();
             }
@@ -228,7 +228,7 @@ if ($stmt = $db->prepare("SELECT recipient.id AS id, contact_id, uid, recipient.
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
         $present = false;
         for ($i = 1; $i <= PHONES_QTY; $i++) {
-            $response = file(dirname(__FILE__) . "/in/smsVB$i.txt");
+            $response = file(__DIR__ . "/in/smsVB$i.txt");
             foreach($response as $line) {
                 $rid = "R" . substr("0000" . $row["contact_id"], -5);
                 if((strpos($line, $row["uid"]) !== false) AND ((strpos($line, $rid) !== false))) {
