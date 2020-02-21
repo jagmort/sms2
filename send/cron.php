@@ -97,6 +97,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
     $uid = "";
     $sendmail = false;
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+        //Send SMS
         $status = STATUS_NONE;
         if($row["mobile"] < MIN_PHONE_NUM) $row["email_only"] = 1; // wrong mobile number
         if($row["email_only"] < 1) { // Skip SMS if e-mail only
@@ -120,7 +121,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
                 $mail->setFrom($cc, $fname);
                 $mail->Body = $body . $namelist . $footer;
                 $mail->Priority = $mail_priority;
-                if(strlen($filename) > 0) $mail->addAttachment("/var/www/html/sms2/send/files/$filename");
+                if(strlen($filename) > 0) $mail->addAttachment(dirname(__FILE__) . "/files/$filename");
                 try {
                     $mail->send();
                 }
@@ -206,7 +207,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $mail->setFrom($cc, $fname);
             $mail->Body = $body . $namelist . $footer;
             $mail->Priority = $mail_priority;
-            if(strlen($filename) > 0) $mail->addAttachment("/var/www/html/sms2/send/files/$filename");
+            if(strlen($filename) > 0) $mail->addAttachment(dirname(__FILE__) . "/files/$filename");
             try {
                 $mail->send();
             }
