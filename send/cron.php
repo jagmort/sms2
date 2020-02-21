@@ -80,17 +80,8 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
     $stmt->execute();
     $result = $stmt->get_result();
     $mail = new PHPMailer(true);
-    //Server settings
     $mail->SMTPDebug = 0;                                 // Enable verbose debug output
-    //$mail->SMTPKeepAlive = true;
-    //$mail->isSMTP();                                      // Set mailer to use SMTP
     $mail->isMail();                                      // Set mailer to use mail()
-    //$mail->Host = $host;                                // Specify main and backup SMTP servers
-    //$mail->SMTPAuth = true;                               // Enable SMTP authentication
-    //$mail->Username = $muser;                                // SMTP username
-    //$mail->Password = $mpass;                               // SMTP password
-    //$mail->SMTPSecure = $SMTPSecure;                            // Enable TLS encryption, `ssl` also accepted
-    //$mail->Port = $port;                                    // TCP port to connect to
     $mail->CharSet = 'utf-8'; 
     $mail->isHTML(false);                                  // Set email format to HTML
 
