@@ -58,7 +58,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <span id="count"></span>
 <div id="attach"><input type="file" name="file" id="file" /></div>
 <div id="buttons">
-<button type="submit" id="btn" disabled>Отправить</button> <span id="result"></span> <button type="button" id="clr" disabled>Очистить</button> 
+<button type="submit" id="btn" disabled>Отправить</button> <input name="phone" id="single" size="11" title="Отправка на произвольный номер" /> <span id="result"></span> <button type="button" id="clr" disabled>Очистить</button> 
 </div>
 <div>
 <textarea id="phones" name="phones" readonly></textarea>
