@@ -130,14 +130,16 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $fname = $row["fname"];
             $body = $row["text"];
             $footer = $row["sign"] . "\n\nID: " . $row["uid"];
-            $mail->addCC($row["frommail"], $row["fname"]);
+            if(filter_var($row["frommail"], FILTER_VALIDATE_EMAIL))
+                $mail->addCC($row["frommail"], $row["fname"]);
             $mail_subject = $row["subject"] . $subject;
             $mail_priority = $row["mail_priority"];
             $bccarr = array();
             if($bcc !== '') {
                 $bccarr = explode(',', $bcc);
                 foreach ($bccarr as $v) {
-                    $mail->addCC($v);
+                    if(filter_var($v, FILTER_VALIDATE_EMAIL))
+                        $mail->addCC($v);
                 }
             }
             unset($bccarr);
@@ -161,7 +163,8 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $arr = explode(",", $row["tomail"]);
             reset($arr);
             while (list($k, $v) = each($arr))
-                $mail->addAddress($v, $row["name"]);     // Add address to multirecipient email
+                if(filter_var($v, FILTER_VALIDATE_EMAIL))
+                    $mail->addAddress($v, $row["name"]);     // Add address to multirecipient email
             $sendmail = true;
             if($row["email_only"] > 0) {
                 $status = $status | STATUS_EMAIL_SENT;
