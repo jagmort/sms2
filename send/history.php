@@ -27,9 +27,9 @@ try {
 $from_date = $datetime1->format('Y-m-d');
 $to_date = $datetime2->format('Y-m-d');
 
-if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dept, subject_id, text, argus, sms.recovery AS recovery, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, put FROM recipient, sms, contact, user, `group` WHERE put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT group_id FROM user, `group` WHERE `group`.id = group_id AND auth_key = ?) ORDER BY uid DESC, name ASC")) {
+if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dept, subject_id, text, argus, sms.recovery AS recovery, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, put FROM recipient, sms, contact, user, `group` WHERE put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid IN (SELECT group_id FROM user, `group` WHERE `group`.id = group_id AND auth_key = ?) UNION SELECT uid, single, '', '', '', subject_id, text, argus, sms.recovery AS recovery, put, put, '', username, `group`.name AS gname, '', '', '', put FROM `sms`, `user`, `group` WHERE put >= ? AND put <= (? + INTERVAL 1 DAY) AND `group`.id = group_id  AND sms.gid IN (SELECT group_id FROM user, `group` WHERE single != '' AND `group`.id = group_id AND auth_key = ?) AND `user`.id = user_id ORDER BY uid DESC, name ASC")) {
 
-    $stmt->bind_param("sss", $from_date, $to_date, $authkey);
+    $stmt->bind_param("ssssss", $from_date, $to_date, $authkey, $from_date, $to_date, $authkey);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -67,7 +67,10 @@ if($stmt = $db->prepare("SELECT uid, contact.name AS name, position, mobile, dep
     $uid = '';
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
         $arr = mb_split("[\s,_]+", $row["name"]);
-        $contact = '<span title="' . htmlentities($row["name"]) . "\n" . htmlentities($row["position"]) . "\n" . $row["mobile"] . "\n" . htmlentities($row["email"]) . '">' . str_replace("'", "", $arr[0]) . ' ' . mb_substr($arr[1], 0, 1) . ' ' . mb_substr($arr[2], 0, 1) . "</span> (" . $row["dept"] . ")";
+        if($row["name"] != '') {
+            $contact = '<span title="' . htmlentities($row["name"]) . "\n" . htmlentities($row["position"]) . "\n" . $row["mobile"] . "\n" . htmlentities($row["email"]) . '">' . str_replace("'", "", $arr[0]) . ' ' . mb_substr($arr[1], 0, 1) . ' ' . mb_substr($arr[2], 0, 1) . "</span>" . (strlen($row["dept"]) > 0 ? " (" . mb_substr($row["dept"], 0, 60) . ")" : '');
+        }
+        else $contact = '';
         if($uid !== $row["uid"]) {
             if($uid !== "") {
                 if($username == getName($db, $authkey)) {
