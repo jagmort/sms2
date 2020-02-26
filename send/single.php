@@ -139,13 +139,13 @@ if (true || isset($_POST["authkey"]) && isset($_POST["text"]) && isset($_POST["p
                         $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), status = ? WHERE id = ?");
                         $stmt->bind_param("ii", $status, $rid);
                         $stmt->execute();
-                        echo "В очереди на отправку";
+                        echo "Отправлено";
                     }
-                    else echo "Ошибка отправки 2";
+                    else echo "Ошибка отправки";
                 }
                 else echo "Неправильный номер";
             }
-            else echo "Ошибка отправки";
+            else echo "Ошибка БД";
         }
         else echo "Пустое сообщение";
     }
