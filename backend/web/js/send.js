@@ -109,6 +109,19 @@ $(document).ready(function() {
         });
     })
 
+    // Phone number 11 symbols only
+    $("#single").keyup(
+        function(){
+            $("#clr").prop('disabled', false);
+            if($(this).val().match(/\d/g).length === 11 && ($("#text").val().length >= 5)) {
+                $("#btn").prop('disabled', false);
+            }
+            else {
+                $("#btn").prop('disabled', true);
+            }
+        }
+    );
+
     // File input
     $("#file").change(
         function(){
@@ -129,20 +142,35 @@ $(document).ready(function() {
         function(){
             clearCheckboxes();
             $("#clr").prop('disabled', true);
+            $("#single").val('');
         }
     );
 
     // Send button
     $("#btn").click(
         function(){
-            if($("#phones").val() != '' && $("#text").val().length >= 5) {
-                sendAjaxFormFile('result_form', 'ajax_form', '/sms2/send/send.php');
-                $("#btn").prop('disabled', true);
-                setTimeout(function(){
-                    $("#result").html("");
-                }, timeout);
-                clearCheckboxes();
-                $("#clr").prop('disabled', true);
+            if($("#text").val().length >= 5) {
+                if($("#single").val() != '') {
+                    sendAjaxFormFile('result_form', 'ajax_form', '/sms2/send/single.php');
+                    $("#btn").prop('disabled', true);
+                    setTimeout(function(){
+                        $("#result").html("");
+                        $("#single").val("");
+                    }, timeout);
+                    clearCheckboxes();
+                    $("#clr").prop('disabled', true);
+                }
+                else {
+                    if($("#phones").val() != '') {
+                        sendAjaxFormFile('result_form', 'ajax_form', '/sms2/send/send.php');
+                        $("#btn").prop('disabled', true);
+                        setTimeout(function(){
+                            $("#result").html("");
+                        }, timeout);
+                        clearCheckboxes();
+                        $("#clr").prop('disabled', true);
+                    }
+                }
             }
             return false;
         }
@@ -225,8 +253,18 @@ $(document).ready(function() {
     // Chars to go
     $("#text").keyup(function(){
         $('#count').text(maxlen - $(this).val().length);
-        if($("#phones").val() != '' && $("#text").val().length >= 5) {
-            $("#btn").prop('disabled', false);
+        if($("#text").val().length >= 5) {
+            if($("#phones").val() != '') {
+                $("#btn").prop('disabled', false);
+            }
+            else {
+                if($("#single").val().length == 11) {
+                    $("#btn").prop('disabled', false);
+                }
+                else {
+                    $("#btn").prop('disabled', true);
+                }
+            }
         }
         else $("#btn").prop('disabled', true);
     });
