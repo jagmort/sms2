@@ -11,7 +11,10 @@ function sendAjaxFormFile(result_form, ajax_form, url) {
         async: false,
         cache: false,
         contentType: false,
-        processData: false
+        processData: false,
+        success:function(data) {
+          $("#result").html(data); 
+        }
     });
 }
   
