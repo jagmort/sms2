@@ -92,7 +92,7 @@ if (isset($_POST["authkey"]) && isset($_POST["text"]) && isset($_POST["phones"])
             }
             $recovery = isset($_POST["recovery"]) ? $_POST["recovery"] : 0;
             if(AddHistory3($db, $phones, $subject, $text, $user_id, $userip, $uid, $put, $name, $priority, $recovery)) {
-                echo "В очереди на отправку";
+                echo "Отправлено";
             }
             else echo "Ошибка отправки";
         }
