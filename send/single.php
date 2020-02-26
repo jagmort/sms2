@@ -4,7 +4,7 @@ require('param.php');
 function SendSingleSMS($uid, $phone, $text, $priority) {
     mb_internal_encoding("UTF-8");
 
-    $rid = "R" . substr("0000$phone", -5);
+    $rid = "R00000";
 
     $phone .= "F";
     if($phone[0] == "8") $phone[0] = "7";
@@ -83,7 +83,12 @@ function AddHistory(&$db, $phone, $subject, $text, $user_id, $userip, $uid, $put
     if($stmt = $db->prepare("INSERT INTO sms (subject_id, text, user_id, ip, gid, uid, priority, single, put) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
         $stmt->bind_param("isisisiss", $subject, $txt, $user_id, $userip, $group_id, $uid, $priority, $phone, $put);
         $stmt->execute();
-        $res = true;
+        $sms_id = $db->insert_id;
+        if ($stmt = $db->prepare("INSERT INTO recipient (sms_id, contact_id, email_only, status, single) VALUES (?, 0, 0, 0, ?)")) {
+            $stmt->bind_param("is", $sms_id, $phone);
+            $stmt->execute();
+            $res = $db->insert_id;
+        }
     }
     return $res;
 }
@@ -125,9 +130,15 @@ if (true || isset($_POST["authkey"]) && isset($_POST["text"]) && isset($_POST["p
         if(strlen($text) > 5) {
             $phone = trim($_POST["phone"]);
             $priority = trim($_POST["priority"]);
-            if(AddHistory($db, $phone, $subject, $text, $user_id, $userip, $uid, $put, $priority)) {
+            $rid = AddHistory($db, $phone, $subject, $text, $user_id, $userip, $uid, $put, $priority);
+            if($rid !== false) {
+                $status = STATUS_NONE;
                 if($phone >= MIN_PHONE_NUM) {
                     if(SendSingleSMS($uid, $phone, $text, $priority)) {
+                        $status = $status | STATUS_INIT;
+                        $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), status = ? WHERE id = ?");
+                        $stmt->bind_param("ii", $status, $rid);
+                        $stmt->execute();
                         echo "В очереди на отправку";
                     }
                     else echo "Ошибка отправки 2";
