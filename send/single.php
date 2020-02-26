@@ -80,8 +80,8 @@ function AddHistory(&$db, $phone, $subject, $text, $user_id, $userip, $uid, $put
     }
     $txt = mb_substr($text, 0, MAX_SMS_LENGTH - strlen($group) - 3) . " ($group)";
 
-    if($stmt = $db->prepare("INSERT INTO sms (subject_id, text, user_id, ip, gid, uid, priority, single, put) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-        $stmt->bind_param("isisisiss", $subject, $txt, $user_id, $userip, $group_id, $uid, $priority, $phone, $put);
+    if($stmt = $db->prepare("INSERT INTO sms (subject_id, text, user_id, ip, gid, uid, priority, put) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
+        $stmt->bind_param("isisisis", $subject, $txt, $user_id, $userip, $group_id, $uid, $priority, $put);
         $stmt->execute();
         $sms_id = $db->insert_id;
         if ($stmt = $db->prepare("INSERT INTO recipient (sms_id, contact_id, email_only, status, single) VALUES (?, 0, 0, 0, ?)")) {
