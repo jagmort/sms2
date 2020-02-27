@@ -33,12 +33,12 @@ if($stmt2 = $db->prepare("SELECT admin, group_id FROM `user` WHERE auth_key = ?"
     $result2 = $stmt2->get_result();
     $row2 = $result2->fetch_array(MYSQLI_ASSOC);
     if($row2["admin"] > USER_SUPERVISOR)
-        $query = "SELECT uid, contact.id AS cid, contact.name AS name, position, mobile, dept, subject_id, text, argus, sms.recovery AS recovery, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, put, recipient.single AS single FROM recipient, sms, contact, user, `group` WHERE put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND 0 < ? ORDER BY uid DESC, name ASC";
+        $query = "0 <";
     else
-        $query = "SELECT uid, contact.id AS cid, contact.name AS name, position, mobile, dept, subject_id, text, argus, sms.recovery AS recovery, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, put, recipient.single AS single FROM recipient, sms, contact, user, `group` WHERE put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND sms.gid = ? ORDER BY uid DESC, name ASC";
+        $query = "sms.gid =";
 }
 
-if($stmt = $db->prepare($query)) {
+if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, position, mobile, dept, subject_id, text, argus, sms.recovery AS recovery, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, put, recipient.single AS single FROM recipient, sms, contact, user, `group` WHERE put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND " . $query . " ? ORDER BY uid DESC, name ASC")) {
 
     $stmt->bind_param("ssi", $from_date, $to_date, $row2["group_id"]);
     $stmt->execute();
