@@ -272,7 +272,30 @@ $(document).ready(function() {
         else $("#btn").prop('disabled', true);
     });
 
-    // Show contact details
+    // Diff time for textarea
+    $("#text").dblclick(function(){
+        var text = $(this).val();
+        var re1 = /3.+(\d{2})\.(\d{2})\.(\d{2,4})\s+(\d{2}:\d{2})/g;
+        var re2 = /4.+(\d{2})\.(\d{2})\.(\d{2,4})\s+(\d{2}:\d{2})/g;
+        var found1 = text.match(re1);
+        var found2 = text.match(re2);
+        if(found1 && found2) {
+            var date1 = new Date(found1[0].replace(re1, '20$3-$2-$1 $4').substr(-16));
+            var date2 = new Date(found2[0].replace(re2, '20$3-$2-$1 $4').substr(-16));
+            var diff = (new Date(date2) - new Date(date1));
+            var diffD = Math.floor(diff / 86400000); // days
+            var diffH = Math.floor((diff % 86400000) / 3600000); // hours
+            var diffM = Math.round(((diff % 86400000) % 3600000) / 60000); // minutes
+            var diffS = '(';
+            if(diffD > 0) diffS = diffS + diffD + 'д ' + diffH + 'ч ' + diffM + 'м)';
+            else diffS = diffS + diffH + 'ч ' + diffM + 'м)';
+            var re3 =  /(4.+\d{2}\.\d{2}\.\d{2,4}\s+\d{2}:\d{2}).*/g;
+            var result = text.replace(re3, '$1 ' + diffS);
+            $(this).val(result);
+        }
+    });
+
+   // Show contact details
     var clicks = 0;
     $("abbr").click(function(e){
         var self = $(this);
