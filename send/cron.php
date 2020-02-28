@@ -109,7 +109,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
         if($uid == "" || $uid != $row["uid"]) { // Sent email and start next message
             if($sendmail) {
                 $mail->Subject = $mail_subject;
-                $mail->setFrom($cc, $fname);
+                $mail->setFrom($fmail, $fname);
                 $mail->Body = $body . $namelist . $footer;
                 $mail->Priority = $mail_priority;
                 if(strlen($filename) > 0) $mail->addAttachment(__DIR__ . "/files/$filename");
@@ -120,22 +120,22 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
 
                 }
             }
-            $mail->clearAddresses();
+            $mail->clearAllRecipients();
 
             // Start new mail
             $namelist = "\n\nОповещены: ";
             $uid = $row["uid"];
-            $cc = $row["frommail"];
+            $fmail = $row["frommail"];
             $bcc = $row["supervisor"];
             $fname = $row["fname"];
             $body = $row["text"];
             $footer = $row["sign"] . "\n\nID: " . $row["uid"];
-            if(filter_var($row["frommail"], FILTER_VALIDATE_EMAIL))
-                $mail->addCC($row["frommail"], $row["fname"]);
+            if(filter_var($fmail, FILTER_VALIDATE_EMAIL))
+                $mail->addCC($fmail, $fname);
             $mail_subject = $row["subject"] . $subject;
             $mail_priority = $row["mail_priority"];
             $bccarr = array();
-            if($bcc !== '') {
+            if(mb_strpos($bcc, '@') !== false) {
                 $bccarr = explode(',', $bcc);
                 foreach ($bccarr as $v) {
                     if(filter_var($v, FILTER_VALIDATE_EMAIL))
@@ -159,7 +159,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
                 $namelist .= ' ' . mb_substr($arr[2], 0, 1);
         }
         $namelist .= '; ';
-        if($row["tomail"] != "") {
+        if(mb_strpos($row["tomail"], '@') !== false) {
             $arr = explode(",", $row["tomail"]);
             reset($arr);
             while (list($k, $v) = each($arr))
@@ -198,7 +198,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
     if($uid != "") { // Sent last email if exist
         if($sendmail) {
             $mail->Subject = $mail_subject;
-            $mail->setFrom($cc, $fname);
+            $mail->setFrom($fmail, $fname);
             $mail->Body = $body . $namelist . $footer;
             $mail->Priority = $mail_priority;
             if(strlen($filename) > 0) $mail->addAttachment(__DIR__ . "/files/$filename");
@@ -209,13 +209,14 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
 
             }
         }
+        $mail->clearAllRecipients();
     }
     $result->free();
 }
 
 
 // Check SMS file
-if ($stmt = $db->prepare("SELECT recipient.id AS id, contact_id, uid, recipient.status AS status FROM `sms`, `recipient`, `contact`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND contact_id = contact.id AND sms_id = sms.id AND (recipient.status & 1) > 0 AND put >= (NOW() - INTERVAL 1 DAY)")) {
+if ($stmt = $db->prepare("SELECT recipient.id AS id, contact_id, uid, recipient.status AS status FROM `sms`, `recipient`, `user`, `group` WHERE user_id = user.id AND group_id = group.id AND sms_id = sms.id AND (recipient.status & 1) > 0 AND put >= (NOW() - INTERVAL 1 DAY)")) {
     //$stmt->bind_param("i", 0);
     $stmt->execute();
     $result = $stmt->get_result();
