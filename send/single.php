@@ -128,7 +128,8 @@ if (true || isset($_POST["authkey"]) && isset($_POST["text"]) && isset($_POST["p
         $uid = $datetime->format('Ymd-His-') . substr("000$user_id", -4);
         $put = $datetime->format('Y-m-d H:i:s');
         if(strlen($text) > 5) {
-            $phone = trim($_POST["phone"]);
+            preg_match_all('!\d+!', trim($_POST["phone"]), $matches);
+            $phone = implode($matches[0]);
             $priority = trim($_POST["priority"]);
             $rid = AddHistory($db, $phone, $subject, $text, $user_id, $userip, $uid, $put, $priority);
             if($rid !== false) {
