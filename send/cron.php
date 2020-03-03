@@ -76,7 +76,7 @@ require 'param.php';
 use \DateTime;
 
 // Create SMS file
-if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS contact_id, email_only, `contact`.name AS name, dept, mobile, `contact`.email AS tomail, `group`.email AS frommail, `group`.supervisor AS supervisor, `group`.name AS fname, `subject`.text AS subject, `subject`.priority AS mail_priority, `sms`.text AS text, sign, uid, filename, `sms`.priority AS priority, put FROM `sms`, `subject`, `recipient`, `contact`, `user`, `group` WHERE `sms`.subject_id = `subject`.id AND `sms`.user_id = `user`.id AND `user`.group_id = `group`.id AND `recipient`.contact_id = `contact`.id AND `recipient`.sms_id = `sms`.id AND `recipient`.status = 0 AND `sms`.put > '0000-00-00 00:00:00'")) {
+if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS contact_id, email_only, `contact`.name AS name, dept, mobile, `contact`.email AS tomail, `group`.email AS frommail, `group`.supervisor AS supervisor, `group`.name AS fname, `subject`.text AS subject, `subject`.priority AS mail_priority, `sms`.text AS text, sign, uid, filename, `sms`.priority AS priority, put FROM `sms`, `subject`, `recipient`, `contact`, `user`, `group` WHERE `sms`.subject_id = `subject`.id AND `sms`.user_id = `user`.id AND `user`.group_id = `group`.id AND `recipient`.contact_id = `contact`.id AND `recipient`.sms_id = `sms`.id AND `recipient`.status = 0 AND `sms`.put > '0000-00-00 00:00:00' ORDER BY `sms`.id")) {
     $stmt->execute();
     $result = $stmt->get_result();
     $mail = new PHPMailer(true);
