@@ -24,7 +24,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 ?>
 <dialog id="edit"></dialog>
 <dialog id="add"></dialog>
-<dialog id="alert"><div class="msg"></div><div><button type="button" id="cancel" onclick="$('#alert')[0].close()">Закрыть</button></div></dialog>
+<?php // <dialog id="alert"><div class="msg"></div><div><button type="button" id="cancel" onclick="$('#alert')[0].close()">Закрыть</button></div></dialog> ?>
 <div id="main">
 <div id="content">
 <form id="ajax_form" method="post" action="" enctype="multipart/form-data">
@@ -35,6 +35,9 @@ if(($identity = Yii::$app->user->identity) != NULL):
 Приоритет
 <input type="hidden" name="priority" value="9">
 <input type="checkbox" name="priority" value="0" checked title="Высокий">
+</div>
+<div id="search">
+<input type="text" name="search" value="" title="Поиск контакта" /><button id="search_btn" title="Поиск контакта">&#128270;</button>
 </div>
 <div>
 <select name="subject" id="subject" title="Тема e-mail">
@@ -58,7 +61,8 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <span id="count"></span>
 <div id="attach"><input type="file" name="file" id="file" /></div>
 <div id="buttons">
-<button type="submit" id="btn" disabled>Отправить</button> <input name="phone" id="single" size="11" title="Отправка на произвольный номер" /> <span id="result"></span> <button type="button" id="clr" disabled>Очистить</button> 
+<button type="submit" id="btn" disabled>Отправить</button> <input name="phone" id="single" size="11" title="Отправка на произвольный номер
+(11 цифр, например, 89012345678)" /> <span id="result"></span> <button type="button" id="clr" disabled>Очистить</button> 
 </div>
 <div>
 <textarea id="phones" name="phones" readonly></textarea>
