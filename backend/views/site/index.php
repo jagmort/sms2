@@ -32,7 +32,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <input id="userip" type="hidden" name="userip" value="<?= $userip ?>" />
 <div id="left">
 <div id="priority">
-Приоритет
+Приоритет отправки SMS
 <input type="hidden" name="priority" value="9">
 <input type="checkbox" name="priority" value="0" checked title="Высокий">
 </div>
