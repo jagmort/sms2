@@ -28,6 +28,7 @@
     position: absolute;
     margin: -2em 0em;
 }
+
 #priority input[type='checkbox']:after {
     width: 15px;
     height: 15px;
@@ -45,6 +46,23 @@
 
 #priority input[type='checkbox']:checked:after {
     background: url("/sms2/backend/web/img/up.png") #fff;
+}
+
+#search {
+    float: right;
+    margin: -2em 0;
+}
+
+#search input {
+    margin-right: 37px;
+    padding: 0 2px;
+}
+
+#search button {
+    position: absolute;
+    margin: 0 -34px;
+    height: 24px;
+    width: 34px;
 }
 
 #subject {
@@ -401,9 +419,17 @@ table.history {
 }
 
 .history td.text {
-    max-width: 800px;
-    min-width: 400px;
+/*    max-width: 1000px;
+    min-width: 400px;*/
 }
+
+.history td.text span {
+    /*font-style: italic;*/
+    color: #999;
+    display: block;
+    margin-bottom: 0.5em;
+}
+
 .history th {
     border-left:solid #999 1px;
     border-top: none;

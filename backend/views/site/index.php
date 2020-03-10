@@ -24,7 +24,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 ?>
 <dialog id="edit"></dialog>
 <dialog id="add"></dialog>
-<?php // <dialog id="alert"><div class="msg"></div><div><button type="button" id="cancel" onclick="$('#alert')[0].close()">Закрыть</button></div></dialog> ?>
+<dialog id="alert"><div class="msg"></div><div><button type="button" id="cancel" onclick="$('#alert')[0].close()">Закрыть</button></div></dialog>
 <div id="main">
 <div id="content">
 <form id="ajax_form" method="post" action="" enctype="multipart/form-data">
@@ -286,7 +286,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                             $optgroup = $row["optgroup"];
                             echo '<optgroup title="' . $optgroup . '" label="' . $optgroup . '"></optgroup>';
                         }
-                        echo '<option data-alert="' . htmlentities($row["alert"]) . '" value="' . $contacts . '" title="' . htmlentities($row["name"] . " (" . $row["id"] . ")") . '">' . htmlentities($row["name"]) . '</option>';
+                        echo '<option data-list="' . $row["id"] . '" data-alert="' . htmlentities($row["alert"]) . '" value="' . $contacts . '" title="' . htmlentities($row["name"] . " (" . $row["id"] . ")") . '">' . htmlentities($row["name"]) . '</option>';
                     endwhile;
                     $result->free();
 ?>
