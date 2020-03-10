@@ -38,7 +38,7 @@ if($stmt2 = $db->prepare("SELECT admin, group_id FROM `user` WHERE auth_key = ?"
         $query = "sms.gid =";
 }
 
-if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, position, mobile, dept, `subject`.text AS subject, `list`.name AS list, `sms`.text AS text, argus, sms.recovery AS recovery, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, put, recipient.single AS single FROM `recipient`, `sms`, `contact`, `user`, `group`, `list`, `subject` WHERE subject_id = `subject`.id AND list_id = `list`.id AND put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND " . $query . " ? ORDER BY uid DESC, name ASC")) {
+if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, position, mobile, dept, list_id, `subject`.text AS subject, `list`.name AS list, `sms`.text AS text, argus, sms.recovery AS recovery, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, put, recipient.single AS single FROM `recipient`, `sms`, `contact`, `user`, `group`, `list`, `subject` WHERE subject_id = `subject`.id AND list_id = `list`.id AND put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND " . $query . " ? ORDER BY uid DESC, name ASC")) {
 
     $stmt->bind_param("ssi", $from_date, $to_date, $row2["group_id"]);
     $stmt->execute();
@@ -88,7 +88,7 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
                     echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
                 }
                 else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
-                echo "<td>$uid</td><td>$username</td><td class=\"text\">" . ($list != 'Blank' ? "<span>$list</span>" : '') . "$text $filename</td><td>$argus</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
+                echo "<td>$uid</td><td>$username</td><td class=\"text\">" . ($list != 'Blank' ? "<span>$list ($list_id)</span>" : '') . "$text $filename</td><td>$argus</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
                 echo "</tr>\n";
             }
             $i++;
@@ -97,6 +97,7 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
             $group = $row["gname"];
             $name = $contact;
             $subject = $row["subject"];
+            $list_id = $row["list_id"];
             $list = $row["list"];
             $text = $row["text"];
             $text = str_replace("\n", '<br />', $text);
