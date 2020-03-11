@@ -1,5 +1,10 @@
 var maxlen = 600;
 var timeout = 5000;
+var clicks = 0;
+var search_count = 0;
+var search_current = null;
+var search_text = '';
+var list = 0;
 
 // Submit form
 function sendAjaxFormFile(result_form, ajax_form, url) {
@@ -20,6 +25,7 @@ function sendAjaxFormFile(result_form, ajax_form, url) {
   
 // Clear all contacts' checkboxes
 function clearCheckboxes() {
+    list = 0;
     var all_checkboxes = $('#tabs input:checkbox');
     all_checkboxes.prop('checked', false);
     all_checkboxes.prop('indeterminate', false);
@@ -39,6 +45,8 @@ var program = [];
 function scanCheckboxes() {
     program = [];
     $("#phones").empty();
+    if(list > 0)
+        $("#phones").append(list + ": ");
     $('#tabs input:checkbox').each(function () {
         var el = $(this);
         if(el.is(':disabled') != true) {
@@ -91,6 +99,8 @@ $(document).ready(function() {
             all_checkboxes.prop('checked', false);
             all_checkboxes.prop('indeterminate', false);
             all_checkboxes.data('checked', 0);
+            console.log($("option:selected", this).attr('data-list'));
+            list = $("option:selected", this).attr('data-list');
             var str = this.value;
             var arr = str.split(',');
             arr.forEach(function(item, i, arr) {
@@ -137,6 +147,31 @@ $(document).ready(function() {
         function(){
             if($(this).prop('checked')) $(this).prop('title', 'Высокий');
             else $(this).prop('title', 'Низкий');
+        }
+    );
+
+    // Search button
+    $("#search_btn").click(
+        function(){
+            if(search_text === $("#search>input").val()) {
+                search_count++;
+            }
+            else {
+                search_text = $("#search>input").val();
+                search_count = 0;
+            }
+            var abbr = $("abbr").filter(function() {
+                var reg = new RegExp(search_text, "i");
+                return reg.test($(this).text());
+            });
+            if(abbr.length <= search_count) search_count = 0;
+            $(".current > div > div").removeClass("detailed");
+            $(".details").hide();
+            var id = abbr.eq(search_count).closest('.tab-content').attr('id');
+            $('li[data-tab="' + id + '"]').click();
+            abbr.eq(search_count).siblings(".details").slideToggle("fast");
+            abbr.eq(search_count).parent().addClass("detailed");
+            return false;
         }
     );
 
@@ -296,7 +331,6 @@ $(document).ready(function() {
     });
 
    // Show contact details
-    var clicks = 0;
     $("abbr").click(function(e){
         var self = $(this);
         clicks++;
@@ -319,7 +353,7 @@ $(document).ready(function() {
                     else
                         self.siblings('input').prop('disabled', true);
                 }
-                    clicks = 0;
+                clicks = 0;
             }, 300);
         }
     });
