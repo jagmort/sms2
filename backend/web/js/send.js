@@ -290,8 +290,13 @@ $(document).ready(function() {
 
     // Chars to go
     $("#text").keyup(function(){
-        $('#count').text(maxlen - $(this).val().length);
-        if($("#text").val().length >= 5) {
+        if (typeof signlen !== 'undefined' || signlen !== null)
+            smslen = maxlen - signlen;
+        else
+            smslen = maxlen;
+        $(this).attr('maxlength',smslen);
+        $('#count').text(smslen - $(this).val().length);
+        if($(this).val().length >= 5) {
             if($("#phones").val() != '') {
                 $("#btn").prop('disabled', false);
             }

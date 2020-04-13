@@ -95,7 +95,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
         $result->free();
     }
 
-    if ($stmt = $db->prepare("SELECT tab.id AS id, tab.name AS name, admin FROM `tab`, `group`, `group_tab`, `user` WHERE `group`.id = group_tab.group_id AND tab.id = tab_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC, tab.name")):
+    if ($stmt = $db->prepare("SELECT tab.id AS id, tab.name AS name, admin, `group`.name AS gname FROM `tab`, `group`, `group_tab`, `user` WHERE `group`.id = group_tab.group_id AND tab.id = tab_id AND user.group_id = `group`.id AND auth_key = ? ORDER BY `order` DESC, tab.name")):
         $stmt->bind_param("s", $identity->getAuthKey());
         $stmt->execute();
         $result = $stmt->get_result();
@@ -105,6 +105,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
         $tabcont = '';
         $i = 0;
         while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+            $signlen = mb_strlen($row["gname"]) + 3;
             $admin = $row["admin"];
             $i++;
             $tabs[] = $row["id"];
@@ -304,5 +305,8 @@ if(($identity = Yii::$app->user->identity) != NULL):
 </form>
 </div>
 </div>
+<script>
+    var signlen = <?php echo $signlen ?>;
+</script>
 <!-- /view -->
 <?php endif ?>
