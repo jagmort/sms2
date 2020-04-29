@@ -260,35 +260,50 @@ if(($identity = Yii::$app->user->identity) != NULL):
                     endif;
                     $optgroup = "";
                     $i = 0;
-                    while($row = $result->fetch_array(MYSQLI_ASSOC)):
+                    while($row = $result->fetch_array(MYSQLI_ASSOC)) {
                         $i++;
-                        if($stmt = $db->prepare("SELECT contact.id AS id, email_only FROM `contact`, `contact_list` WHERE contact.id = contact_id AND list_id = ?")):
+                        if($stmt = $db->prepare("SELECT contact.id AS id, email_only, escalate FROM `contact`, `contact_list` WHERE contact.id = contact_id AND list_id = ?")) {
                             $stmt->bind_param("i", $row["id"]);
                             $stmt->execute();
                             $result2 = $stmt->get_result();
-                            $first = true;
+                            $first_reg = true;
+                            $first_esc = true;
                             $contacts = "";
-                            while($row2 = $result2->fetch_array(MYSQLI_ASSOC)):
-                                if($row2["email_only"] <> "0"):
+                            $escalate = "";
+                            while($row2 = $result2->fetch_array(MYSQLI_ASSOC)) {
+                                if($row2["email_only"] > 0) {
                                     $email_only = "-";
-                                else:
+                                }
+                                else {
                                     $email_only = "";
-                                endif;
-                                if($first):
-                                    $contacts = $row2["id"] . $email_only;
-                                    $first = false;
-                                else:
-                                    $contacts .= "," . $row2["id"] . $email_only;
-                                endif;
-                            endwhile;
+                                }
+                                if($row2["escalate"] > 0) { // контакт для эскалации
+                                    if($first_esc) {
+                                        $escalate = $row2["id"] . $email_only;
+                                        $first_esc = false;
+                                    }
+                                    else {
+                                        $escalate .= "," . $row2["id"] . $email_only;
+                                    }
+                                }
+                                else { // обычный контакт
+                                    if($first_reg) {
+                                        $contacts = $row2["id"] . $email_only;
+                                        $first_reg = false;
+                                    }
+                                    else {
+                                        $contacts .= "," . $row2["id"] . $email_only;
+                                    }
+                                }
+                            }
                             $result2->free();
-                        endif;
+                        }
                         if($row["optgroup"] != $optgroup) {
                             $optgroup = $row["optgroup"];
                             echo '<optgroup title="' . $optgroup . '" label="' . $optgroup . '"></optgroup>';
                         }
-                        echo '<option data-list="' . $row["id"] . '" data-alert="' . htmlentities($row["alert"]) . '" value="' . $contacts . '" title="' . htmlentities($row["name"] . " (" . $row["id"] . ")") . '">' . htmlentities($row["name"]) . '</option>';
-                    endwhile;
+                        echo '<option data-list="' . $row["id"] . '" data-alert="' . htmlentities($row["alert"]) . '" data-esc="' . $escalate . '" value="' . $contacts . '" title="' . htmlentities($row["name"] . " (" . $row["id"] . ")") . '">' . htmlentities($row["name"]) . '</option>';
+                    }
                     $result->free();
 ?>
 </select>
