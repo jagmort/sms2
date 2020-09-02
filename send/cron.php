@@ -118,9 +118,12 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $context = stream_context_create($options);
             $getUpdates = file_get_contents('https://api.telegram.org/bot' . BOT_API_TOKEN . '/sendMessage', false, $context);
             $json = json_decode($getUpdates, true);
-            $stmt = $db->prepare("UPDATE recipient SET message_id = ? WHERE id = ?");
-            $stmt->bind_param("ii", $json['result']['message_id'], $row["id"]);
-            $stmt->execute();
+            if($json['ok'] == 1) {
+                $status = $status | STATUS_TELEGRAM_SENT;
+                $stmt = $db->prepare("UPDATE recipient SET message_id = ?, sent = NOW(), status = ? WHERE id = ?");
+                $stmt->bind_param("ii", $json['result']['message_id'], $row["id"]);
+                $stmt->execute();
+            }
         }
 
         if($uid == "" || $uid != $row["uid"]) { // Sent email and start next message

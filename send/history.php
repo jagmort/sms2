@@ -115,7 +115,7 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
                 $done = DateTime::createFromFormat('Y-m-d H:i:s', $row["done"])->format('d/m H:i');
             else
                 $done = '—';
-            $status = $row["status"]; 
+            $status = dechex($row["status"]); 
         }
         else {
             $name .= "<br />\n" . $contact;
@@ -124,7 +124,7 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
             else
                 $done .= "<br />\n—";
 
-            $status .= "<br />\n" . $row["status"]; 
+            $status .= "<br />\n" . dechex($row["status"]); 
         }
 
         // статус отправки
@@ -136,11 +136,13 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
             if(($row["status"] & STATUS_INIT) == 1) $status .= "; <b>SMS not sent</b>";
         }
         if(($row["status"] & STATUS_NO_EMAIL) > 0)
-            $status .= "; <i>No e-mail</i>";
+            $status .= "; <i>no e-mail</i>";
         else {
-            if((($row["status"] & STATUS_EMAIL_SENT) > 0) && (($row["status"] & (STATUS_SMS_SENT | STATUS_INIT)) <= 0))
-                $status .= "; <i>E-mail only</i>";
+            if((($row["status"] & STATUS_EMAIL_SENT) > 0) && ((($row["status"] & STATUS_TELEGRAM_SENT) <= 0) && ($row["status"] & (STATUS_SMS_SENT | STATUS_INIT)) <= 0))
+                $status .= "; <i>e-mail</i>";
         }
+        if(($row["status"] & STATUS_TELEGRAM_SENT) > 0)
+            $status .= "; <i>telegram</i>";
         // ---------------
 
     }
