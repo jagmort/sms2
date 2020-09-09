@@ -262,7 +262,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                     $i = 0;
                     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
                         $i++;
-                        if($stmt = $db->prepare("SELECT contact.id AS id, email_only, escalate FROM `contact`, `contact_list` WHERE active = 1 AND contact.id = contact_id AND list_id = ?")) {
+                        if($stmt = $db->prepare("SELECT contact.id AS id, email_only, escalate FROM `contact`, `contact_list` WHERE active > 0 AND contact.id = contact_id AND list_id = ?")) {
                             $stmt->bind_param("i", $row["id"]);
                             $stmt->execute();
                             $result2 = $stmt->get_result();
