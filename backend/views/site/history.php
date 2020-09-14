@@ -1,10 +1,12 @@
 <?php
-
 use kartik\date\DatePicker;
 
 $this->title = 'SMS 2+';
 $this->registerJsFile('js/jquery-3.2.1.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerJsFile('js/history.js', ['position' => yii\web\View::POS_HEAD]);
+$this->registerJsFile('js/xlsx.core.min.js', ['position' => yii\web\View::POS_HEAD]);
+$this->registerJsFile('js/FileSaver.min.js', ['position' => yii\web\View::POS_HEAD]);
+$this->registerJsFile('js/tableexport.min.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerCssFile('css/main.css');
 
 ?>
@@ -30,7 +32,9 @@ if(($identity = Yii::$app->user->identity) != NULL) echo '<input type="hidden" n
 ?>
 </form>
 </div>
-<div id="refresh">Обновление&nbsp;<input type="checkbox" checked="checked" /></div>
+<div id="refresh">Обновление&nbsp;<input type="checkbox" /></div>
+<div id="export">
+</div>
 <div id="result"></div>
 </div>
 </div>
