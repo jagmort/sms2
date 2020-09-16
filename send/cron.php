@@ -88,49 +88,12 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
     $uid = "";
     $sendmail = false;
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-        //Send SMS
-        $status = STATUS_NONE;
-        $row["email_only"] = 1; // Shutdown SMS sending
-        if($row["mobile"] < MIN_PHONE_NUM) $row["email_only"] = 1; // wrong mobile number
-        if($row["email_only"] < 1) { // Skip SMS if e-mail only
-            if(SendSMS($row["uid"], $row["contact_id"], $row["dept"], $row["mobile"], $row["tomail"], $row["text"], $row["priority"])) {
-                $status = $status | STATUS_INIT;
-                $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), status = ? WHERE id = ?");
-                $stmt->bind_param("ii", $status, $row["id"]);
-                $stmt->execute();
-            }
-            else {
-                $status = $status | STATUS_EMAIL_ONLY;
-                $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), status = ? WHERE id = ?");
-                $stmt->bind_param("ii", $status, $row["id"]);
-                $stmt->execute();
-            }
-        }
-
-        if($row["telegram"] > 0 && $row["pin"] == 0) { // Send message to telegram
-            $teldata = array('chat_id' => $row["telegram"], 'text' => $row["text"]);
-            $options = array(
-                'http' => array('method' => 'POST',
-                    'header' => "Content-Type:application/x-www-form-urlencoded\r\n",
-                    'content' => http_build_query($teldata),
-                ),
-            );
-            $context = stream_context_create($options);
-            $getUpdates = file_get_contents('https://api.telegram.org/bot' . BOT_API_TOKEN . '/sendMessage', false, $context);
-            $json = json_decode($getUpdates, true);
-            if($json['ok'] == 1) {
-                $status = $status | STATUS_TELEGRAM_SENT;
-                $stmt = $db->prepare("UPDATE recipient SET message_id = ?, sent = NOW(), status = ? WHERE id = ?");
-                $stmt->bind_param("ii", $json['result']['message_id'], $row["id"]);
-                $stmt->execute();
-            }
-        }
-
-        if($uid == "" || $uid != $row["uid"]) { // Sent email and start next message
+        // Sent email and start next message
+        if($uid == "" || $uid != $row["uid"]) { 
             if($sendmail) {
                 $mail->Subject = $mail_subject;
                 $mail->setFrom($fmail, $fname);
-                $mail->Body = $body . $namelist . $footer;
+                $mail->Body = $body . (mb_strpos($namelist, ';') === false ? '' : $namelist) . $footer;
                 $mail->Priority = $mail_priority;
                 if(strlen($filename) > 0) $mail->addAttachment(__DIR__ . "/files/$filename");
                 try {
@@ -143,7 +106,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $mail->clearAllRecipients();
 
             // Start new mail
-            $namelist = "\n\nОповещены: ";
+            $namelist = "\n\nОповещены в Telegram: ";
             $uid = $row["uid"];
             $fmail = $row["frommail"];
             $bcc = $row["supervisor"];
@@ -171,6 +134,55 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
                 $filename = '';
             }
         }
+
+        //Send SMS
+        $status = STATUS_NONE;
+        //$row["email_only"] = 1; // Shutdown SMS sending
+        if($row["mobile"] < MIN_PHONE_NUM) $row["email_only"] = 1; // wrong mobile number
+        if(false && $row["email_only"] < 1) { // Skip SMS if e-mail only
+            if(SendSMS($row["uid"], $row["contact_id"], $row["dept"], $row["mobile"], $row["tomail"], $row["text"], $row["priority"])) {
+                $status = $status | STATUS_INIT;
+                $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), status = ? WHERE id = ?");
+                $stmt->bind_param("ii", $status, $row["id"]);
+                $stmt->execute();
+            }
+            else {
+                $status = $status | STATUS_EMAIL_ONLY;
+                $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), status = ? WHERE id = ?");
+                $stmt->bind_param("ii", $status, $row["id"]);
+                $stmt->execute();
+            }
+        }
+
+        if($row["telegram"] != 0 && $row["pin"] == 0 && $row["email_only"] < 1) { // Send message to telegram
+            $arr = mb_split("[\s,_]+", $row["name"]);
+            $namelist .= str_replace("'", "", $arr[0]);
+            if(count($arr) > 1) {
+                $namelist .= ' ' . mb_substr($arr[1], 0, 1);
+                if(count($arr) > 2)
+                    $namelist .= ' ' . mb_substr($arr[2], 0, 1);
+            }
+            $namelist .= '; ';
+    
+            $teldata = array('chat_id' => $row["telegram"], 'text' => $row["text"]);
+            $options = array(
+                'http' => array('method' => 'POST',
+                    'header' => "Content-Type:application/x-www-form-urlencoded\r\n",
+                    'content' => http_build_query($teldata),
+                ),
+            );
+            $context = stream_context_create($options);
+            $getUpdates = file_get_contents('https://api.telegram.org/bot' . BOT_API_TOKEN . '/sendMessage', false, $context);
+            $json = json_decode($getUpdates, true);
+            if($json['ok'] == 1) {
+                $status = $status | STATUS_TELEGRAM_SENT;
+                $stmt = $db->prepare("UPDATE recipient SET message_id = ?, sent = NOW(), status = ? WHERE id = ?");
+                $stmt->bind_param("ii", $json['result']['message_id'], $row["id"]);
+                $stmt->execute();
+            }
+        }
+
+        /*
         $arr = mb_split("[\s,_]+", $row["name"]);
         $namelist .= str_replace("'", "", $arr[0]);
         if(count($arr) > 1) {
@@ -179,6 +191,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
                 $namelist .= ' ' . mb_substr($arr[2], 0, 1);
         }
         $namelist .= '; ';
+        */
         if(mb_strpos($row["tomail"], '@') !== false) {
             $arr = explode(",", $row["tomail"]);
             reset($arr);
@@ -219,7 +232,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
         if($sendmail) {
             $mail->Subject = $mail_subject;
             $mail->setFrom($fmail, $fname);
-            $mail->Body = $body . $namelist . $footer;
+            $mail->Body = $body . (mb_strpos($namelist, ';') === false ? '' : $namelist) . $footer;
             $mail->Priority = $mail_priority;
             if(strlen($filename) > 0) $mail->addAttachment(__DIR__ . "/files/$filename");
             try {
