@@ -38,7 +38,7 @@ if($stmt2 = $db->prepare("SELECT admin, group_id FROM `user` WHERE auth_key = ?"
         $query = "sms.gid =";
 }
 
-if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, position, mobile, dept, list_id, `subject`.text AS subject, `list`.name AS list, `sms`.text AS text, argus, sms.recovery AS recovery, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, put, recipient.single AS single FROM `recipient`, `sms`, `contact`, `user`, `group`, `list`, `subject` WHERE subject_id = `subject`.id AND list_id = `list`.id AND put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND " . $query . " ? ORDER BY uid DESC, name ASC")) {
+if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, position, mobile, dept, list_id, `subject`.text AS subject, `list`.name AS list, `sms`.text AS text, argus, sms.recovery AS recovery, put, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, put, recipient.single AS single FROM `recipient`, `sms`, `contact`, `user`, `group`, `list`, `subject` WHERE subject_id = `subject`.id AND list_id = `list`.id AND put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND " . $query . " ? ORDER BY uid DESC, name ASC")) {
 
     $stmt->bind_param("ssi", $from_date, $to_date, $row2["group_id"]);
     $stmt->execute();
@@ -107,8 +107,8 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
                 $filename = '<a href="/sms2/send/files/' . $dtput->format('Y/m/d/') . $row["filename"] . '">&#128193;</a>';
             }
             else $filename = '';
-            if($row["sent"] != DATE0)
-                $sent = DateTime::createFromFormat('Y-m-d H:i:s', $row["sent"])->format('d/m H:i');
+            if($row["put"] != DATE0)
+                $sent = DateTime::createFromFormat('Y-m-d H:i:s', $row["put"])->format('d/m H:i');
             else
                 $sent = '—';
             if($row["done"] != DATE0)
