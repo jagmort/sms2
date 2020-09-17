@@ -176,22 +176,17 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             $json = json_decode($getUpdates, true);
             if($json['ok'] == 1) {
                 $status = $status | STATUS_TELEGRAM_SENT;
-                $stmt = $db->prepare("UPDATE recipient SET message_id = ?, sent = NOW(), status = ? WHERE id = ?");
-                $stmt->bind_param("ii", $json['result']['message_id'], $row["id"]);
+                $stmt = $db->prepare("UPDATE recipient SET message_id = ?, sent = NOW(), done = NOW(), status = ? WHERE id = ?");
+                $stmt->bind_param("iii", $json['result']['message_id'], $status, $row["id"]);
+                $stmt->execute();
+            }
+            else {
+                $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
+                $stmt->bind_param("ii", $status, $row["id"]);
                 $stmt->execute();
             }
         }
 
-        /*
-        $arr = mb_split("[\s,_]+", $row["name"]);
-        $namelist .= str_replace("'", "", $arr[0]);
-        if(count($arr) > 1) {
-            $namelist .= ' ' . mb_substr($arr[1], 0, 1);
-            if(count($arr) > 2)
-                $namelist .= ' ' . mb_substr($arr[2], 0, 1);
-        }
-        $namelist .= '; ';
-        */
         if(mb_strpos($row["tomail"], '@') !== false) {
             $arr = explode(",", $row["tomail"]);
             reset($arr);
@@ -199,7 +194,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
                 if(filter_var($v, FILTER_VALIDATE_EMAIL))
                     $mail->addAddress($v, $row["name"]);     // Add address to multirecipient email
             $sendmail = true;
-            if($row["email_only"] > 0) {
+            if($row["email_only"] > 0 || $row["telegram"] == 0) {
                 $status = $status | STATUS_EMAIL_SENT;
                 $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), done = NOW(), status = ? WHERE id = ?");
                 $stmt->bind_param("ii", $status, $row["id"]);
@@ -213,18 +208,10 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
             }
         }
         else { // blank email
-            if($row["email_only"] > 0) {
-                $status = $status | STATUS_NO_EMAIL;
-                $stmt = $db->prepare("UPDATE recipient SET sent = NOW(), done = NOW(), status = ? WHERE id = ?");
-                $stmt->bind_param("ii", $status, $row["id"]);
-                $stmt->execute();
-            }
-            else {
-                $status = $status | STATUS_NO_EMAIL;
-                $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
-                $stmt->bind_param("ii", $status, $row["id"]);
-                $stmt->execute();
-            }
+            $status = $status | STATUS_NO_EMAIL;
+            $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
+            $stmt->bind_param("ii", $status, $row["id"]);
+            $stmt->execute();
         }
     }
 
