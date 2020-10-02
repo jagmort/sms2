@@ -12,12 +12,14 @@ $(document).ready(function() {
     sendAjaxForm('result_form', 'ajax_form', '/sms2/send/history.php');
 });
 function sendAjaxForm(result_form, ajax_form, url) {
+    $("#loading").css("display","block");
     jQuery.ajax({
         url:     url, 
         type:     "POST",
         dataType: "html",
         data: jQuery("#" + ajax_form).serialize(),
         success: function(response) {
+            $("#loading").css("display","none");
             $("#result").html(response);
             TableExport(document.getElementsByTagName("table"), {
                 headers: true,                      // (Boolean), display table headers (th or td elements) in the <thead>, (default: true)
