@@ -24,14 +24,14 @@ if(($identity = Yii::$app->user->identity) != NULL):
 
     if (!empty($_GET['uid'])) 
     $uid = $_GET['uid'];
-    if($stmt = $db->prepare("SELECT `uid`, `text`, `list_id`, `tab_id`, `contact_id`, `email_only`  FROM `sms`, `list`, `recipient` WHERE `uid`=? AND `list`.id = `list_id` AND `sms`.id = `sms_id`")) {
+    if($stmt = $db->prepare("SELECT `uid`, `text`, `list_id`, `tab_id`, `contact_id`, `email_only`, `group`.`name` AS gname FROM `sms`, `list`, `recipient`, `group` WHERE `uid`=? AND `list`.id = `list_id` AND `sms`.id = `sms_id` AND `gid` = `group`.id")) {
         $stmt->bind_param("s", $uid);
         $stmt->execute();
         $result = $stmt->get_result();
         while($row = $result->fetch_array(MYSQLI_ASSOC)) {
             if(!isset($phones)) {
                 $list_id = $row['list_id'];
-                $text = $row['text'];
+                $text = preg_replace('/(.*) \(' . $row['gname'] . '\)$/', "$1", $row['text']);
                 if($list_id > 0)
                     $tab_id = $row['tab_id'];
             }
@@ -366,6 +366,8 @@ if(($identity = Yii::$app->user->identity) != NULL):
             $("#phone" + item.slice(0, -1)).data('checked', 1);
         }
     });
+    $("#clr").prop('disabled', false);
+    $("#btn").prop('disabled', false);
 <?php
     }
 ?>
