@@ -350,6 +350,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <?php
     if(isset($phones)) {
 ?>
+    list = <?= isset($list_id) ? $list_id : 0 ?>;
     var all_checkboxes = $('#tabs input:checkbox');
     all_checkboxes.prop('checked', false);
     all_checkboxes.prop('indeterminate', false);

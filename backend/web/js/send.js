@@ -89,6 +89,46 @@ $(document).ready(function() {
                 text = subject + text;
                 $("#text").val(text.slice(0, 600));
             }
+
+            // reselect chekboxes
+            if(list > 0) {
+                console.log(list);
+                var all_checkboxes = $('#tabs input:checkbox');
+                all_checkboxes.prop('checked', false);
+                all_checkboxes.prop('indeterminate', false);
+                all_checkboxes.data('checked', 0);
+                //console.log($("option:selected", this).attr('data-list'));
+                //list = $("option:selected", this).attr('data-list');
+                var opt = $('option[data-list='+list+']');
+                var str = opt.val(); // general contacts
+                var arr = str.split(',');
+                arr.forEach(function(item, i, arr) {
+                    if(item.substr(-1, 1) != '-') {
+                        $("#phone" + item).prop('checked', true);
+                        $("#phone" + item).data('checked', 2);
+                    }
+                    else {
+                        $("#phone" + item.slice(0, -1)).prop('indeterminate', true);
+                        $("#phone" + item.slice(0, -1)).data('checked', 1);
+                    }
+                });
+
+                if($( "option:selected", this).val() == 2) { // Эскалация
+                    var str = opt.attr('data-esc'); // escalation's contacts
+                    var arr = str.split(',');
+                    arr.forEach(function(item, i, arr) {
+                        if(item.substr(-1, 1) != '-') {
+                            $("#phone" + item).prop('checked', true);
+                            $("#phone" + item).data('checked', 2);
+                        }
+                        else {
+                            $("#phone" + item.slice(0, -1)).prop('indeterminate', true);
+                            $("#phone" + item.slice(0, -1)).data('checked', 1);
+                        }
+                    });
+                }
+                scanCheckboxes();
+            }
         });
     });
 
@@ -101,7 +141,8 @@ $(document).ready(function() {
             all_checkboxes.data('checked', 0);
             //console.log($("option:selected", this).attr('data-list'));
             list = $("option:selected", this).attr('data-list');
-            var str = this.value;
+
+            var str = this.value; // general contacts
             var arr = str.split(',');
             arr.forEach(function(item, i, arr) {
                 if(item.substr(-1, 1) != '-') {
@@ -113,6 +154,22 @@ $(document).ready(function() {
                     $("#phone" + item.slice(0, -1)).data('checked', 1);
                 }
             });
+
+            if($( "#subject option:selected" ).val() == 2) { // Эскалация
+                var str = $("option:selected", this).attr('data-esc'); // escalation's contacts
+                var arr = str.split(',');
+                arr.forEach(function(item, i, arr) {
+                    if(item.substr(-1, 1) != '-') {
+                        $("#phone" + item).prop('checked', true);
+                        $("#phone" + item).data('checked', 2);
+                    }
+                    else {
+                        $("#phone" + item.slice(0, -1)).prop('indeterminate', true);
+                        $("#phone" + item.slice(0, -1)).data('checked', 1);
+                    }
+                });
+            }
+
             scanCheckboxes();
             var alert = $("option:selected", this).attr('data-alert');
             if(alert != '') {
