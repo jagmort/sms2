@@ -35,7 +35,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                 if($list_id > 0)
                     $tab_id = $row['tab_id'];
             }
-            $phones .= $row['contact_id'] . '; ';
+            $phones .= $row['contact_id'] . ($row['email_only'] < 1 ? '' : '-') . '; ';
         }
     }
 ?>
