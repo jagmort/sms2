@@ -1,5 +1,5 @@
 var maxlen = 600;
-var timeout = 5000;
+var timeout = 60000;
 var clicks = 0;
 var search_count = 0;
 var search_current = null;
@@ -99,7 +99,7 @@ $(document).ready(function() {
             all_checkboxes.prop('checked', false);
             all_checkboxes.prop('indeterminate', false);
             all_checkboxes.data('checked', 0);
-            console.log($("option:selected", this).attr('data-list'));
+            //console.log($("option:selected", this).attr('data-list'));
             list = $("option:selected", this).attr('data-list');
             var str = this.value;
             var arr = str.split(',');

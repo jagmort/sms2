@@ -1,5 +1,5 @@
 <?php
-$this->title = 'SMS 2+';
+$this->title = 'SMS 2+ Тест';
 $this->registerJsFile('js/jquery-3.2.1.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerJsFile('js/send.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerCssFile('css/main.css');
@@ -22,6 +22,21 @@ if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 if(($identity = Yii::$app->user->identity) != NULL):
     require('../../send/param.php');
 
+    if (!empty($_GET['uid'])) 
+    $uid = $_GET['uid'];
+    if($stmt = $db->prepare("SELECT `uid`, `text`, `list_id`, `tab_id`, `contact_id`, `email_only`  FROM `sms`, `list`, `recipient` WHERE `uid`=? AND `list`.id = `list_id` AND `sms`.id = `sms_id`")) {
+        $stmt->bind_param("s", $uid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+            if(!isset($phones)) {
+                $list_id = $row['list_id'];
+                $text = $row['text'];
+                $tab_id = $row['tab_id'];
+            }
+            $phones .= $row['contact_id'] . '; ';
+        }
+    }
 ?>
 <dialog id="edit"></dialog>
 <dialog id="add"></dialog>
@@ -57,7 +72,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 </select>
 </div>
 <div>
-<textarea id="text" name="text" maxlength="<?= MAX_SMS_LENGTH ?>"></textarea>
+<textarea id="text" name="text" maxlength="<?= MAX_SMS_LENGTH ?>"><?= isset($text) ? $text : '' ?></textarea>
 </div>
 <span id="count"></span>
 <div id="attach"><input type="file" name="file" id="file" /></div>
@@ -66,7 +81,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 (11 цифр, например, 89012345678)" /> <span id="result"></span> <button type="button" id="clr" disabled>Очистить</button> 
 </div>
 <div>
-<textarea id="phones" name="phones" readonly></textarea>
+<textarea id="phones" name="phones" readonly><?= isset($phones) ? $list_id . ": " . $phones : '' ?></textarea>
 </div>
 <div id="que">
 <ul id="queue">
@@ -249,10 +264,18 @@ if(($identity = Yii::$app->user->identity) != NULL):
                 $rlist = $rlist + $result->num_rows;
                 if($rlist > 0):
                     if($rlist > 40) $rlist = 40;
+                    if(isset($tab_id)) { // select list in current tab
+?>
+<div class="list<?= $tab_id == $tab ? ' current' : '' ?>" id="list-tab-<?= $tab ?>">
+<select
+<?php
+                    }
+                    else { // list in first tab
 ?>
 <div class="list<?= ($k < 1) ? ' current' : '' ?>" id="list-tab-<?= $tab ?>">
 <select
 <?php
+                    }
                     if($rlist != 1):
                         echo ' size="' . $rlist . '">';
                     else: 
@@ -303,7 +326,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                             $optgroup = $row["optgroup"];
                             echo '<optgroup title="' . $optgroup . '" label="' . $optgroup . '"></optgroup>';
                         }
-                        echo '<option data-list="' . $row["id"] . '" data-alert="' . htmlentities($row["alert"]) . '" data-esc="' . $escalate . '" value="' . $contacts . '" title="' . htmlentities($row["name"] . " (" . $row["id"] . ")") . '">' . htmlentities($row["name"]) . '</option>';
+                        echo '<option data-list="' . $row["id"] . '" data-alert="' . htmlentities($row["alert"]) . '" data-esc="' . $escalate . '" value="' . $contacts . '" title="' . htmlentities($row["name"] . " (" . $row["id"] . ")") . '"' . ($list_id == $row['id'] ? ' selected' : '') . '>' . htmlentities($row["name"]) . '</option>';
                     }
                     $result->free();
 ?>
@@ -322,7 +345,29 @@ if(($identity = Yii::$app->user->identity) != NULL):
 </div>
 </div>
 <script>
-    var signlen = <?php echo $signlen ?>;
+    var signlen = <?= $signlen ?>;
+<?php
+    if(isset($phones)) {
+?>
+    var all_checkboxes = $('#tabs input:checkbox');
+    all_checkboxes.prop('checked', false);
+    all_checkboxes.prop('indeterminate', false);
+    all_checkboxes.data('checked', 0);
+    var str = '<?= $phones ?>';
+    var arr = str.split('; ');
+    arr.forEach(function(item, i, arr) {
+        if(item.substr(-1, 1) != '-') {
+            $("#phone" + item).prop('checked', true);
+            $("#phone" + item).data('checked', 2);
+        }
+        else {
+            $("#phone" + item.slice(0, -1)).prop('indeterminate', true);
+            $("#phone" + item.slice(0, -1)).data('checked', 1);
+        }
+    });
+<?php
+    }
+?>
 </script>
 <!-- /view -->
 <?php endif ?>

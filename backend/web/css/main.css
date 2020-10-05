@@ -426,6 +426,10 @@ table.history {
     background: #ffd;
 }
 
+.history td.id {
+    cursor: pointer;
+}
+
 .history td.text {
 /*    max-width: 1000px;
     min-width: 400px;*/

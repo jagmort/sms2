@@ -1,9 +1,11 @@
 $(document).ready(function() {
-    jQuery('#w0-kvdate').on('change', function(){
-            sendAjaxForm('result_form', 'ajax_form', '/sms2/send/history.php');
-            return false; 
-        }
-    );
+    $('#result').on('click', '.id', function() {
+        $('<form method="get" action="/sms2/backend/web/index.php"><input type="hidden" name="r" value="site/index"><input type="hidden" name="uid" value="' + $(this).text() + '" /></form>').appendTo('body').submit();
+    });   
+    $('#w0-kvdate').on('change', function() {
+        sendAjaxForm('result_form', 'ajax_form', '/sms2/send/history.php');
+        return false; 
+    });
     setInterval(function() {
         if($("#refresh input").prop("checked")) {
             sendAjaxForm('result_form', 'ajax_form', '/sms2/send/history.php');
@@ -11,16 +13,17 @@ $(document).ready(function() {
     }, 60000);
     sendAjaxForm('result_form', 'ajax_form', '/sms2/send/history.php');
 });
+
 function sendAjaxForm(result_form, ajax_form, url) {
     $("#loading").css("display","block");
-    jQuery.ajax({
+    $.ajax({
         url:     url, 
         type:     "POST",
         dataType: "html",
         data: jQuery("#" + ajax_form).serialize(),
         success: function(response) {
-            $("#loading").css("display","none");
             $("#result").html(response);
+            /*
             TableExport(document.getElementsByTagName("table"), {
                 headers: true,                      // (Boolean), display table headers (th or td elements) in the <thead>, (default: true)
                 footers: false,                      // (Boolean), display table footers (th or td elements) in the <tfoot>, (default: false)
@@ -35,9 +38,12 @@ function sendAjaxForm(result_form, ajax_form, url) {
                 RTL: false,                         // (Boolean), set direction of the worksheet to right-to-left (default: false)
                 sheetname: "History"                     // (id, String), sheet name for the exported spreadsheet, (default: 'id')
               });
+            */
+           $("#loading").css("display","none");
         },
         error: function(response) {
             $("#result").html("Ошибка");
         }
     });
 }
+

@@ -72,7 +72,7 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
 
 ?>
 <table class="history">
-<tr><th>ID</th><th>User</th><th>Text</th><th>Argus</th><th>To</th><th>Created</th><th>SMS Sent</th><th>Status</th></tr>
+<tr><th>ID</th><th>User</th><th>Text</th><th>Argus</th><th>To</th><th>Created</th><th>Sent</th><th>Status</th></tr>
 <?php
     $i = 0;
     $uid = '';
@@ -88,7 +88,7 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
                     echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
                 }
                 else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
-                echo "<td>$uid</td><td>$username</td><td class=\"text\">" . ($list != 'Blank' ? "<span>$list ($list_id)</span>" : '') . "$text $filename</td><td>$argus</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
+                echo '<td class="id">' . $uid . '</td><td>' . $username . '</td><td class="text">' . ($list != 'Blank' ? "<span>$list ($list_id)</span>" : '') . "$text $filename</td><td>$argus</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
                 echo "</tr>\n";
             }
             $i++;
@@ -151,7 +151,7 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
             echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
         }
         else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
-        echo "<td>$uid</td><td>$username</td><td>$text $filename</td><td>$argus</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
+        echo '<td class="id">' . $uid . "</td><td>$username</td><td>$text $filename</td><td>$argus</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
         echo "</tr>\n";
     }
 ?>
