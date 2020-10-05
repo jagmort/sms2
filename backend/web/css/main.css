@@ -428,6 +428,11 @@ table.history {
 
 .history td.id {
     cursor: pointer;
+    color:#337ab7;
+}
+
+.history td.id:hover {
+    text-decoration: underline;
 }
 
 .history td.text {
