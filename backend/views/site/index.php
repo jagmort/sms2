@@ -1,5 +1,5 @@
 <?php
-$this->title = 'SMS 2+ Тест';
+$this->title = 'SMS 2+';
 $this->registerJsFile('js/jquery-3.2.1.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerJsFile('js/send.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerCssFile('css/main.css');
@@ -32,7 +32,8 @@ if(($identity = Yii::$app->user->identity) != NULL):
             if(!isset($phones)) {
                 $list_id = $row['list_id'];
                 $text = $row['text'];
-                $tab_id = $row['tab_id'];
+                if($list_id > 0)
+                    $tab_id = $row['tab_id'];
             }
             $phones .= $row['contact_id'] . '; ';
         }
@@ -81,7 +82,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 (11 цифр, например, 89012345678)" /> <span id="result"></span> <button type="button" id="clr" disabled>Очистить</button> 
 </div>
 <div>
-<textarea id="phones" name="phones" readonly><?= isset($phones) ? $list_id . ": " . $phones : '' ?></textarea>
+<textarea id="phones" name="phones" readonly><?= isset($phones) ? ($list_id > 0 ? $list_id . ": " : '') . $phones : '' ?></textarea>
 </div>
 <div id="que">
 <ul id="queue">
