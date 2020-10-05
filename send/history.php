@@ -88,7 +88,7 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
                     echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
                 }
                 else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
-                echo '<td class="id">' . $uid . '</td><td>' . $username . '</td><td class="text">' . ($list != 'Blank' ? "<span>$list ($list_id)</span>" : '') . "$text $filename</td><td>$argus</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
+                echo '<td title="Копировать" class="id">' . $uid . '</td><td>' . $username . '</td><td class="text">' . ($list != 'Blank' ? "<span>$list ($list_id)</span>" : '') . "$text $filename</td><td><a href=\"http://omssis-sms.mts-nn.ru/post/copy.php?argus=$argus\" target=\"_blank\">$argus</a>$recovery</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
                 echo "</tr>\n";
             }
             $i++;
@@ -101,7 +101,8 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
             $list = $row["list"];
             $text = $row["text"];
             $text = str_replace("\n", '<br />', $text);
-            $argus = ($row["argus"] > 0 ? $row["argus"] : "") . ($row["recovery"] > 0 ? "<br />+" : "");
+            $argus = ($row["argus"] > 0 ? $row["argus"] : "");
+            $recovery = $row["recovery"] > 0 ? "<br />+" : ""; 
             if(strlen($row["filename"]) > 0) {
                 $dtput = new DateTime($row["put"]);
                 $filename = '<a href="/sms2/send/files/' . $dtput->format('Y/m/d/') . $row["filename"] . '">&#128193;</a>';
@@ -151,7 +152,7 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
             echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
         }
         else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
-        echo '<td class="id">' . $uid . "</td><td>$username</td><td>$text $filename</td><td>$argus</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
+        echo '<td title="Копировать" class="id">' . $uid . "</td><td>$username</td><td>$text $filename</td><td><a href=\"http://omssis-sms.mts-nn.ru/post/copy.php?argus=$argus\" target=\"_blank\">$argus</a>$recovery</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
         echo "</tr>\n";
     }
 ?>
