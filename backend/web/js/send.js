@@ -1,10 +1,11 @@
 var maxlen = 600;
-var timeout = 60000;
+var timeout = 10000;
 var clicks = 0;
 var search_count = 0;
 var search_current = null;
 var search_text = '';
 var list = 0;
+var active_tab = 0;
 
 // Submit form
 function sendAjaxFormFile(result_form, ajax_form, url) {
@@ -79,6 +80,13 @@ function scanCheckboxes() {
 }
 
 $(document).ready(function() {
+    // Get current tab id
+    $('.tab-link').each(function () {
+        if($(this).attr('class') == 'tab-link current')
+            active_tab = $(this).attr('data-tab').substring(4);
+    });
+    if(active_tab == 0)
+        active_tab = $( ".tab-link:first" ).attr('data-tab').substring(4);
 
     // Add subject to SMS text
     $('#subject').each(function () {
@@ -321,10 +329,10 @@ $(document).ready(function() {
     });
 
     // Get queue
-    setInterval(function() {
+    /*setInterval(function() {
         $("#queue").load("/sms2/send/queue.php", function() {
         });
-    }, timeout);
+    }, timeout);*/
 
     // Switch tabs
     $('ul.tabs li').click(function(){
@@ -452,8 +460,9 @@ $(document).ready(function() {
     });
 });
 
-$(window).on("beforeunload", function() {
-})
-
-$(window).on("onload", function() {
-})
+$(window).bind("load", function() { 
+    setTimeout(function(){
+        console.log(active_tab);
+        $('li[data-tab="tab-' + active_tab + '"]').click();
+    }, 0);
+});
