@@ -32,15 +32,12 @@ if($stmt2 = $db->prepare("SELECT admin, group_id FROM `user` WHERE auth_key = ?"
     $stmt2->execute();
     $result2 = $stmt2->get_result();
     $row2 = $result2->fetch_array(MYSQLI_ASSOC);
-    if($row2["admin"] > USER_SUPERVISOR)
-        $query = "0 <";
-    else
-        $query = "sms.gid =";
+    $group_id = $row2["group_id"];
 }
 
 if($stmt = $db->prepare("SELECT DATE(`put`) AS dt, COUNT(`sms`.`id`) AS sum, `username` FROM `sms`, `user` WHERE `group_id` = ? AND `priority` != 5 AND `user`.`id` = `sms`.`user_id` AND `put` >= ? AND `put` <= (? + INTERVAL 1 DAY) GROUP BY `user_id`, DATE(`put`) ORDER BY `user_id` ASC, DATE(`put`) DESC")) {
 
-    $stmt->bind_param("iss", $row2["group_id"], $from_date, $to_date);
+    $stmt->bind_param("iss", $group_id, $from_date, $to_date);
     $stmt->execute();
     $result = $stmt->get_result();
 
