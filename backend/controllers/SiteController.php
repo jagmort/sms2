@@ -26,7 +26,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'history', 'stats'],
+                        'actions' => ['logout', 'index', 'history', 'stats', 'initi'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -71,6 +71,11 @@ class SiteController extends Controller
     public function actionStats()
     {
         return $this->render('stats');
+    }
+
+    public function actionIniti()
+    {
+        return $this->render('initi');
     }
 
     /**

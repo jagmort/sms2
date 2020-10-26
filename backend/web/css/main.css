@@ -488,7 +488,7 @@ table.history {
 }
 
 .history i {
-    color: blue;
+    color: green;
     font-style: normal;
 }
 
@@ -563,4 +563,8 @@ dialog div.msg {
     bottom:0;
     margin:auto;
     z-index: 100;
+}
+
+div#sms textarea {
+    width: 100%;
 }
