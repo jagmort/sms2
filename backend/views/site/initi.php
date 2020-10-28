@@ -67,6 +67,13 @@ if(($identity = Yii::$app->user->identity) != NULL) {
 <!-- /view -->
 <?php
         }
+        else {
+?>
+<script type='text/javascript'>
+window.location.href = '/sms2';
+</script>
+<?php            
+        }
     }
 }
 ?>
