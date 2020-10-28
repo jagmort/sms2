@@ -4,17 +4,17 @@ const text = '1. Начало\n2. Кр.3(п.13.4.2)\n3. #time#\n4. \n5. #address
 const dev_type = [['DSLAM'], ['Коммутатор доступа FTTx']];
 
 $(document).ready(function() {
-    jQuery('#w0-kvdate').on('change', function(){
+    $('#w0-kvdate').on('change', function(){
             sendAjaxForm('result_form', 'ajax_form', '/sms2/send/initi.php');
             return false; 
     });
-    jQuery('#brunch').on('change', function(){
+    $('#brunch').on('change', function(){
             $('#node').find('option').remove();
             $("#node").append(`<option selected="selected">%%</option>`);
             sendAjaxForm('result_form', 'ajax_form', '/sms2/send/initi.php');
             return false; 
     });
-    jQuery('#node').on('change', function(){
+    $('#node').on('change', function(){
             sendAjaxForm('result_form', 'ajax_form', '/sms2/send/initi.php');
             return false; 
     });
@@ -68,7 +68,6 @@ function createText() {
     if(dev_dslam > 0) { 
         p6 += dev_dslam + ' DSLAM; ';
     }
-    //p6 += ' [' + ip.slice(0, -2) + ']';
     $('#text').val($('#text').val().replace(/#dev#/, p6));
     $('#text').val($('#text').val().replace(/#ports#/, port));
     clients = person + legal;
@@ -76,19 +75,22 @@ function createText() {
 }
 
 function sendAjaxForm(result_form, ajax_form, url) {
-    jQuery.ajax({
+    $("#loading").css("display","block");
+    $.ajax({
         url:     url, 
         type:     "POST",
         dataType: "html",
         data: jQuery("#" + ajax_form).serialize(),
         success: function(response) {
             $("#result").html(response);
+            $("#loading").css("display","none");
         },
         error: function(response) {
             $("#result").html("Ошибка");
         }
     });
 }
+
 
 function addnodes(...nodes) {
     $('#node').find('option').remove();

@@ -64,6 +64,9 @@ if(($identity = Yii::$app->user->identity) != NULL) {
 <div id="result"></div>
 </div>
 </div>
+<div id="loading">
+  <img id="loading-image" src="img/loading.gif" alt="Loading..." />
+</div>
 <!-- /view -->
 <?php
         }
