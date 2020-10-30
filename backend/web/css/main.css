@@ -21,7 +21,7 @@
 
 #left span#count {
     position: absolute;
-    margin: -2em 28em;
+    margin: -2em 27em;
 }
 
 #priority {
@@ -86,7 +86,7 @@
 
 #text {
     width: 30em;
-    height: 20em;
+    height: 40em;
     border: none;
     font-size: 100%;
     font-family: "Segoe UI", arial, helvetica, freesans, sans-serif;
@@ -137,7 +137,7 @@
 
 #queue {
     width: 30em;
-    height: 25em;
+    height: 5em;
     border: none;
     font-size: 100%;
     font-family: "Segoe UI", arial, helvetica, freesans, sans-serif;

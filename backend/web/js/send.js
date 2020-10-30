@@ -1,4 +1,4 @@
-var maxlen = 600;
+var maxlen = 4096;
 var timeout = 10000;
 var clicks = 0;
 var search_count = 0;
