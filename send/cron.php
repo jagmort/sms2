@@ -138,7 +138,7 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
         //Send SMS
         $status = STATUS_NONE;
         //$row["email_only"] = 1; // Shutdown SMS sending
-        if($row["mobile"] < MIN_PHONE_NUM) $row["email_only"] = 1; // wrong mobile number
+        if(($row["mobile"] < MIN_PHONE_NUM) && ($row["telegram"] == 0)) $row["email_only"] = 1; // wrong mobile number and no telegram
         if(false && $row["email_only"] < 1) { // Skip SMS if e-mail only
             if(SendSMS($row["uid"], $row["contact_id"], $row["dept"], $row["mobile"], $row["tomail"], $row["text"], $row["priority"])) {
                 $status = $status | STATUS_INIT;
