@@ -104,6 +104,7 @@
 #buttons input {
     width: 89px;
     margin: 10px 0;
+    visibility: hidden;
 }
 
 #buttons button:disabled {

@@ -79,7 +79,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <div id="attach"><input type="file" name="file" id="file" /></div>
 <div id="buttons">
 <button type="submit" id="btn" disabled>Отправить</button> <input name="phone" id="single" size="11" title="Отправка на произвольный номер
-(11 цифр, например, 89012345678)" /> <span id="result"></span> <button type="button" id="clr" disabled>Очистить</button> 
+(11 цифр, например, 89012345678)" disabled /> <span id="result"></span> <button type="button" id="clr" disabled>Очистить</button> 
 </div>
 <div>
 <textarea id="phones" name="phones" readonly><?= isset($phones) ? ($list_id > 0 ? $list_id . ": " : '') . $phones : '' ?></textarea>
