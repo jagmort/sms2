@@ -42,11 +42,12 @@ function createText() {
         if(a) argus += a + ', ';
         person += Number($(this).closest('td').siblings().eq(6).html());
         legal += Number($(this).closest('td').siblings().eq(7).html());
+        clients = person + legal;
         type = $(this).closest('td').siblings().eq(8).html();
         d = Number($(this).closest('td').siblings().eq(5).html()) + 1;
         if(dev_type[0].includes(type)) {
             dev_dslam += d;
-            port += Math.round(d / 0.75);
+            port += Math.round(clients / 0.75);
         }
         if(dev_type[1].includes(type)) {
             dev_fttb += d;
@@ -70,7 +71,6 @@ function createText() {
     }
     $('#text').val($('#text').val().replace(/#dev#/, p6));
     $('#text').val($('#text').val().replace(/#ports#/, port));
-    clients = person + legal;
     $('#text').val($('#text').val().replace(/#clients#/, clients));
 }
 
