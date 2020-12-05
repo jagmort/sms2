@@ -27,6 +27,8 @@ $(document).ready(function() {
     });
 
     $(document).on('change', 'input[id^="row"]', function() {
+        if($(this).prop("checked")) $(this).closest('tr').css("font-weight", "bold");
+        else $(this).closest('tr').css("font-weight", "normal");
         createText();
     });
 });
