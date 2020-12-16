@@ -82,8 +82,9 @@ if (isset($_POST["authkey"]) && isset($_POST["text"]) && isset($_POST["phones"])
     if($user_id = getName($db, $AuthKey)) {
         $uid = $datetime->format('Ymd-His-') . substr("000$user_id", -4);
         $put = $datetime->format('Y-m-d H:i:s');
-        if(strlen($text) > 5) {
-            $exp = explode(": ", trim($_POST["phones"]));
+        $str_phones = trim($_POST['phones']);
+        if(strlen($text) > 5 && (mb_strpos($str_phones, ';') !== FALSE)) {
+            $exp = explode(": ", $str_phones);
             $count = count($exp);
             $list = $count > 1 ? $exp[0] : 0;
             $phones = explode("; ", $exp[$count - 1]);
