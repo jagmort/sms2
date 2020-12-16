@@ -143,7 +143,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                 $tabcont .= '<div id="tab-' . $row["id"] . '" class="tab-content' . ($i != 1 ? '' : ' current') . "\">\n";
             }
 
-            if ($stmt = $db->prepare("SELECT contact.id AS id, mobile, name, dept, block, position, work, home, email, comment, keyword, contact_tab.`order`AS `order`, telegram , tab_id, work_from, work_to, vac_from, vac_to FROM contact, contact_tab WHERE contact.id = contact_id AND tab_id = ? ORDER BY block, `order` DESC, name")):
+            if ($stmt = $db->prepare("SELECT contact.id AS id, mobile, name, dept, block, position, work, home, email, comment, keyword, contact_tab.`order`AS `order`, telegram, pin, tab_id, work_from, work_to, vac_from, vac_to FROM contact, contact_tab WHERE contact.id = contact_id AND tab_id = ? ORDER BY block, `order` DESC, name")):
                 $stmt->bind_param("i", $row["id"]);
                 $stmt->execute();
                 $result2 = $stmt->get_result();
@@ -187,7 +187,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                         $tabcont .= ' disabled';
                     $tabcont .= ' wd="' . $workday . '" />';
                     $tabcont .= '<abbr order="' . $row2["order"] . '">';
-                    $tabcont .= preg_replace('/(.*)\'(.*)\'(.*)/i', '${1}<strong>${2}</strong>${3}', preg_replace('/_/i', ' ', htmlentities($row2["name"]))) . ($row2["telegram"] != 0 ? ' <span><i class="fa fa-telegram" aria-hidden="true"></i></span>' : '') . '<br />';
+                    $tabcont .= preg_replace('/(.*)\'(.*)\'(.*)/i', '${1}<strong>${2}</strong>${3}', preg_replace('/_/i', ' ', htmlentities($row2["name"]))) . ($row2["telegram"] != 0 && $row2["pin"] == 0 ? ' <span><i class="fa fa-telegram" aria-hidden="true"></i></span>' : '') . '<br />';
                     $tabcont .= '<span>'. $row2["position"] . ', ' . $row2["dept"] . '</span>';
                     $tabcont .= "</abbr>";
                     $tabcont .= '<div class="details"';
