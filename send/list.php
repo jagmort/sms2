@@ -99,8 +99,8 @@ if($stmt = $db->prepare("SELECT list.`name` AS `name` FROM `list`, `tab`, `group
         $lists[] = $row["name"];
     }
 }   
-if($stmt = $db->prepare("SELECT `contact`.id AS id, `contact`.email AS email FROM `list`, contact_list, contact, `group_list`, `group` WHERE `group`.`name` = ? AND `group`.id = group_id AND `list`.id = `group_list`.list_id AND `list`.`name` = ? AND `list`.id = `contact_list` .list_id AND `contact`.id = contact_id AND escalate < 1 AND active > 0 ORDER BY email ASC")) {
-    $stmt->bind_param("ss", $group, $list);
+if($stmt = $db->prepare("SELECT `contact`.id AS id, `contact`.email AS email FROM `list`, contact_list, contact, `group_list`, `group`, `tab` WHERE `group`.`name` = ? AND `group`.id = group_id AND `list`.id = `group_list`.list_id AND `list`.`name` = ? AND `list`.id = `contact_list` .list_id AND `contact`.id = contact_id AND escalate < 1 AND active > 0 AND `list`.tab_id = `tab`.id AND `tab`.name = ? ORDER BY email ASC")) {
+    $stmt->bind_param("sss", $group, $list, $tab);
     $stmt->execute();
     $result = $stmt->get_result();
     $emails = [];
