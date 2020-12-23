@@ -569,3 +569,44 @@ dialog div.msg {
 div#sms textarea {
     width: 100%;
 }
+
+#branch {
+    white-space: nowrap;
+    margin: 10px;
+    cursor: pointer;
+}
+#branch a {
+    padding: 1em;
+}
+#problem {
+    border-width: 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+#problem th {
+    padding: 2px 5px 2px 5px;
+    text-align: center;
+}
+#problem tbody:nth-child(1) tr {
+    background: #eee;
+}
+#problem tbody:nth-child(2) tr:nth-child(2n) {
+    background: #eee;
+}
+#problem td {
+    padding: 2px 5px 2px 5px;
+    text-align: left;
+}
+#problem td:nth-child(1) {
+    padding-left: 2px;
+    white-space: nowrap;
+}
+#problem td:nth-child(2) {
+    white-space: nowrap;
+}
+#problem td:nth-child(4) {
+    white-space: nowrap;
+}
+#problem td:last-child {
+    padding-right: 2px;
+}

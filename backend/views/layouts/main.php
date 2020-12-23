@@ -49,6 +49,7 @@ AppAsset::register($this);
         ['label' => 'Статистика', 'url' => ['/site/stats']],
         ['label' => 'Инити', 'url' => ['/site/initi']],
         ['label' => 'Списки', 'url' => ['/site/list']],
+        ['label' => 'ГП', 'url' => ['/site/problem']],
         ['label' => 'Сбросить пароль', 'url' => '/sms2/frontend/web/index.php?r=site%2Frequest-password-reset'],
     ];
     if (Yii::$app->user->isGuest) {
