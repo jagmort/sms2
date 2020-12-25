@@ -41,7 +41,7 @@ if(($identity = Yii::$app->user->identity) != NULL) {
 </div>
 </div>
 <table id="problem">
-<tr><th>Начало</th><th>(С)КВ</th><th>Адрес</th><th>Номер</th><th>Название</th><th>Последний комментарий</th><th>Участок</th></tr>
+<tr><th>Создан</th><th>Факт. дата</th><th>(С)КВ</th><th>Адрес</th><th>Номер</th><th>Название</th><th>Последний комментарий</th><th>Участок</th></tr>
 <tbody id="result">
 </tbody>
 </table>
