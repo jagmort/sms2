@@ -47,12 +47,8 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <form id="ajax_form" method="post" action="" enctype="multipart/form-data">
 <input id="identity" type="hidden" name="authkey" value="<?= $identity->getAuthKey() ?>" />
 <input id="userip" type="hidden" name="userip" value="<?= $userip ?>" />
+<input type="checkbox" name="priority" value="0" checked />
 <div id="left">
-<div id="priority">
-Приоритет отправки SMS
-<input type="hidden" name="priority" value="9">
-<input type="checkbox" name="priority" value="0" checked title="Высокий">
-</div>
 <div id="search">
 <input type="text" name="search" value="" title="Поиск контакта" /><button id="search_btn" title="Поиск контакта">&#128270;</button>
 </div>
@@ -182,7 +178,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                         $work_from = DateTime::createFromFormat('Y-m-d H:i:s', $datetime->format('Y-m-d 00:00:00'), $tz);
                         $work_to = DateTime::createFromFormat('Y-m-d H:i:s', $datetime->format('Y-m-d 00:00:00'), $tz);
                     }
-                    $tabcont .= "<input title=\"&#128241; SMS и e-mail\n&#9993;  только e-mail\n&times; недоступен\" type=\"checkbox\" id=\"phone" . $row2["id"] . '" value="' . $row2["id"] . '" data-keyword="' . htmlentities($row2["keyword"]) .'"';
+                    $tabcont .= "<input title=\"&#128241; Telegram и e-mail\n&#9993;  только e-mail\n&times; недоступен\" type=\"checkbox\" id=\"phone" . $row2["id"] . '" value="' . $row2["id"] . '" data-keyword="' . htmlentities($row2["keyword"]) .'"';
                     if(($vac_from <= $datetime && $vac_to >= $datetime) || (($work_from != $work_to) && ($work_from > $datetime || $work_to < $datetime || !$workday))) // Vacation or not a worktime
                         $tabcont .= ' disabled';
                     $tabcont .= ' wd="' . $workday . '" />';
