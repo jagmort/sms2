@@ -610,3 +610,26 @@ div#sms textarea {
 #problem td:last-child {
     padding-right: 2px;
 }
+
+
+#email textarea {
+    width: 17em;
+    height: 10em;
+}
+#list-emails {
+    border-width: 0;
+    border-collapse: collapse;
+}
+#list-emails td {
+    padding: 2px 5px 2px 5px;
+    text-align: left;
+}
+#list-emails td:nth-child(1) {
+    padding-left: 2px;
+    text-align: right;
+}
+#list-emails a {
+    text-decoration: none;
+    cursor: pointer;
+    color: red;
+}

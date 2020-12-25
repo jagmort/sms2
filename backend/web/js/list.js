@@ -3,22 +3,36 @@ $(document).ready(function() {
         $("#tab").val("");
         $("#list").val("");
         $("#submit").attr("value", "0");
+        $("#delete").attr("value", "0");
         sendAjaxForm('result_form', 'ajax_form', '/sms2/send/list.php');
         return false; 
     });
     $('#tab').on('change', function() {
         $("#submit").attr("value", "0");
+        $("#delete").attr("value", "0");
         $("#list").val("");
         sendAjaxForm('result_form', 'ajax_form', '/sms2/send/list.php');
         return false; 
     });
     $('#list').on('change', function() {
         $("#submit").attr("value", "0");
+        $("#delete").attr("value", "0");
         sendAjaxForm('result_form', 'ajax_form', '/sms2/send/list.php');
         return false; 
     })
     $('#add').on('click', function() {
         $("#submit").attr("value", "1");
+        $("#delete").attr("value", "0");
+        sendAjaxForm('result_form', 'ajax_form', '/sms2/send/list.php');
+        return false;
+    })
+    $('#clear').on('click', function() {
+        $("textarea").val("");
+        return false;
+    })
+    $(document).on('click', '.contact-delete', function() {
+        $("#submit").attr("value", "0");
+        $("#delete").attr("value", $(this).attr("cid"));
         sendAjaxForm('result_form', 'ajax_form', '/sms2/send/list.php');
         return false;
     })
