@@ -47,7 +47,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <form id="ajax_form" method="post" action="" enctype="multipart/form-data">
 <input id="identity" type="hidden" name="authkey" value="<?= $identity->getAuthKey() ?>" />
 <input id="userip" type="hidden" name="userip" value="<?= $userip ?>" />
-<input type="checkbox" name="priority" value="0" checked />
+<input type="hidden" name="priority" value="0" />
 <div id="left">
 <div id="search">
 <input type="text" name="search" value="" title="Поиск контакта" /><button id="search_btn" title="Поиск контакта">&#128270;</button>
