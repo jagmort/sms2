@@ -1,7 +1,7 @@
 <?php
 use kartik\date\DatePicker;
 
-$this->title = 'SMS 2+';
+$this->title = 'Аварии Инити — SMS 2+';
 $this->registerJsFile('js/jquery-3.2.1.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerJsFile('js/initi.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerCssFile('css/main.css');

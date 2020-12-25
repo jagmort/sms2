@@ -7,7 +7,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
-$this->title = 'Вход';
+$this->title = 'Вход — SMS 2+';
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('css/jm.css');
 ?>

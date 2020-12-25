@@ -1,7 +1,7 @@
 <?php
 use kartik\date\DatePicker;
 
-$this->title = 'SMS 2+';
+$this->title = 'История оповещений — SMS 2+';
 $this->registerJsFile('js/jquery-3.2.1.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerJsFile('js/history.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerJsFile('js/xlsx.core.min.js', ['position' => yii\web\View::POS_HEAD]);
