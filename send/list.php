@@ -23,12 +23,12 @@ if($submit > 0) {
     foreach(preg_split("/\r\n|\n|\r|\t/", $text) as $v) {
         $v = trim($v, " \n\r\t\v\0\"");
         if(filter_var($v, FILTER_VALIDATE_EMAIL)) {
-            if($stmt = $db->prepare('SELECT contact_id, `group`.`id` AS group_id FROM contact, contact_tab, tab, group_tab, `group` WHERE `group`.id = group_id AND `tab`.id = `group_tab`.tab_id AND `tab`.id = `contact_tab`.tab_id AND contact_id = `contact`.id AND keyword NOT LIKE "old" AND `contact`.email = ? AND `group`.`name` = ? ORDER BY contact_id DESC LIMIT 1')) {
+            if($stmt = $db->prepare('SELECT contact_id, `group`.`id` AS group_id FROM contact, contact_tab, tab, group_tab, `group` WHERE `group`.id = group_id AND `tab`.id = `group_tab`.tab_id AND `tab`.id = `contact_tab`.tab_id AND contact_id = `contact`.id AND hide < 1 AND `contact`.email = ? AND `group`.`name` = ? ORDER BY contact_id DESC LIMIT 1')) {
                 $stmt->bind_param("ss", $v, $group);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 if(($row = $result->fetch_array(MYSQLI_ASSOC)) == NULL) { // not exist in tabs of the group
-                    if($stmt2 = $db->prepare('SELECT `id` FROM `contact` WHERE email = ? AND keyword NOT LIKE "old" ORDER BY id DESC LIMIT 1')) {
+                    if($stmt2 = $db->prepare('SELECT `id` FROM `contact` WHERE email = ? AND hide < 1 ORDER BY id DESC LIMIT 1')) {
                         $stmt2->bind_param("s", $v);
                         $stmt2->execute();
                         $result = $stmt2->get_result();
