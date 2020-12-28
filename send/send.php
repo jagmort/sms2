@@ -14,7 +14,7 @@ function AddHistory3(&$db, $contacts, $subject, $list, $text, $user_id, $userip,
     $txt = mb_substr($text, 0, MAX_SMS_LENGTH - strlen($group) - 3) . " ($group)";
     $argus = 0;
     if($row["recovery"] > 0) {
-        if(preg_match_all('/(ПРМОН|ГП\ СПД)\-(\d+)/', $txt, $reg, PREG_SET_ORDER))
+        if(preg_match_all('/(ПРМОН|ГП\ СПД|АВР_SQM)\-(\d+)/', $txt, $reg, PREG_SET_ORDER))
             if(count($reg) < 3)
                 $argus = $reg[0][2];
     }
