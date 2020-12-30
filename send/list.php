@@ -1,6 +1,7 @@
 <?php
 require('param.php');
 
+$active = ['—', '<i class="fa fa-hand-pointer-o" aria-hidden="true" title="Добавлен вручную"></i>', '<i class="fa fa-telegram" aria-hidden="true" title="Подписался в Telegram"></i>', '<i class="fa fa-telegram" aria-hidden="true" title="Добавился из Telegram"></i>', '<i class="fa fa-cog" aria-hidden="true"  title="Подписан на этой странице"></i>'];
 $authkey = $db->real_escape_string($_POST["authkey"]);
 $group = $db->real_escape_string($_POST["group"]);
 $tab = $db->real_escape_string($_POST["tab"]);
@@ -69,9 +70,6 @@ else {
     }
 }
 
-
-echo "<br />$group<br />$tab<br />$list<br />";
-
 if($stmt2 = $db->prepare("SELECT admin, group_id FROM `user` WHERE auth_key = ?")) {
     $stmt2->bind_param("s", $authkey);
     $stmt2->execute();
@@ -106,7 +104,7 @@ if($stmt = $db->prepare("SELECT list.`name` AS `name` FROM `list`, `tab`, `group
         $lists[] = $row["name"];
     }
 }   
-if($stmt = $db->prepare("SELECT `contact`.id AS id, `contact`.email AS email, `contact`.`name` AS cname, `list`.id AS list_id FROM `list`, contact_list, contact, `group_list`, `group`, `tab` WHERE `group`.`name` = ? AND `group`.id = group_id AND `list`.id = `group_list`.list_id AND `list`.`name` = ? AND `list`.id = `contact_list` .list_id AND `contact`.id = contact_id AND escalate < 1 AND active > 0 AND `list`.tab_id = `tab`.id AND `tab`.name = ? ORDER BY email ASC")) {
+if($stmt = $db->prepare("SELECT `contact`.id AS id, `contact`.email AS email, `contact`.`name` AS cname, active, `list`.id AS list_id FROM `list`, contact_list, contact, `group_list`, `group`, `tab` WHERE `group`.`name` = ? AND `group`.id = group_id AND `list`.id = `group_list`.list_id AND `list`.`name` = ? AND `list`.id = `contact_list` .list_id AND `contact`.id = contact_id AND escalate < 1 AND active > 0 AND `list`.tab_id = `tab`.id AND `tab`.name = ? ORDER BY email ASC")) {
     $stmt->bind_param("sss", $group, $list, $tab);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -114,9 +112,9 @@ if($stmt = $db->prepare("SELECT `contact`.id AS id, `contact`.email AS email, `c
     $i = 1;
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
         if(filter_var($row["email"], FILTER_VALIDATE_EMAIL))
-            $emails[] = "<td>$i</td><td><a class=\"contact-delete\" cid=\"". $row["id"] ."\">×</a></td><td></td><td>" . $row["email"] . "</td><td>" . $row["cname"] . "</td>";
+            $emails[] = "<td>$i</td><td>" . (($row["active"] < 4 && $row["active"] > 1) ? "" : "<a class=\"contact-delete\" cid=\"". $row["id"] ."\">×</a>") . "</td><td>" . $active[$row["active"]] . "</td><td>" . $row["email"] . "</td><td>" . $row["cname"] . "</td><td>" . $row["id"] . "</td>";
         else 
-            $emails[] = "<td>$i</td><td><a class=\"contact-delete\" cid=\"". $row["id"] ."\">×</a></td><td>ID:" . $row["id"] . "</td><td>" . $row["cname"] . "</td>";
+            $emails[] = "<td>$i</td><td>" . (($row["active"] < 4 && $row["active"] > 1) ? "" : "<a class=\"contact-delete\" cid=\"". $row["id"] ."\">×</a>") . "</td><td>" . $active[$row["active"]] . "</td><td>ID:" . $row["id"] . "</td><td>" . $row["cname"] . "</td><td>" . $row["id"] . "</td>";
         $i++;
         $list_id = $row["list_id"];
     }
@@ -125,7 +123,7 @@ if($stmt = $db->prepare("SELECT `contact`.id AS id, `contact`.email AS email, `c
 <div id="current">
 <?php
 if(sizeof($emails) > 0)
-    echo "<strong>$list ($list_id" . ')</strong><br /><table id="list-emails"><tr>' . implode("</tr><tr>", $emails) . '</tr></table>';
+    echo "<div id=\"breadcrumb\">$group / $tab / <strong>$list ($list_id" . ')</strong></div><table id="list-emails"><tr>' . implode("</tr><tr>", $emails) . '</tr></table>';
 ?>
 </div>
 <script type='text/javascript'>
