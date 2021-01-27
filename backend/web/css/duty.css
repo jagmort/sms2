@@ -1,0 +1,41 @@
+#duty {
+    border-width: 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+#duty th {
+    padding: 2px 5px 2px 5px;
+    text-align: left;
+}
+#duty tr:nth-child(2n) {
+    background: #eee;
+}
+#duty td {
+    padding: 2px 5px 2px 5px;
+    text-align: left;
+}
+#duty td:nth-child(1) {
+    padding-left: 2px;
+    white-space: nowrap;
+}
+#duty td:nth-child(2) {
+    white-space: nowrap;
+}
+#duty td:nth-child(3) {
+    white-space: nowrap;
+}
+#duty td:nth-child(4) {
+    white-space: nowrap;
+}
+#duty td:last-child {
+    padding-right: 2px;
+    white-space: nowrap;
+}
+a.take {
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+}
+a.take:hover {
+    text-decoration: none;
+}

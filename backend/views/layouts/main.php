@@ -47,9 +47,10 @@ AppAsset::register($this);
         ['label' => 'Главная', 'url' => ['/site/index']],
         ['label' => 'История', 'url' => ['/site/history']],
         ['label' => 'Статистика', 'url' => ['/site/stats']],
-        ['label' => 'Инити', 'url' => ['/site/initi']],
         ['label' => 'Списки', 'url' => ['/site/list']],
+        ['label' => 'Инити', 'url' => ['/site/initi']],
         ['label' => 'ГП', 'url' => ['/site/problem']],
+        ['label' => 'Смена ГМСПД', 'url' => ['/site/duty']],
         ['label' => 'Сбросить пароль', 'url' => '/sms2/frontend/web/index.php?r=site%2Frequest-password-reset'],
     ];
     if (Yii::$app->user->isGuest) {
