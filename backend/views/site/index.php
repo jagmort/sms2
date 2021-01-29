@@ -49,6 +49,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <input id="userip" type="hidden" name="userip" value="<?= $userip ?>" />
 <input type="hidden" name="priority" value="0" />
 <div id="left">
+<div id="priority" title=""></div>
 <div id="search">
 <input type="text" name="search" value="" title="Поиск контакта" /><button id="search_btn" title="Поиск контакта"><i class="fa fa-search" aria-hidden="true"></i></button>
 </div>
