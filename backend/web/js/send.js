@@ -39,6 +39,8 @@ function clearCheckboxes() {
         $("#btn").prop('disabled', false);
     }
     else $("#btn").prop('disabled', true);
+    $("#priority").html("");
+    $("#priority").attr("title", "");
 }
 
 // Fill phones textarea with contacts' checkboxes
@@ -100,13 +102,10 @@ $(document).ready(function() {
 
             // reselect chekboxes
             if(list > 0) {
-                console.log(list);
                 var all_checkboxes = $('#tabs input:checkbox');
                 all_checkboxes.prop('checked', false);
                 all_checkboxes.prop('indeterminate', false);
                 all_checkboxes.data('checked', 0);
-                //console.log($("option:selected", this).attr('data-list'));
-                //list = $("option:selected", this).attr('data-list');
                 var opt = $('option[data-list='+list+']');
                 var str = opt.val(); // general contacts
                 var arr = str.split(',');
@@ -147,9 +146,9 @@ $(document).ready(function() {
             all_checkboxes.prop('checked', false);
             all_checkboxes.prop('indeterminate', false);
             all_checkboxes.data('checked', 0);
-            //console.log($("option:selected", this).attr('data-list'));
             list = $("option:selected", this).attr('data-list');
-
+            $("#priority").html($("option:selected", this).html().substring(0, 28));
+            $("#priority").attr("title", $("option:selected", this).html());
             var str = this.value; // general contacts
             var arr = str.split(',');
             arr.forEach(function(item, i, arr) {
@@ -462,7 +461,6 @@ $(document).ready(function() {
 
 $(window).bind("load", function() { 
     setTimeout(function(){
-        console.log(active_tab);
         $('li[data-tab="tab-' + active_tab + '"]').click();
     }, 0);
 });
