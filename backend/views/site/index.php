@@ -50,7 +50,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
 <input type="hidden" name="priority" value="0" />
 <div id="left">
 <div id="search">
-<input type="text" name="search" value="" title="Поиск контакта" /><button id="search_btn" title="Поиск контакта">&#128270;</button>
+<input type="text" name="search" value="" title="Поиск контакта" /><button id="search_btn" title="Поиск контакта"><i class="fa fa-search" aria-hidden="true"></i></button>
 </div>
 <div>
 <select name="subject" id="subject" title="Тема e-mail">
