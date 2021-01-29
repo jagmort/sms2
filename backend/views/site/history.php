@@ -32,9 +32,7 @@ if(($identity = Yii::$app->user->identity) != NULL) echo '<input type="hidden" n
 ?>
 </form>
 </div>
-<div id="refresh">Обновление&nbsp;<input type="checkbox" /></div>
-<div id="export">
-</div>
+<div id="refresh">Обновление&nbsp;<input type="checkbox" />&nbsp;&nbsp;&nbsp;<a id="export" href="/sms2/send/history-csv.php" target="_blank">Загрузить</a></div>
 <div id="result"></div>
 </div>
 </div>

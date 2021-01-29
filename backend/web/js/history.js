@@ -15,12 +15,13 @@ $(document).ready(function() {
 });
 
 function sendAjaxForm(result_form, ajax_form, url) {
+    $("#export").attr("href", '/sms2/send/history-csv.php?' + $("#" + ajax_form).serialize());
     $("#loading").css("display","block");
     $.ajax({
         url:     url, 
         type:     "POST",
         dataType: "html",
-        data: jQuery("#" + ajax_form).serialize(),
+        data: $("#" + ajax_form).serialize(),
         success: function(response) {
             $("#result").html(response);
             $("#loading").css("display","none");
