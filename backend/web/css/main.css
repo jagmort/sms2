@@ -309,8 +309,10 @@ ul.tabs li.current {
 }
 
 .tab-content .details span {
+    margin-top: 1em;
     font-size: 100%;
     cursor: pointer;
+    display:inline-block;
 }
 
 .tab-content strong {
@@ -384,6 +386,10 @@ ul.tabs li.current {
     position: absolute;
     left: 19em;
     top: 4.5em;
+}
+
+#refresh a {
+    padding-left: 2em;
 }
 
 #w0-kvdate input {
@@ -597,6 +603,10 @@ div#sms textarea {
     padding: 2px 5px 2px 5px;
     text-align: left;
 }
+#problem td.far {
+    color:crimson;
+    font-weight: 500;
+}
 #problem td:nth-child(1) {
     padding-left: 2px;
     white-space: nowrap;
@@ -604,7 +614,10 @@ div#sms textarea {
 #problem td:nth-child(2) {
     white-space: nowrap;
 }
-#problem td:nth-child(4) {
+#problem td:nth-child(3) {
+    white-space: nowrap;
+}
+#problem td:nth-child(5) {
     white-space: nowrap;
 }
 #problem td:last-child {
@@ -615,6 +628,9 @@ div#sms textarea {
 #email textarea {
     width: 17em;
     height: 10em;
+}
+#breadcrumb {
+    margin: 1em 0 1em 0;
 }
 #list-emails {
     border-width: 0;

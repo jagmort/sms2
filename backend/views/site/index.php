@@ -134,7 +134,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
             }
             else {
 ?>
-<li class="tab-link<?= $i != 1 ? '' : ' current' ?>" data-tab="tab-<?= $row["id"] ?>"><?= htmlentities($row["name"]) ?></li>
+<li class="tab-link<?= $i != 1 ? '' : ' current' ?>" data-tab="tab-<?= $row["id"] ?>"><?= $row["name"] ?></li>
 <?php
                 $tabcont .= '<div id="tab-' . $row["id"] . '" class="tab-content' . ($i != 1 ? '' : ' current') . "\">\n";
             }
@@ -210,7 +210,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                     if($row2["comment"] != "")
                         $tabcont .= '<br />' . htmlentities($row2["comment"]);
                     if($admin > USER_KEYWORD):
-                        $tabcont .= '<br /><span data-tab="' . $row2["tab_id"] . '" data-id="' . $row2["id"] . '">&#9998;<br />ID: ' . $row2["id"];
+                        $tabcont .= '<br /><span data-tab="' . $row2["tab_id"] . '" data-id="' . $row2["id"] . '"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Редактировать<br />ID: ' . $row2["id"];
                         $tabcont .= '<br />Вкладка: ' . $row2["tab_id"];
                         $tabcont .= '<br />Блок: ' . htmlentities($row2["block"]);
                         $tabcont .= '<br />Порядок: ' . $row2["order"];
