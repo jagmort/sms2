@@ -38,7 +38,7 @@ if($stmt2 = $db->prepare("SELECT admin, group_id FROM `user` WHERE auth_key = ?"
         $query = "sms.gid =";
 }
 
-if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, position, mobile, dept, list_id, `subject`.text AS subject, `list`.name AS list, `sms`.text AS text, argus, sms.recovery AS recovery, put, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, put, recipient.single AS single FROM `recipient`, `sms`, `contact`, `user`, `group`, `list`, `subject` WHERE subject_id = `subject`.id AND list_id = `list`.id AND put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND " . $query . " ? ORDER BY uid DESC, name ASC")) {
+if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, position, mobile, dept, list_id, `subject`.text AS subject, `list`.name AS list, `sms`.text AS text, argus, sms.recovery AS recovery, put, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, recipient.single AS single, message_id FROM `recipient`, `sms`, `contact`, `user`, `group`, `list`, `subject` WHERE subject_id = `subject`.id AND list_id = `list`.id AND put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND " . $query . " ? ORDER BY uid DESC, name ASC")) {
 
     $stmt->bind_param("ssi", $from_date, $to_date, $row2["group_id"]);
     $stmt->execute();
@@ -76,7 +76,18 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
 <?php
     $i = 0;
     $uid = '';
+    $answer = '';
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
+        // get replies
+        if($stmt2 = $db->prepare("SELECT email, text FROM `contact`, `telegram` WHERE chat_id = `contact`.telegram AND `telegram`.reply_to_message_id > 0 AND `telegram`.reply_to_message_id = ?;")) {
+
+            $stmt2->bind_param("i", $row["message_id"]);
+            $stmt2->execute();
+            $result2 = $stmt2->get_result();
+            while($row2 = $result2->fetch_array(MYSQLI_ASSOC)) {
+                $answer .= '<br />' . $row2["email"] . ': ' . $row2["text"];
+            }
+        }
         $arr = mb_split("[\s,_]+", $row["name"]);
         if($row["cid"] != 0)
             $contact = '<span title="' . htmlentities($row["name"]) . "\n" . htmlentities($row["position"]) . "\n" . $row["mobile"] . "\n" . htmlentities($row["email"]) . '">' . str_replace("'", "", $arr[0]) . ' ' . mb_substr($arr[1], 0, 1) . ' ' . mb_substr($arr[2], 0, 1) . "</span>" . (strlen($row["dept"]) > 0 ? " (" . mb_substr($row["dept"], 0, 60) . ")" : '');
@@ -88,9 +99,10 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
                     echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
                 }
                 else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
-                echo '<td title="Копировать" class="id">' . $uid . '</td><td>' . $username . '</td><td class="text">' . ($list != 'Blank' ? "<span>$list ($list_id)</span>" : '') . "$text $filename</td><td><a href=\"http://omssis-sms.mts-nn.ru/post/copy.php?argus=$argus\" target=\"_blank\">$argus</a>$recovery</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
+                echo '<td title="Копировать" class="id">' . $uid . '</td><td>' . $username . '</td><td class="text">' . ($list != 'Blank' ? "<span>$list ($list_id)</span>" : '') . "$text $filename" . ($answer != '' ? "<span class=\"answer\">$answer</span>" : '') . "</td><td><a href=\"http://omssis-sms.mts-nn.ru/post/copy.php?argus=$argus\" target=\"_blank\">$argus</a>$recovery</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
                 echo "</tr>\n";
             }
+            $answer = '';
             $i++;
             $uid = $row["uid"];
             $username = $row["username"];
@@ -152,7 +164,7 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
             echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
         }
         else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
-        echo '<td title="Копировать" class="id">' . $uid . "</td><td>$username</td><td>$text $filename</td><td><a href=\"http://omssis-sms.mts-nn.ru/post/copy.php?argus=$argus\" target=\"_blank\">$argus</a>$recovery</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
+        echo '<td title="Копировать" class="id">' . $uid . '</td><td>' . $username . '</td><td class="text">' . ($list != 'Blank' ? "<span>$list ($list_id)</span>" : '') . "$text $filename" . ($answer != '' ? "<span class=\"answer\">$answer</span>" : '') . "</td><td><a href=\"http://omssis-sms.mts-nn.ru/post/copy.php?argus=$argus\" target=\"_blank\">$argus</a>$recovery</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
         echo "</tr>\n";
     }
 ?>

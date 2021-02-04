@@ -454,6 +454,9 @@ table.history {
     display: block;
     margin-bottom: 0.5em;
 }
+.history td.text span.answer {
+    color: red;
+}
 
 .history th {
     border-left:solid #999 1px;
