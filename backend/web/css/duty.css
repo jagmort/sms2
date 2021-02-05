@@ -27,6 +27,9 @@
 #duty td:nth-child(4) {
     white-space: nowrap;
 }
+#duty td:nth-child(6) {
+    color:#08c;
+}
 #duty td:last-child {
     padding-right: 2px;
     white-space: nowrap;
