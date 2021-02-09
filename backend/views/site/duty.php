@@ -28,7 +28,7 @@ if(($identity = Yii::$app->user->identity) != NULL) {
 </form>
 </div>
 <table id="duty">
-<tr><th></th><th>Филиал</th><th>Сотрудник</th><th>Телефон</th><th>Сотовый</th><th></th><th>E-mail</th></tr>
+<tr><th></th><th>Филиал</th><th>Сотрудник</th><th>Телефон</th><th>Сотовый</th><th></th><th>E-mail</th><th></th></tr>
 <tbody id="result">
 </tbody>
 </table>

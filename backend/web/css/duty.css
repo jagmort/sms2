@@ -6,8 +6,9 @@
 #duty th {
     padding: 2px 5px 2px 5px;
     text-align: left;
+    background-color: white;
 }
-#duty tr:nth-child(2n) {
+#duty tr:nth-child(2n + 1) {
     background: #eee;
 }
 #duty td {
