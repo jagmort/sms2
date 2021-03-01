@@ -39,13 +39,13 @@ if($stmt2 = $db->prepare("SELECT admin, group_id FROM `user` WHERE auth_key = ?"
 }
 
 header('Content-Disposition: attachment; filename="' . $from_date . '-' . $to_date . '.csv";');
-echo '"DateTime";"Argus";"User"' . "\n";
+echo '"DateTime";"Argus";"User";"Text"' . "\n";
 $csv = array();
-if($stmt = $db->prepare("SELECT `put`, `username`, `argus` FROM `sms`, `user`WHERE `recovery` IN (0, 3) AND `user`.id = `sms`.`user_id` AND put >= ? AND put <= (? + INTERVAL 1 DAY) AND group_id = gid AND " . $query . " ? ORDER BY `sms`.`put` DESC")) {
+if($stmt = $db->prepare("SELECT `put`, `username`, `argus`, `text` FROM `sms`, `user`WHERE `recovery` IN (0, 3) AND `user`.id = `sms`.`user_id` AND put >= ? AND put <= (? + INTERVAL 1 DAY) AND group_id = gid AND " . $query . " ? ORDER BY `sms`.`put` DESC")) {
     $stmt->bind_param("ssi", $from_date, $to_date, $row2["group_id"]);
     $stmt->execute();
     $result = $stmt->get_result();
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-        echo '"' . $row["put"] . '";"' . $row["argus"] . '";"' . $row["username"] . '"' . "\n";
+        echo '"' . $row["put"] . '";"' . $row["argus"] . '";"' . $row["username"] . '";"' . iconv("UTF-8", "CP1251", str_replace('"', '""', $row["text"])) . '"' . "\n";
     }
 }
