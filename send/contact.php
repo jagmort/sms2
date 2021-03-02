@@ -25,7 +25,7 @@ $admin = getName($db, $AuthKey, $username);
 
 if($admin > USER_KEYWORD) {
     if(isset($_POST['save'])) {
-        if($stmt = $db->prepare("SELECT name, position, dept, mobile, work, home, email, comment, keyword, block, `order` FROM `contact`, `contact_tab` WHERE contact_id = `contact`.id AND `contact`.id=? AND tab_id=?")) {
+        if($stmt = $db->prepare("SELECT `contact`.id AS id, name, position, dept, mobile, work, home, email, comment, keyword, block, `order` FROM `contact`, `contact_tab` WHERE contact_id = `contact`.id AND `contact`.id = ? AND tab_id = ?")) {
             $stmt->bind_param("ii", $id, $tab_id);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -40,7 +40,7 @@ if($admin > USER_KEYWORD) {
                 fwrite($fout, ' | ' . $value);
             }
             unset($value);
-            fwrite($fout, "\n+");
+            fwrite($fout, "\n+ | " . $row[0]);
 
             $i = 0;
             foreach ($row as &$value) {
