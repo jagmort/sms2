@@ -43,9 +43,10 @@ if($submit > 0) {
                         else {
                             $contact_id = $row2['id'];   
                         }
-                        if($stmt3 = $db->prepare('INSERT INTO `contact_tab`(`contact_id`, `tab_id`, `block`) SELECT ?, tab_id , "✈" FROM tab, group_tab, `group` WHERE `group`.id = group_id AND `tab`.`name` = ? AND `tab`.id = tab_id AND `group`.name = ? LIMIT 1')) {
+                        if($stmt3 = $db->prepare('INSERT INTO `contact_tab`(`contact_id`, `tab_id`, `block`) SELECT ?, tab_id , ? FROM tab, group_tab, `group` WHERE `group`.id = group_id AND `tab`.`name` = ? AND `tab`.id = tab_id AND `group`.name = ? LIMIT 1')) {
                             echo $jj++ . " — " . $contact_id . ' — ' . $tab . ' — ' . $group . "<br />";
-                            $stmt3->bind_param("iss", $contact_id, $tab, $group);
+                            $tab_group = "✈ " . $list;
+                            $stmt3->bind_param("isss", $contact_id, $tab_group, $tab, $group);
                             $stmt3->execute();
                         }
                     }
@@ -53,7 +54,7 @@ if($submit > 0) {
                 else {
                     $contact_id = $row['contact_id'];
                 }
-                if($stmt4 = $db->prepare('INSERT INTO `contact_list`(`contact_id`, `list_id`, `active`) SELECT ?, `list`.id, 4 FROM `list`, `group_list`, `group`, `tab`, `group_tab` WHERE list_id = `list`.id AND `group_list`.group_id = `group`.id AND `group`.`name` = ? AND `list`.`name` = ? AND `tab`.`name` = ? AND `group_tab`.tab_id = `tab`.id AND `tab`.id = `list`.tab_id AND `group_tab`.group_id = `group`.id ON DUPLICATE KEY UPDATE active = 4')) {
+                if($stmt4 = $db->prepare('INSERT INTO `contact_list`(`contact_id`, `list_id`, `email_only`, `escalate`, `active`) SELECT ?, `list`.id, 0, 0, 4 FROM `list`, `group_list`, `group`, `tab`, `group_tab` WHERE list_id = `list`.id AND `group_list`.group_id = `group`.id AND `group`.`name` = ? AND `list`.`name` = ? AND `tab`.`name` = ? AND `group_tab`.tab_id = `tab`.id AND `tab`.id = `list`.tab_id AND `group_tab`.group_id = `group`.id ON DUPLICATE KEY UPDATE active = 4')) {
                     $stmt4->bind_param("isss", $contact_id, $group, $list, $tab);
                     $stmt4->execute();
                 }    
