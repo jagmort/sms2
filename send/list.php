@@ -22,9 +22,9 @@ if ($stmt = $db->prepare("SELECT `user`.id AS `uid`, `group`.`name` AS group_nam
 if($submit > 0) {
     $jj = 0;
     foreach(preg_split("/\r\n|\n|\r|\t/", $text) as $v) {
-        $v = trim($v, " \n\r\t\v\0\"");
+        $v = mb_strtolower(trim($v, " \n\r\t\v\0\""));
         if(filter_var($v, FILTER_VALIDATE_EMAIL)) {
-            if($stmt = $db->prepare('SELECT contact_id, `group`.`id` AS group_id FROM contact, contact_tab, tab, group_tab, `group` WHERE `group`.id = group_id AND `tab`.id = `group_tab`.tab_id AND `tab`.id = `contact_tab`.tab_id AND contact_id = `contact`.id AND hide < 1 AND `contact`.email = ? AND `group`.`name` = ? ORDER BY contact_id DESC LIMIT 1')) {
+            if($stmt = $db->prepare('SELECT contact_id, `group`.`id` AS group_id FROM contact, contact_tab, tab, group_tab, `group` WHERE `group`.id = group_id AND `tab`.id = `group_tab`.tab_id AND `tab`.id = `contact_tab`.tab_id AND contact_id = `contact`.id AND `contact`.hide < 1 AND `tab`.id != 50 AND `contact`.email = ? AND `group`.`name` = ? ORDER BY contact_id DESC LIMIT 1')) {
                 $stmt->bind_param("ss", $v, $group);
                 $stmt->execute();
                 $result = $stmt->get_result();
@@ -105,7 +105,7 @@ if($stmt = $db->prepare("SELECT list.`name` AS `name` FROM `list`, `tab`, `group
         $lists[] = $row["name"];
     }
 }   
-if($stmt = $db->prepare("SELECT `contact`.id AS id, `contact`.email AS email, `contact`.`name` AS cname, active, `list`.id AS list_id FROM `list`, contact_list, contact, `group_list`, `group`, `tab` WHERE `group`.`name` = ? AND `group`.id = group_id AND `list`.id = `group_list`.list_id AND `list`.`name` = ? AND `list`.id = `contact_list` .list_id AND `contact`.id = contact_id AND escalate < 1 AND active > 0 AND `list`.tab_id = `tab`.id AND `tab`.name = ? ORDER BY email ASC")) {
+if($stmt = $db->prepare("SELECT `contact`.id AS id, `contact`.email AS email, `contact`.`name` AS cname, active, `list`.id AS list_id, `tab`.id AS tab_id, `group`.id AS group_id FROM `list`, contact_list, contact, `group_list`, `group`, `tab` WHERE `group`.`name` = ? AND `group`.id = group_id AND `list`.id = `group_list`.list_id AND `list`.`name` = ? AND `list`.id = `contact_list` .list_id AND `contact`.hide < 1 AND `contact`.id = contact_id AND escalate < 1 AND active > 0 AND `list`.tab_id = `tab`.id AND `tab`.name = ? ORDER BY email ASC")) {
     $stmt->bind_param("sss", $group, $list, $tab);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -113,22 +113,24 @@ if($stmt = $db->prepare("SELECT `contact`.id AS id, `contact`.email AS email, `c
     $i = 1;
     while($row = $result->fetch_array(MYSQLI_ASSOC)) {
         if(filter_var($row["email"], FILTER_VALIDATE_EMAIL))
-            $emails[] = "<td>$i</td><td>" . (($row["active"] < 4 && $row["active"] > 1) ? "" : "<a class=\"contact-delete\" cid=\"". $row["id"] ."\">×</a>") . "</td><td>" . $active[$row["active"]] . "</td><td>" . $row["email"] . "</td><td>" . $row["cname"] . "</td><td>" . $row["id"] . "</td>";
+            $emails[] = "<td>$i</td><td>" . (($row["active"] < 4 && $row["active"] > 1) ? "" : "<a class=\"contact-delete\" cid=\"". $row["id"] ."\">×</a>") . "</td><td>" . $active[$row["active"]] . "</td><td>" . $row["email"] . "</td><td>" . $row["cname"] . "</td><td>(" . $row["id"] . ")</td>";
         else 
-            $emails[] = "<td>$i</td><td>" . (($row["active"] < 4 && $row["active"] > 1) ? "" : "<a class=\"contact-delete\" cid=\"". $row["id"] ."\">×</a>") . "</td><td>" . $active[$row["active"]] . "</td><td>ID:" . $row["id"] . "</td><td>" . $row["cname"] . "</td><td>" . $row["id"] . "</td>";
+            $emails[] = "<td>$i</td><td>" . (($row["active"] < 4 && $row["active"] > 1) ? "" : "<a class=\"contact-delete\" cid=\"". $row["id"] ."\">×</a>") . "</td><td>" . $active[$row["active"]] . "</td><td>ID:" . $row["id"] . "</td><td>" . $row["cname"] . "</td><td>(" . $row["id"] . ")</td>";
         $i++;
         $list_id = $row["list_id"];
+        $tab_id = $row["tab_id"];
+        $group_id = $row["group_id"];
     }
 }   
 ?>
 <div id="current">
 <?php
 if(sizeof($emails) > 0)
-    echo "<div id=\"breadcrumb\">$group / $tab / <strong>$list ($list_id" . ')</strong></div><table id="list-emails"><tr>' . implode("</tr><tr>", $emails) . '</tr></table>';
+    echo "<div id=\"breadcrumb\">$group ($group_id) / $tab ($tab_id) / <strong>$list ($list_id" . ')</strong></div><table id="list-emails"><tr>' . implode("</tr><tr>", $emails) . '</tr></table>';
 ?>
 </div>
 <script type='text/javascript'>
-const groups = ["<?= ($user_id == 1 ? implode('","', $groups) :  'Blank","' . $user_group) ?>"];
+const groups = ["<?= (($user_id == 1 || $user_id == 18)? implode('","', $groups) :  'Blank","' . $user_group) ?>"];
 addgroups.apply(null, groups);
 $('select option[value="<?= $group ?>"]').attr("selected",true);
 const tabs = ["<?= implode('","', $tabs) ?>"];
