@@ -140,7 +140,7 @@ if(($identity = Yii::$app->user->identity) != NULL):
                 $tabcont .= '<div id="tab-' . $row["id"] . '" class="tab-content' . ($i != 1 ? '' : ' current') . "\">\n";
             }
 
-            if ($stmt = $db->prepare("SELECT contact.id AS id, mobile, name, dept, block, position, work, home, email, comment, keyword, contact_tab.`order`AS `order`, telegram, pin, tab_id, work_from, work_to, vac_from, vac_to FROM contact, contact_tab WHERE contact.id = contact_id AND tab_id = ? ORDER BY block, `order` DESC, name")):
+            if ($stmt = $db->prepare("SELECT `contact`.id AS id, mobile, name, dept, block, position, work, home, email, comment, keyword, `contact_tab`.`order`AS `order`, telegram, pin, tab_id, work_from, work_to, vac_from, vac_to FROM `contact`, `contact_tab` WHERE `contact`.hide < 1 AND `contact`.id = contact_id AND tab_id = ? ORDER BY block, `order` DESC, name")):
                 $stmt->bind_param("i", $row["id"]);
                 $stmt->execute();
                 $result2 = $stmt->get_result();
