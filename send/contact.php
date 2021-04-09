@@ -44,8 +44,13 @@ if($admin > USER_KEYWORD) {
 
             $i = 0;
             foreach ($row as &$value) {
-                if(isset($_POST[$cols[$i]])) 
-                    $col[] = $_POST[$cols[$i]];
+                if(isset($_POST[$cols[$i]])) {
+                    if($cols[$i] === 'mobile')
+                        $col[] = preg_replace('/[^0-9]+/', '', preg_replace('/\+7/', '8', $_POST[$cols[$i]])); // extract only digits from mobile number
+                    else
+                        $col[] = $_POST[$cols[$i]];
+
+                }
                 else 
                     $col[] = $value;
                 fwrite($fout, ' | ' . $col[$i]);
@@ -84,7 +89,7 @@ if($admin > USER_KEYWORD) {
 <div>ФИО <input name="name" value="<?= htmlentities($row['name']) ?>" /></div> 
 <div>Должность <input name="position" value="<?= htmlentities($row['position']) ?>" /></div>
 <div>Отдел <input name="dept" value="<?= htmlentities($row['dept']) ?>" /></div>
-<div>Сотовый <input name="mobile" maxlength="11" value="<?= $row['mobile'] ?>" /></div>
+<div>Сотовый <input name="mobile" value="<?= $row['mobile'] ?>" /></div>
 <div>Рабочий <input name="work" value="<?= htmlentities($row['work']) ?>" /></div>
 <div>Домашний <input name="home" value="<?= htmlentities($row['home']) ?>" /></div>
 <div>E-mail <input name="email" value="<?= htmlentities($row['email']) ?>" /></div>
