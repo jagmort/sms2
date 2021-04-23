@@ -3,7 +3,7 @@ require('param.php');
 
 $authkey = $db->real_escape_string($_POST["authkey"]);
 $branch = $_POST["branch"];
-
+$shift = array(1, 23); // ГМСПД
 
 if ($stmt = $db->prepare("SELECT `user`.id AS `uid`, `group`.id AS gid FROM `user`, `group` WHERE `user`.group_id = `group`.id AND auth_key = ?")) {
     $stmt->bind_param("s", $authkey);
@@ -14,7 +14,7 @@ if ($stmt = $db->prepare("SELECT `user`.id AS `uid`, `group`.id AS gid FROM `use
     $user_id = $row["uid"];
 }
 
-if($branch > 0 && $gid == 1) {
+if($branch > 0 && in_array($gid, $shift)) {
     if ($stmt = $db->prepare("UPDATE `user_branch` SET `user_id`=?, taking = NOW() WHERE `branch_id`=?")) {
         $stmt->bind_param("ii", $user_id, $branch);
         $stmt->execute();
@@ -27,7 +27,7 @@ if ($stmt2 = $db->prepare("SELECT `branch`.id AS bid, `human`, `name`, `work`, `
     $stmt2->execute();
     $result2 = $stmt2->get_result();
     while($row2 = $result2->fetch_array(MYSQLI_ASSOC)) {
-    echo '<tr><td>' . ($gid == 1 ? '<a class="take" bid="' . $row2["bid"] . '" title="Принять смену ' . $row2["human"] . '"><i class="fa fa-handshake-o" aria-hidden="true"></i></a>' : '') . '</td><td>' . $row2["human"] . "</td><td>" . $row2["name"] . "</td><td>" . $row2["work"] . "</td><td>" . $row2["mobile"] . "</td><td>" . $row2["home"] . "</td><td>" . ($row2["telegram"] > 0 ? '<i class="fa fa-telegram" aria-hidden="true"></i> ' : '') . "</td><td>" . $row2["email"] . "</td><td>" . ($gid == 1 ? $row2["taking"] : '') . "</td></tr>\n";
+    echo '<tr><td>' . (in_array($gid, $shift) ? '<a class="take" bid="' . $row2["bid"] . '" title="Принять смену ' . $row2["human"] . '"><i class="fa fa-handshake-o" aria-hidden="true"></i></a>' : '') . '</td><td>' . $row2["human"] . "</td><td>" . $row2["name"] . "</td><td>" . $row2["work"] . "</td><td>" . $row2["mobile"] . "</td><td>" . $row2["home"] . "</td><td>" . ($row2["telegram"] > 0 ? '<i class="fa fa-telegram" aria-hidden="true"></i> ' : '') . "</td><td>" . $row2["email"] . "</td><td>" . (in_array($gid, $shift) ? $row2["taking"] : '') . "</td></tr>\n";
     }
 }
 ?>
