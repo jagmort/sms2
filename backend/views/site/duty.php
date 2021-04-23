@@ -14,7 +14,6 @@ if(($identity = Yii::$app->user->identity) != NULL) {
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_array(MYSQLI_ASSOC);
-        if(true || $row['uid'] == 1) { // jm only
 ?>
 <!-- view -->
 <div id="main">
@@ -22,7 +21,7 @@ if(($identity = Yii::$app->user->identity) != NULL) {
 <div id="calendar">
 <form id="ajax_form" method="post" action="">
 <?php
-            if(($identity = Yii::$app->user->identity) != NULL) echo '<input type="hidden" name="authkey" value="' . $identity->getAuthKey() . '" />'
+    echo '<input type="hidden" name="authkey" value="' . $identity->getAuthKey() . '" />'
 ?>
 <input type="hidden" id="branch" name="branch" value="0">
 </form>
@@ -36,14 +35,6 @@ if(($identity = Yii::$app->user->identity) != NULL) {
 </div>
 <!-- /view -->
 <?php
-        }
-        else {
-?>
-<script type='text/javascript'>
-window.location.href = '/sms2';
-</script>
-<?php            
-        }
     }
 }
 ?>
