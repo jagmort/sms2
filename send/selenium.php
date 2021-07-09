@@ -35,24 +35,29 @@ else {
     else {
         $gp = array();
         $argus_auto = array();
-        if($stmt = $db->prepare("SELECT `Номер ГП`, `Фактическая дата повреждения`, `Список клиентов` FROM `client`, `argus` WHERE `Номер ГП` LIKE 'ПРМОН-%' AND `Номер ГП` = `number` AND `actual` > `closed` AND `flag` < 1 AND `Уровень обслуживания` = 'ПЛАТИНОВЫЙ'")) {
+        if($stmt = $db->prepare("SELECT `Номер ГП`, `actual`, `Список клиентов`, `branch`.offset AS offset FROM `client`, `argus`, `branch` WHERE `branch`.id = `branch_id` AND `Номер ГП` LIKE 'ПРМОН-%' AND `Номер ГП` = `number` AND `actual` > `closed` AND `flag` < 1 AND `Уровень обслуживания` = 'ПЛАТИНОВЫЙ'")) {
 
             $stmt->execute();
             $result = $stmt->get_result();
             while($row = $result->fetch_array(MYSQLI_ASSOC)) {
-                $open = new DateTime($row["Фактическая дата повреждения"]);
+                $actual = new DateTime($row["actual"]);
+                $actual->add(new DateInterval('PT' . $row["offset"]. 'H'));
+                $estimated = new DateTime($row["actual"]);
+                $estimated->add(new DateInterval('PT4H'));
+                $estimated->add(new DateInterval('PT' . $row["offset"]. 'H'));
                 if(isset($gp[$row["Номер ГП"]]))
                     $gp[$row["Номер ГП"]]["client"] .= "\n" . $row["Список клиентов"];
                 else {
                     $gp[$row["Номер ГП"]]["client"] = "Уровень обслуживания ПЛАТИНОВЫЙ\n" . $row["Список клиентов"];
-                    $gp[$row["Номер ГП"]]["dt"] = $open->format('Y-m-d\TH:i:s.000\Z');
+                    $gp[$row["Номер ГП"]]["actual"] = $actual->format('Y-m-d\TH:i:s.000\Z');
+                    $gp[$row["Номер ГП"]]["estimated"] = $estimated->format('Y-m-d\TH:i:s.000\Z');
                 }
             }
             
             foreach ($gp as $k => $v) {
                 if(preg_match('/\-(\d+)/', $k, $matches))
                     $argus = $matches[1];
-                array_push($argus_auto, ['id' => $argus, 'dt' => $v["dt"], 'cause' => '', 'comment' => $v["client"], 'done' => 0, 'expired' => 0]);
+                array_push($argus_auto, ['id' => $argus, 'actual' => $v["actual"], 'estimated' => $v["estimated"], 'cause' => '', 'comment' => $v["client"], 'done' => 0, 'expired' => 0]);
             }
 
 
