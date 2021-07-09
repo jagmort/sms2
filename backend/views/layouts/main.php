@@ -50,6 +50,7 @@ AppAsset::register($this);
         ['label' => 'Списки', 'url' => ['/site/list']],
         ['label' => 'Инити', 'url' => ['/site/initi']],
         ['label' => 'ГП', 'url' => ['/site/problem']],
+        ['label' => 'СЗО/ЦЭ', 'url' => ['/site/szo']],
         ['label' => 'Смена ГМСПД', 'url' => ['/site/duty']],
         ['label' => 'Сбросить пароль', 'url' => '/sms2/frontend/web/index.php?r=site%2Frequest-password-reset'],
     ];

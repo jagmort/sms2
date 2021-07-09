@@ -22,7 +22,7 @@ if($branch > 0 && in_array($gid, $shift)) {
     }
 }
 
-if ($stmt2 = $db->prepare("SELECT `branch`.id AS bid, `human`, `name`, `work`, `mobile`, `home`, `contact`.email AS email, taking, `contact`.telegram AS telegram FROM `branch`, `user`, `contact`, `user_branch` WHERE `contact`.id = `user`.`contact_id` AND branch_id = `branch`.id AND `user_id` = `user`.id ORDER BY `branch`.id")) {
+if ($stmt2 = $db->prepare("SELECT `branch`.id AS bid, `human`, `name`, `work`, `mobile`, `home`, `contact`.email AS email, taking, `contact`.telegram AS telegram FROM `branch`, `user`, `contact`, `user_branch` WHERE `contact`.id = `user`.`contact_id` AND branch_id = `branch`.id AND `user_id` = `user`.id ORDER BY `branch`.order")) {
     //$stmt2->bind_param("s", $identity->getAuthKey());
     $stmt2->execute();
     $result2 = $stmt2->get_result();
