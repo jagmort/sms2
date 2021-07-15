@@ -628,6 +628,46 @@ div#sms textarea {
     padding-right: 2px;
 }
 
+#client {
+    border-width: 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+#client th {
+    padding: 2px 5px 2px 5px;
+    text-align: center;
+}
+#client tbody:nth-child(1) tr {
+    background: #eee;
+}
+#client tbody:nth-child(2) tr:nth-child(2n) {
+    background: #eee;
+}
+#client td {
+    padding: 2px 5px 2px 5px;
+    text-align: left;
+}
+#client td.far {
+    color:crimson;
+    font-weight: 500;
+}
+#client td:nth-child(1) {
+    padding-left: 2px;
+    white-space: nowrap;
+}
+#client td:nth-child(3) {
+    text-align: center;
+}
+#client td:nth-child(4) {
+    white-space: nowrap;
+}
+#client td:nth-child(5) {
+    white-space: nowrap;
+}
+#client td:last-child {
+    padding-right: 2px;
+    white-space: nowrap;
+}
 
 #email textarea {
     width: 17em;
