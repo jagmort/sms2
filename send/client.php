@@ -8,7 +8,6 @@ if(isset($_POST["branch"]))
 else
     $branch = '%%';
 
-echo "<!-- ### $branch ### -->";
 $offset = array();
 $stmt = $db->prepare("SELECT initi, offset FROM `branch`");
 $stmt->execute();
