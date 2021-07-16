@@ -1,4 +1,8 @@
 $(document).ready(function() {
+    $('#result').on('click', '.sms', function() {
+        console.log("click");
+        $('<form method="get" action="/sms2/backend/web/index.php"><input type="hidden" name="r" value="site/history"><input type="hidden" name="argus" value="' + $(this).attr('data-argus') + '" /></form>').appendTo('body').submit();
+    });   
     sendAjaxForm('result_form', 'ajax_form', '/sms2/send/client.php');
 });
 

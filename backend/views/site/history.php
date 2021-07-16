@@ -4,10 +4,8 @@ use kartik\date\DatePicker;
 $this->title = 'История оповещений — SMS 2+';
 $this->registerJsFile('js/jquery-3.2.1.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerJsFile('js/history.js', ['position' => yii\web\View::POS_HEAD]);
-$this->registerJsFile('js/xlsx.core.min.js', ['position' => yii\web\View::POS_HEAD]);
-$this->registerJsFile('js/FileSaver.min.js', ['position' => yii\web\View::POS_HEAD]);
-$this->registerJsFile('js/tableexport.min.js', ['position' => yii\web\View::POS_HEAD]);
 $this->registerCssFile('css/main.css');
+$this->registerCssFile('css/font-awesome.css');
 
 ?>
 <!-- view -->
@@ -28,11 +26,12 @@ echo DatePicker::widget([
         'format' => 'yyyy-mm-dd'
     ]
 ]);
-if(($identity = Yii::$app->user->identity) != NULL) echo '<input type="hidden" name="authkey" value="' . $identity->getAuthKey() . '" />'
+if(($identity = Yii::$app->user->identity) != NULL) echo '<input type="hidden" name="authkey" value="' . $identity->getAuthKey() . '" />';
+if(!empty($_GET['argus'])) echo '<input type="hidden" name="argus" value="' . $_GET['argus'] . '" />';
 ?>
 </form>
 </div>
-<div id="refresh">Обновление&nbsp;<input type="checkbox" />&nbsp;&nbsp;&nbsp;<a id="export" href="/sms2/send/history-csv.php" target="_blank">Загрузить</a></div>
+<div id="refresh">Обновление&nbsp;<input type="checkbox" /> <a id="export" href="/sms2/send/history-csv.php" target="_blank"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Экспорт в CSV</a></div>
 <div id="result"></div>
 </div>
 </div>

@@ -27,15 +27,25 @@ try {
 $from_date = $datetime1->format('Y-m-d');
 $to_date = $datetime2->format('Y-m-d');
 
+if(!empty($_POST['argus'])) {
+    $query = 'argus = ' . intval($_POST['argus']) . ' AND ';
+    $datetime1->sub(new DateInterval('P1Y'));
+}
+else
+    $query = '';
+
+$from_date = $datetime1->format('Y-m-d');
+$to_date = $datetime2->format('Y-m-d');
+    
 if($stmt2 = $db->prepare("SELECT admin, group_id FROM `user` WHERE auth_key = ?")) {
     $stmt2->bind_param("s", $authkey);
     $stmt2->execute();
     $result2 = $stmt2->get_result();
     $row2 = $result2->fetch_array(MYSQLI_ASSOC);
     if($row2["admin"] > USER_SUPERVISOR)
-        $query = "0 <";
+        $query .= "0 <";
     else
-        $query = "sms.gid =";
+        $query .= "sms.gid =";
 }
 
 if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, position, mobile, dept, list_id, `subject`.text AS subject, `list`.name AS list, `sms`.text AS text, argus, sms.recovery AS recovery, put, sent, done, recipient.status AS status, username, `group`.name AS gname, phone, contact.email AS email, filename, recipient.single AS single, message_id FROM `recipient`, `sms`, `contact`, `user`, `group`, `list`, `subject` WHERE subject_id = `subject`.id AND list_id = `list`.id AND put >= ? AND put <= (? + INTERVAL 1 DAY) AND user.id = sms.user_id AND recipient.contact_id = contact.id AND recipient.sms_id = sms.id AND `group`.id = gid AND " . $query . " ? ORDER BY uid DESC, name ASC")) {
