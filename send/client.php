@@ -2,6 +2,13 @@
 require('param.php');
 
 $authkey = $db->real_escape_string($_POST["authkey"]);
+
+if(isset($_POST["branch"]))
+    $branch = $_POST["branch"];
+else
+    $branch = '%%';
+
+echo "<!-- ### $branch ### -->";
 $offset = array();
 $stmt = $db->prepare("SELECT initi, offset FROM `branch`");
 $stmt->execute();
@@ -11,7 +18,8 @@ while($row = $result->fetch_array(MYSQLI_ASSOC)) {
 }
 $stmt->free_result();
 
-if ($stmt2 = $db->prepare("SELECT branch AS `Филиал`, `Номер ГП`, minlevel AS `Уровень`, countcl AS `Клиентов`, actual AS `Начало`, estimated AS `Планируемое`, `Тип населенного пункта`, region AS `Регион`, exec_section AS `Очередь`, comment AS `Комментарий`, put AS `e-mail/telegram`, `last`, `nargus` FROM sms a RIGHT JOIN (SELECT branch, argus, number, `Номер ГП`, (SELECT name FROM level d WHERE d.id = MIN(level.id)) AS minlevel, COUNT(client.id) AS countcl, actual, estimated, closed, `Тип населенного пункта`, region, exec_section, comment, c.`update` AS `last`, c.`argus` AS `nargus` FROM client, level, argus c INNER JOIN (SELECT `update` FROM `argus` WHERE actual > closed ORDER BY `update` desc LIMIT 1) d ON c.`update` = d.`update` WHERE number = `Номер ГП` AND level.name = client.`Уровень обслуживания` AND (`Номер ГП` LIKE 'ГП СПД-%' OR `Номер ГП` LIKE 'ПРМОН-%') GROUP BY `Номер ГП`) b ON a.argus = b.argus WHERE minlevel = 'ПЛАТИНОВЫЙ' ORDER BY `Начало` ASC")) {
+if ($stmt2 = $db->prepare("SELECT branch AS `Филиал`, `Номер ГП`, minlevel AS `Уровень`, countcl AS `Клиентов`, actual AS `Начало`, estimated AS `Планируемое`, `Тип населенного пункта`, region AS `Регион`, exec_section AS `Очередь`, comment AS `Комментарий`, put AS `e-mail/telegram`, `last`, `nargus` FROM sms a RIGHT JOIN (SELECT branch, argus, number, `Номер ГП`, (SELECT name FROM level d WHERE d.id = MIN(level.id)) AS minlevel, COUNT(client.id) AS countcl, actual, estimated, closed, `Тип населенного пункта`, region, exec_section, comment, c.`update` AS `last`, c.`argus` AS `nargus` FROM client, level, argus c INNER JOIN (SELECT `update` FROM `argus` WHERE actual > closed ORDER BY `update` desc LIMIT 1) d ON c.`update` = d.`update` WHERE number = `Номер ГП` AND level.name = client.`Уровень обслуживания` AND (`Номер ГП` LIKE 'ГП СПД-%' OR `Номер ГП` LIKE 'ПРМОН-%') GROUP BY `Номер ГП`) b ON a.argus = b.argus WHERE minlevel = 'ПЛАТИНОВЫЙ' AND branch LIKE ? ORDER BY `Начало` ASC")) {
+    $stmt2->bind_param("s", $branch);
     $stmt2->execute();
     $result2 = $stmt2->get_result();
     $i = 0;

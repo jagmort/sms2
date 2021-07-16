@@ -22,6 +22,24 @@ if(($identity = Yii::$app->user->identity) != NULL) {
 <?php
             if(($identity = Yii::$app->user->identity) != NULL) echo '<input type="hidden" name="authkey" value="' . $identity->getAuthKey() . '" />'
 ?>
+<div id="refresh2">Филиал: 
+<select name="branch" id="branch">
+<option>%%</option>
+<option>bsh</option>
+<option>chv</option>
+<option>kir</option>
+<option>mel</option>
+<option>mrd</option>
+<option>nzg</option>
+<option>orb</option>
+<option>pnz</option>
+<option>smr</option>
+<option>srt</option>
+<option>tts</option>
+<option>udm</option>
+<option>uln</option>
+</select>
+</div>
 </form>
 </div>
 <table id="client">
