@@ -2,6 +2,10 @@
 require('param.php');
 
 $authkey = $db->real_escape_string($_POST["authkey"]);
+if(isset($_POST["branch"]))
+    $branch = $_POST["branch"];
+else
+    $branch = '%%';
 $offset = array();
 $stmt = $db->prepare("SELECT initi, offset FROM `branch`");
 $stmt->execute();
@@ -11,7 +15,8 @@ while($row = $result->fetch_array(MYSQLI_ASSOC)) {
 }
 $stmt->free_result();
 
-if ($stmt2 = $db->prepare("SELECT actual, closed, estimated, region, number, comment, exec_section, branch, flag, a.`update` AS `last` FROM argus a INNER JOIN (SELECT `update` FROM `argus` WHERE `actual` > `closed` ORDER BY `update` desc LIMIT 1) b ON a.update = b.update WHERE `flag` & 4 > 0 ORDER BY actual")) {
+if ($stmt2 = $db->prepare("SELECT actual, closed, estimated, region, number, comment, exec_section, branch, flag, a.`update` AS `last` FROM argus a INNER JOIN (SELECT `update` FROM `argus` WHERE `actual` > `closed` ORDER BY `update` desc LIMIT 1) b ON a.update = b.update WHERE `flag` & 4 > 0 AND branch LIKE ? ORDER BY actual")) {
+    $stmt2->bind_param("s", $branch);
     $stmt2->execute();
     $result2 = $stmt2->get_result();
     $i = 0;

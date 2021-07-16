@@ -1,4 +1,8 @@
 $(document).ready(function() {
+    $('#branch').on('change', function(){
+        sendAjaxForm('result_form', 'ajax_form', '/sms2/send/szo.php');
+        return false; 
+    });
     sendAjaxForm('result_form', 'ajax_form', '/sms2/send/szo.php');
 });
 
