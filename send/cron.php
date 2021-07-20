@@ -172,18 +172,26 @@ if ($stmt = $db->prepare("SELECT `recipient`.id AS id, `recipient`.contact_id AS
                 ),
             );
             $context = stream_context_create($options);
-            $getUpdates = file_get_contents('https://api.telegram.org/bot' . BOT_API_TOKEN . '/sendMessage', false, $context);
-            $json = json_decode($getUpdates, true);
-            if($json['ok'] == 1) {
-                $status = $status | STATUS_TELEGRAM_SENT;
-                $stmt = $db->prepare("UPDATE recipient SET message_id = ?, sent = NOW(), done = NOW(), status = ? WHERE id = ?");
-                $stmt->bind_param("iii", $json['result']['message_id'], $status, $row["id"]);
+
+            if(false === ($getUpdates = file_get_contents('https://api.telegram.org/bot' . BOT_API_TOKEN . '/sendMessage', false, $context))) {
+                $err = error_get_last();
+                $stmt = $db->prepare("UPDATE recipient SET error = ? WHERE id = ?");
+                $stmt->bind_param("si", $err["message"], $row["id"]);
                 $stmt->execute();
             }
             else {
-                $stmt = $db->prepare("UPDATE recipient SET status = ? WHERE id = ?");
-                $stmt->bind_param("ii", $status, $row["id"]);
-                $stmt->execute();
+                $json = json_decode($getUpdates, true);
+                if($json['ok'] == 1) {
+                    $status = $status | STATUS_TELEGRAM_SENT;
+                    $stmt = $db->prepare("UPDATE recipient SET message_id = ?, sent = NOW(), done = NOW(), status = ? WHERE id = ?");
+                    $stmt->bind_param("iii", $json['result']['message_id'], $status, $row["id"]);
+                    $stmt->execute();
+                }
+                else {
+                    $stmt = $db->prepare("UPDATE recipient SET error = ? WHERE id = ?");
+                    $stmt->bind_param("si", $json["description"], $row["id"]);
+                    $stmt->execute();
+                }
             }
         }
 
