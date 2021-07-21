@@ -24,7 +24,7 @@ if ($stmt2 = $db->prepare("SELECT actual, closed, estimated, region, number, com
         $estimated = new DateTime($row2['estimated']);
         $actual = new DateTime($row2['actual']);
         $now = new DateTime(null, new DateTimeZone('Europe/Moscow'));
-        echo '<tr><td' . ($now > $estimated ? ' class="far"' : '') . '>' . $actual->format('d.m.Y H:i') . '</td><td>' . $row2['region'] . '</td><td><a href="http://omssis-sms.mts-nn.ru/post/copy.php?argus=' . $row2['number']. '" target="_blank">' . $row2['number']. '</a></td><td>' . str_replace(array("\n\n"), "<br />", $row2['comment']) . '</td><td>' . $row2['exec_section'] . "</td></tr>\n";
+        echo '<tr><td' . ($now > $estimated ? ' class="far"' : '') . '>' . $actual->format('d.m.Y H:i') . '</td><td>' . $row2['region'] . '</td><td><a href="http://omssis-sms.mts-nn.ru/sms2/send/copy.php?argus=' . $row2['number']. '" target="_blank">' . $row2['number']. '</a></td><td>' . str_replace(array("\n\n"), "<br />", $row2['comment']) . '</td><td>' . $row2['exec_section'] . "</td></tr>\n";
         if($i < 1)
             $last = $row2['last'];
         $i++;
