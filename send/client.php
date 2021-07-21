@@ -30,7 +30,7 @@ if ($stmt2 = $db->prepare("SELECT branch AS `Филиал`, `Номер ГП`, m
         else
             $sms = '';
         $now = new DateTime(null, new DateTimeZone('Europe/Moscow'));
-        echo '<tr><td><a href="http://omssis-sms.mts-nn.ru/sms2/send/copy.php?argus=' . $row2['Номер ГП']. '" target="_blank">' . $row2['Номер ГП']. '</a></td><td>' . mb_convert_case($row2['Уровень'], MB_CASE_TITLE) . '</td><td>' . $row2['Клиентов'] . '</td><td>' . $actual->format('d.m.Y H:i') . '</td><td' . ($now > $estimated ? ' class="far"' : '') . '>' . $estimated->format('d.m.Y H:i') . '</td><td>' . $row2['Тип населенного пункта'] . '</td><td>' . $row2['Регион'] . '</td><td>' . $row2['Очередь'] . '</td><td>' . str_replace(array("\n\n"), "<br />", $row2['Комментарий']) . '</td><td class="sms" data-argus="' . $row2['nargus']. '">' . ($sms !== '' ? $sms->format('d.m.Y H:i') : '–') . "</td></tr>\n";
+        echo '<tr><td><a href="' . COPY_URL . '?argus=' . $row2['Номер ГП']. '" target="_blank">' . $row2['Номер ГП']. '</a></td><td>' . mb_convert_case($row2['Уровень'], MB_CASE_TITLE) . '</td><td>' . $row2['Клиентов'] . '</td><td>' . $actual->format('d.m.Y H:i') . '</td><td' . ($now > $estimated ? ' class="far"' : '') . '>' . $estimated->format('d.m.Y H:i') . '</td><td>' . $row2['Тип населенного пункта'] . '</td><td>' . $row2['Регион'] . '</td><td>' . $row2['Очередь'] . '</td><td>' . str_replace(array("\n\n"), "<br />", $row2['Комментарий']) . '</td><td class="sms" data-argus="' . $row2['nargus']. '">' . ($sms !== '' ? $sms->format('d.m.Y H:i') : '–') . "</td></tr>\n";
         if($i < 1)
             $last = $row2['last'];
         $i++;
