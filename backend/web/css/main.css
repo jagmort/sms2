@@ -389,6 +389,9 @@ ul.tabs li.current {
 #refresh a {
     padding-left: 2em;
 }
+#refresh2 {
+    white-space: nowrap;
+}
 
 #w0-kvdate input {
     padding: 2px;
@@ -579,6 +582,11 @@ div#sms textarea {
 }
 #branch a {
     padding: 1em;
+}
+#level {
+    white-space: nowrap;
+    margin: 10px;
+    cursor: pointer;
 }
 #problem {
     border-width: 0;

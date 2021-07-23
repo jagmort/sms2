@@ -39,7 +39,19 @@ if(($identity = Yii::$app->user->identity) != NULL) {
 <option>udm</option>
 <option>uln</option>
 </select>
-</div>
+Уровень: 
+<select name="level" id="level">
+<option>%%</option>
+<?php
+    if ($stmt2 = $db->prepare("SELECT `name` FROM `level` ORDER BY id ASC")) {
+      $stmt2->execute();
+      $result2 = $stmt2->get_result();
+      while($row2 = $result2->fetch_array(MYSQLI_ASSOC)) {
+        echo "<option>" . $row2['name'] . "</option>\n";        
+      }
+    }
+?>
+</select></div>
 </form>
 </div>
 <table id="client">

@@ -6,6 +6,10 @@ $(document).ready(function() {
         sendAjaxForm('result_form', 'ajax_form', '/sms2/send/client.php');
         return false; 
     });
+    $('#level').on('change', function(){
+        sendAjaxForm('result_form', 'ajax_form', '/sms2/send/client.php');
+        return false; 
+    });
     sendAjaxForm('result_form', 'ajax_form', '/sms2/send/client.php');
 });
 
