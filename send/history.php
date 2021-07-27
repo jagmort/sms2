@@ -109,7 +109,7 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
                     echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
                 }
                 else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
-                echo '<td title="Копировать" class="id">' . $uid . '</td><td>' . $username . '</td><td class="text">' . ($list != 'Blank' ? "<span>$list ($list_id)</span>" : '') . "$text $filename" . ($answer != '' ? "<span class=\"answer\">$answer</span>" : '') . "</td><td><a href=\"' . COPY_URL . '?argus=$argus\" target=\"_blank\">$argus</a>$recovery</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
+                echo '<td title="Копировать" class="id">' . $uid . '</td><td>' . $username . '</td><td class="text">' . ($list != 'Blank' ? "<span>$list ($list_id)</span>" : '') . "$text $filename" . ($answer != '' ? "<span class=\"answer\">$answer</span>" : '') . "</td><td><a href=\"" . COPY_URL . "?argus=$argus\" target=\"_blank\">$argus</a>$recovery</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
                 echo "</tr>\n";
             }
             $answer = '';
@@ -174,7 +174,7 @@ if($stmt = $db->prepare("SELECT uid, contact.id AS cid, contact.name AS name, po
             echo '<tr' . (($i & 1) ? ' class="myodd"' : ' class="my"') . '>';
         }
         else echo '<tr' . (($i & 1) ? ' class="odd"' : '') . '>';
-        echo '<td title="Копировать" class="id">' . $uid . '</td><td>' . $username . '</td><td class="text">' . ($list != 'Blank' ? "<span>$list ($list_id)</span>" : '') . "$text $filename" . ($answer != '' ? "<span class=\"answer\">$answer</span>" : '') . "</td><td><a href=\"http://omssis-sms.mts-nn.ru/post/copy.php?argus=$argus\" target=\"_blank\">$argus</a>$recovery</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
+        echo '<td title="Копировать" class="id">' . $uid . '</td><td>' . $username . '</td><td class="text">' . ($list != 'Blank' ? "<span>$list ($list_id)</span>" : '') . "$text $filename" . ($answer != '' ? "<span class=\"answer\">$answer</span>" : '') . "</td><td><a href=\"". COPY_URL . "?argus=$argus\" target=\"_blank\">$argus</a>$recovery</td><td>$name</td><td>$sent</td><td>$done</td><td>$status</td>";
         echo "</tr>\n";
     }
 ?>
