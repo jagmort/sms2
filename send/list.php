@@ -96,7 +96,7 @@ if($stmt = $db->prepare("SELECT tab.`name` AS `name` FROM `tab`, `group_tab`, `g
         $tabs[] = $row["name"];
     }
 }   
-if($stmt = $db->prepare("SELECT list.`name` AS `name` FROM `list`, `tab`, `group_list`, `group` WHERE `group`.`name` = ? AND `tab`.`name` = ? AND `group`.id = group_id AND `tab`.id = tab_id AND `list`.id = list_id ORDER BY `list`.`order` DESC")) {
+if($stmt = $db->prepare("SELECT list.`name` AS `name` FROM `list`, `tab`, `group_list`, `group` WHERE `group`.`name` = ? AND `tab`.`name` = ? AND `group`.id = group_id AND `tab`.id = tab_id AND `list`.id = list_id ORDER BY `list`.`order` DESC, `list`.id ASC")) {
     $stmt->bind_param("ss", $group, $tab);
     $stmt->execute();
     $result = $stmt->get_result();
